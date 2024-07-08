@@ -49,9 +49,9 @@ server:
   logPath: "logs/server"                      # 服务日志保存路径
   ErrorStack: true                            # 当Server捕获到异常时是否记录堆栈信息到日志中。默认为true
   ErrorLogEnabled: true                       # 是否记录异常日志信息到日志中。默认为true
-  errorLogPattern: "error/{Y-m-d}.log"        # 异常错误日志文件格式。默认为"error-{Ymd}.log"
+  errorLogPattern: "error_{Y-m-d}.log"        # 异常错误日志文件格式。默认为"error-{Ymd}.log"
   accessLogEnabled: true                      # 是否记录访问日志。默认为false
-  accessLogPattern: "access/{Y-m-d}.log"      # 访问日志文件格式。默认为"access-{Ymd}.log"
+  accessLogPattern: "access_{Y-m-d}.log"      # 访问日志文件格式。默认为"access-{Ymd}.log"
   maxHeaderBytes: "100KB"                     # 请求头大小限制，请求头包括客户端提交的Cookie数据，默认设置为100KB
   clientMaxBodySize: "200MB"                  # 客户端提交的Body大小限制，同时也影响文件上传大小，默认设置为200MB
   serverAgent: "HG HTTP Server"               # 服务端Agent信息。默认为"HG HTTP Server"
@@ -231,7 +231,7 @@ database:
     <<: *defaultLogger
     stdout: true
   default:
-    link: "mysql:hotgo:hg123456.@tcp(127.0.0.1:3306)/hotgo?loc=Local&parseTime=true&charset=utf8mb4"
+    link: "mysql:root:123456@tcp(127.0.0.1:3306)/hotgo?loc=Local&parseTime=true&charset=utf8mb4"
     debug: true
     Prefix: "hg_"
 
