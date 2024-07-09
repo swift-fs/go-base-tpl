@@ -13,6 +13,7 @@ run:
   # Include test files or not.
   # Default: true
   tests: false
+  go: "1.20"
 
   # Which dirs to skip: issues from them won't be reported.
   # Can use regexp here: `generated.*`, regexp is applied on full path.
@@ -73,7 +74,8 @@ issues:
       text: "unnecessaryDefer:"
   exclude-dirs:
     - internal/library/hggen/internal
-  exclude-files: [] 
+  exclude-files: []
+    
 
 # https://golangci-lint.run/usage/linters
 linters-settings:
@@ -190,7 +192,6 @@ linters-settings:
     # Report about shadowed variables.
     # Default: false
     # check-shadowing: true
-    
     # Settings per analyzer.
     settings:
       # Analyzer name, run `go tool vet help` to see all analyzers.

@@ -6,12 +6,13 @@
 package global
 
 import (
-	"github.com/gogf/gf/v2/net/ghttp"
-	"github.com/gogf/gf/v2/util/gmeta"
-	"github.com/gogf/gf/v2/util/gtag"
 	"reflect"
 	"strings"
 	"sync"
+
+	"github.com/gogf/gf/v2/net/ghttp"
+	"github.com/gogf/gf/v2/util/gmeta"
+	"github.com/gogf/gf/v2/util/gtag"
 )
 
 // HTTPRouter http路由
@@ -77,7 +78,6 @@ func LoadHTTPRoutes(r *ghttp.Request) map[string]*HTTPRouter {
 				httpRoutes[key] = setRouterMeta(router)
 			}
 		}
-
 	}
 	return httpRoutes
 }

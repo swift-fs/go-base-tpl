@@ -7,12 +7,6 @@ package admin
 
 import (
 	"context"
-	"github.com/gogf/gf/v2/crypto/gmd5"
-	"github.com/gogf/gf/v2/database/gdb"
-	"github.com/gogf/gf/v2/errors/gerror"
-	"github.com/gogf/gf/v2/frame/g"
-	"github.com/gogf/gf/v2/os/gtime"
-	"github.com/gogf/gf/v2/util/grand"
 	"hotgo/internal/consts"
 	"hotgo/internal/dao"
 	"hotgo/internal/library/contexts"
@@ -23,6 +17,13 @@ import (
 	"hotgo/internal/model/input/sysin"
 	"hotgo/internal/service"
 	"hotgo/utility/simple"
+
+	"github.com/gogf/gf/v2/crypto/gmd5"
+	"github.com/gogf/gf/v2/database/gdb"
+	"github.com/gogf/gf/v2/errors/gerror"
+	"github.com/gogf/gf/v2/frame/g"
+	"github.com/gogf/gf/v2/os/gtime"
+	"github.com/gogf/gf/v2/util/grand"
 )
 
 type sAdminSite struct{}
@@ -292,8 +293,8 @@ func (s *sAdminSite) getLoginRoleAndDept(ctx context.Context, roleId, deptId int
 // BindUserContext 绑定用户上下文
 func (s *sAdminSite) BindUserContext(ctx context.Context, claims *model.Identity) (err error) {
 	//// 如果不想每次访问都重新加载用户信息，可以放开注释。但在本次登录未失效前，用户信息不会刷新
-	//contexts.SetUser(ctx, claims)
-	//return
+	// contexts.SetUser(ctx, claims)
+	// return
 
 	var mb *entity.AdminMember
 	if err = dao.AdminMember.Ctx(ctx).WherePri(claims.Id).Scan(&mb); err != nil {

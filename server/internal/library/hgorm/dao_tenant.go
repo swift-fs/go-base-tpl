@@ -7,10 +7,11 @@ package hgorm
 
 import (
 	"context"
-	"github.com/gogf/gf/v2/errors/gerror"
-	"github.com/gogf/gf/v2/frame/g"
 	"hotgo/internal/consts"
 	"hotgo/utility/tree"
+
+	"github.com/gogf/gf/v2/errors/gerror"
+	"github.com/gogf/gf/v2/frame/g"
 )
 
 // TenantRelation 租户关系
@@ -85,7 +86,7 @@ func GetTenantRelation(ctx context.Context, memberId int64) (tr *TenantRelation,
 		}
 		tr.UserId = memberId
 	default:
-		err = gerror.Newf("未找到用户[%]的租户关系,部门类型[%v] 无效", memberId, tr.DeptType)
+		err = gerror.Newf("未找到用户[%v]的租户关系,部门类型[%v] 无效", memberId, tr.DeptType)
 		return nil, err
 	}
 	return

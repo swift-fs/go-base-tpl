@@ -8,6 +8,13 @@ package location
 import (
 	"context"
 	"fmt"
+	"hotgo/utility/validate"
+	"io"
+	"net"
+	"net/http"
+	"strings"
+	"time"
+
 	"github.com/gogf/gf/v2/encoding/gcharset"
 	"github.com/gogf/gf/v2/errors/gerror"
 	"github.com/gogf/gf/v2/frame/g"
@@ -15,12 +22,6 @@ import (
 	"github.com/gogf/gf/v2/text/gstr"
 	"github.com/gogf/gf/v2/util/gconv"
 	"github.com/kayon/iploc"
-	"hotgo/utility/validate"
-	"io"
-	"net"
-	"net/http"
-	"strings"
-	"time"
 )
 
 const (
@@ -72,7 +73,7 @@ func WhoisLocation(ctx context.Context, ip string, retry ...int64) (*IpLocationD
 
 	// 利用重试机制缓解高并发情况下限流的影响
 	// 毕竟这是一个免费的接口，如果你对IP归属地定位要求毕竟高，可以考虑换个付费接口
-	if response.StatusCode != 200 {
+	if response.StatusCode != http.StatusOK {
 		retryCount := defaultRetry
 		if len(retry) > 0 {
 			retryCount = retry[0]

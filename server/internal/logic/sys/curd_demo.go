@@ -145,7 +145,6 @@ func (s *sSysCurdDemo) Export(ctx context.Context, in *sysin.CurdDemoListInp) (e
 // Edit 修改/新增CURD列表
 func (s *sSysCurdDemo) Edit(ctx context.Context, in *sysin.CurdDemoEditInp) (err error) {
 	return g.DB().Transaction(ctx, func(ctx context.Context, tx gdb.TX) (err error) {
-
 		// 修改
 		if in.Id > 0 {
 			in.UpdatedBy = contexts.GetUserId(ctx)
@@ -170,7 +169,6 @@ func (s *sSysCurdDemo) Edit(ctx context.Context, in *sysin.CurdDemoEditInp) (err
 
 // Delete 删除CURD列表
 func (s *sSysCurdDemo) Delete(ctx context.Context, in *sysin.CurdDemoDeleteInp) (err error) {
-
 	if _, err = s.Model(ctx).WherePri(in.Id).Delete(); err != nil {
 		err = gerror.Wrap(err, "删除CURD列表失败，请稍后重试！")
 		return

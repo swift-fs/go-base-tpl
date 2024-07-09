@@ -33,5 +33,4 @@ func AddLineNo(s string) string {
 		bf.WriteString(strings.Repeat(" ", maxLineNoStrLen-len(lineNoStr)) + lineNoStr + "  " + line)
 	}
 	return bf.String()
-
 }

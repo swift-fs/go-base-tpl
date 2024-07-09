@@ -1,10 +1,11 @@
 package gohtml
 
 import (
-	"golang.org/x/net/html"
 	"io"
 	"regexp"
 	"strings"
+
+	"golang.org/x/net/html"
 )
 
 // parse parses a stirng and converts it into an html.
@@ -106,9 +107,9 @@ func getTagName(tokenizer *html.Tokenizer) string {
 }
 
 // setEndTagRaw sets an endTagRaw to the parent.
-func setEndTagRaw(tokenizer *html.Tokenizer, parent *tagElement, tagName string) string {
+func setEndTagRaw(_ *html.Tokenizer, parent *tagElement, tagName string) string {
 	if parent != nil && parent.tagName == tagName {
-		parent.endTagRaw = `</` + fMustCompile(parent.startTagRaw) + `>` //string(tokenizer.Raw())
+		parent.endTagRaw = `</` + fMustCompile(parent.startTagRaw) + `>` // string(tokenizer.Raw())
 		return ""
 	}
 	return tagName

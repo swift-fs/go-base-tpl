@@ -7,6 +7,12 @@ package queue
 
 import (
 	"context"
+	"hotgo/internal/consts"
+	"hotgo/utility/simple"
+	"hotgo/utility/validate"
+	"sync"
+	"time"
+
 	"github.com/apache/rocketmq-client-go/v2"
 	"github.com/apache/rocketmq-client-go/v2/admin"
 	"github.com/apache/rocketmq-client-go/v2/consumer"
@@ -16,11 +22,6 @@ import (
 	"github.com/gogf/gf/v2/errors/gerror"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/os/grpool"
-	"hotgo/internal/consts"
-	"hotgo/utility/simple"
-	"hotgo/utility/validate"
-	"sync"
-	"time"
 )
 
 type RocketMq struct {
@@ -191,7 +192,7 @@ func (r *RocketMq) ListenReceiveMsgDo(topic string, receiveDo func(mqMsg MqMsg))
 
 	err = r.consumerIns.Subscribe(topic, consumer.MessageSelector{}, func(ctx context.Context, msgs ...*primitive.MessageExt) (consumer.ConsumeResult, error) {
 		for _, item := range msgs {
-			rocketManager.goPool.Add(ctx, func(ctx context.Context) {
+			_ = rocketManager.goPool.Add(ctx, func(ctx context.Context) {
 				receiveDo(MqMsg{
 					RunType: ReceiveMsg,
 					Topic:   item.Topic,

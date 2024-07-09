@@ -7,14 +7,6 @@ package views
 
 import (
 	"context"
-	"github.com/gogf/gf/v2/container/gvar"
-	"github.com/gogf/gf/v2/database/gdb"
-	"github.com/gogf/gf/v2/errors/gerror"
-	"github.com/gogf/gf/v2/frame/g"
-	"github.com/gogf/gf/v2/os/gfile"
-	"github.com/gogf/gf/v2/os/gtime"
-	"github.com/gogf/gf/v2/os/gview"
-	"github.com/gogf/gf/v2/text/gstr"
 	"hotgo/internal/consts"
 	"hotgo/internal/dao"
 	"hotgo/internal/library/hggen/internal/cmd/gendao"
@@ -27,6 +19,15 @@ import (
 	"hotgo/utility/tree"
 	"runtime"
 	"strings"
+
+	"github.com/gogf/gf/v2/container/gvar"
+	"github.com/gogf/gf/v2/database/gdb"
+	"github.com/gogf/gf/v2/errors/gerror"
+	"github.com/gogf/gf/v2/frame/g"
+	"github.com/gogf/gf/v2/os/gfile"
+	"github.com/gogf/gf/v2/os/gtime"
+	"github.com/gogf/gf/v2/os/gview"
+	"github.com/gogf/gf/v2/text/gstr"
 )
 
 var Curd = gCurd{}
@@ -118,7 +119,7 @@ type CurdOptions struct {
 
 type FuncDict struct {
 	ValueColumn string // 选项值
-	LabelColumn string //选项名称
+	LabelColumn string // 选项名称
 	Value       *sysin.GenCodesColumnListModel
 	Label       *sysin.GenCodesColumnListModel
 }

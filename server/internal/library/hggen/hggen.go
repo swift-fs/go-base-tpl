@@ -6,15 +6,13 @@
 package hggen
 
 import (
-	"github.com/gogf/gf/v2/os/gfile"
 	_ "hotgo/internal/library/hggen/internal/cmd/gendao"
 	"hotgo/internal/library/hggen/internal/utility/utils"
 	_ "unsafe"
 
+	"github.com/gogf/gf/v2/os/gfile"
+
 	"context"
-	"github.com/gogf/gf/v2/errors/gerror"
-	"github.com/gogf/gf/v2/frame/g"
-	"github.com/gogf/gf/v2/util/gconv"
 	"hotgo/internal/consts"
 	"hotgo/internal/library/addons"
 	"hotgo/internal/library/hggen/internal/cmd"
@@ -26,6 +24,10 @@ import (
 	"hotgo/internal/model/input/sysin"
 	"hotgo/internal/service"
 	"sort"
+
+	"github.com/gogf/gf/v2/errors/gerror"
+	"github.com/gogf/gf/v2/frame/g"
+	"github.com/gogf/gf/v2/util/gconv"
 )
 
 //go:linkname doGenDaoForArray hotgo/internal/library/hggen/internal/cmd/gendao.doGenDaoForArray
@@ -33,7 +35,6 @@ func doGenDaoForArray(ctx context.Context, index int, in gendao.CGenDaoInput)
 
 // Dao 生成数据库实体
 func Dao(ctx context.Context) (err error) {
-
 	// 在执行gf gen dao时，先将生成文件放在临时路径，生成完成后再拷贝到项目
 	// 目的是希望减少触发gf热编译的几率，防止热编译运行时代码生成流程未结束被自动重启打断
 	// gf gen dao 的执行时长主要取决于需要生成数据库表的数量，表越多速度越慢

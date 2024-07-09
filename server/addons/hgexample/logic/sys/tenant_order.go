@@ -133,7 +133,6 @@ func (s *sSysTenantOrder) Export(ctx context.Context, in *sysin.TenantOrderListI
 // Edit 修改/新增多租户功能演示
 func (s *sSysTenantOrder) Edit(ctx context.Context, in *sysin.TenantOrderEditInp) (err error) {
 	return g.DB().Transaction(ctx, func(ctx context.Context, tx gdb.TX) (err error) {
-
 		// 修改
 		if in.Id > 0 {
 			if _, err = s.Model(ctx).
@@ -158,7 +157,6 @@ func (s *sSysTenantOrder) Edit(ctx context.Context, in *sysin.TenantOrderEditInp
 
 // Delete 删除多租户功能演示
 func (s *sSysTenantOrder) Delete(ctx context.Context, in *sysin.TenantOrderDeleteInp) (err error) {
-
 	if _, err = s.Model(ctx).WherePri(in.Id).Delete(); err != nil {
 		err = gerror.Wrap(err, "删除多租户功能演示失败，请稍后重试！")
 		return

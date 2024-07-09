@@ -84,7 +84,6 @@ func (s *sSysTestCategory) List(ctx context.Context, in *sysin.TestCategoryListI
 // Edit 修改/新增测试分类
 func (s *sSysTestCategory) Edit(ctx context.Context, in *sysin.TestCategoryEditInp) (err error) {
 	return g.DB().Transaction(ctx, func(ctx context.Context, tx gdb.TX) (err error) {
-
 		// 修改
 		if in.Id > 0 {
 			if _, err = s.Model(ctx).
@@ -107,7 +106,6 @@ func (s *sSysTestCategory) Edit(ctx context.Context, in *sysin.TestCategoryEditI
 
 // Delete 删除测试分类
 func (s *sSysTestCategory) Delete(ctx context.Context, in *sysin.TestCategoryDeleteInp) (err error) {
-
 	if _, err = s.Model(ctx).WherePri(in.Id).Delete(); err != nil {
 		err = gerror.Wrap(err, "删除测试分类失败，请稍后重试！")
 		return

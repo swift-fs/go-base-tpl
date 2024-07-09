@@ -103,7 +103,7 @@ func (e *tagElement) write(bf *formattedBuffer, isPreviousNodeInline bool) bool 
 			}
 		}
 
-		if e.isInline() || bytes.IndexAny(condensedBuffer.buffer.Bytes()[1:], "\n") == -1 {
+		if e.isInline() || bytes.ContainsAny(condensedBuffer.buffer.Bytes()[1:], "\n") {
 			// If we're an inline tag, or there were no newlines were in the buffer,
 			// replace the original with the condensed version
 			condensedBuffer.buffer = bytes.NewBuffer(bytes.Join([][]byte{

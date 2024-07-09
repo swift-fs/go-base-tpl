@@ -8,14 +8,6 @@ package views
 import (
 	"context"
 	"fmt"
-	"github.com/gogf/gf/v2/database/gdb"
-	"github.com/gogf/gf/v2/errors/gerror"
-	"github.com/gogf/gf/v2/frame/g"
-	"github.com/gogf/gf/v2/os/gfile"
-	"github.com/gogf/gf/v2/text/gregex"
-	"github.com/gogf/gf/v2/text/gstr"
-	"github.com/gogf/gf/v2/util/gconv"
-	"golang.org/x/tools/imports"
 	"hotgo/internal/consts"
 	"hotgo/internal/library/hggen/views/gohtml"
 	"hotgo/internal/model"
@@ -27,6 +19,15 @@ import (
 	"regexp"
 	"strings"
 	"unicode"
+
+	"github.com/gogf/gf/v2/database/gdb"
+	"github.com/gogf/gf/v2/errors/gerror"
+	"github.com/gogf/gf/v2/frame/g"
+	"github.com/gogf/gf/v2/os/gfile"
+	"github.com/gogf/gf/v2/text/gregex"
+	"github.com/gogf/gf/v2/text/gstr"
+	"github.com/gogf/gf/v2/util/gconv"
+	"golang.org/x/tools/imports"
 )
 
 // parseServFunName 解析业务服务名称
@@ -242,9 +243,10 @@ func CheckTreeTableFields(columns []*sysin.GenCodesColumnListModel) (err error) 
 
 // CheckIllegalName 检查命名是否合理
 func CheckIllegalName(errPrefix string, names ...string) (err error) {
+	reg, _ := regexp.Compile("^[a-z_][a-z0-9_]*$")
 	for _, name := range names {
 		name = strings.ToLower(name)
-		match, _ := regexp.MatchString("^[a-z_][a-z0-9_]*$", name)
+		match := reg.MatchString(name)
 		if !match {
 			err = gerror.Newf("%v存在格式不正确，必须全部小写且由字母、数字和下划线组成:%v", errPrefix, name)
 			return
