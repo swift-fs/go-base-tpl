@@ -303,7 +303,7 @@ CREATE TABLE IF NOT EXISTS `hg_admin_menu` (
   `id` bigint(20) NOT NULL COMMENT '菜单ID',
   `pid` bigint(20) DEFAULT '0' COMMENT '父菜单ID',
   `level` int(11) NOT NULL DEFAULT '1' COMMENT '关系树等级',
-  `tree` varchar(255) NOT NULL COMMENT '关系树',
+  `tree` varchar(255) NOT NULL DEFAULT '' COMMENT '关系树',
   `title` varchar(64) NOT NULL COMMENT '菜单名称',
   `name` varchar(128) NOT NULL COMMENT '名称编码',
   `path` varchar(200) DEFAULT NULL COMMENT '路由地址',
