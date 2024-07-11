@@ -12,16 +12,16 @@
           </n-radio-group>
         </n-form-item>
 
-        <n-form-item label="注册开关" path="loginRegisterSwitch">
+        <!-- <n-form-item label="注册开关" path="loginRegisterSwitch">
           <n-radio-group v-model:value="formValue.loginRegisterSwitch" name="cashSwitch">
             <n-space>
               <n-radio :value="1">开启</n-radio>
               <n-radio :value="2">关闭</n-radio>
             </n-space>
           </n-radio-group>
-        </n-form-item>
+        </n-form-item> -->
 
-        <n-form-item label="强制邀请" path="loginForceInvite">
+        <!-- <n-form-item label="强制邀请" path="loginForceInvite">
           <n-radio-group v-model:value="formValue.loginForceInvite" name="loginForceInvite">
             <n-space>
               <n-radio :value="1">开启</n-radio>
@@ -31,9 +31,9 @@
           <template #feedback>
             用户通过注册页面发起注册时是否必须填写邀请信息，用于上下级关系绑定</template
           >
-        </n-form-item>
+        </n-form-item> -->
 
-        <n-form-item label="自动获取openId" path="loginAutoOpenId">
+        <!-- <n-form-item label="自动获取openId" path="loginAutoOpenId">
           <n-radio-group v-model:value="formValue.loginAutoOpenId" name="loginAutoOpenId">
             <n-space>
               <n-radio :value="1">开启</n-radio>
@@ -43,9 +43,9 @@
           <template #feedback>
             在微信内登录后台时，自动获取当前登录人的openid（如开启需要配置微信公众号参数）</template
           >
-        </n-form-item>
+        </n-form-item> -->
 
-        <n-divider title-placement="left">注册默认信息配置</n-divider>
+        <!-- <n-divider title-placement="left">注册默认信息配置</n-divider>
         <n-form-item label="默认注册头像" path="loginAvatar">
           <FileChooser v-model:value="formValue.loginAvatar" file-type="image" />
         </n-form-item>
@@ -83,7 +83,7 @@
 
         <n-form-item label="隐私权政策" path="loginPolicy">
           <Editor style="height: 320px" v-model:value="formValue.loginPolicy" id="loginPolicy" />
-        </n-form-item>
+        </n-form-item> -->
 
         <div>
           <n-space>
