@@ -8,6 +8,17 @@ package global
 import (
 	"context"
 	"fmt"
+	"hotgo/internal/consts"
+	"hotgo/internal/library/cache"
+	"hotgo/internal/library/queue"
+	"hotgo/internal/model/entity"
+	"hotgo/internal/service"
+	"hotgo/utility/charset"
+	"hotgo/utility/simple"
+	"hotgo/utility/validate"
+	"runtime"
+	"strings"
+
 	"github.com/gogf/gf/contrib/trace/jaeger/v2"
 	"github.com/gogf/gf/v2"
 	"github.com/gogf/gf/v2/container/gvar"
@@ -19,16 +30,6 @@ import (
 	"github.com/gogf/gf/v2/os/gtime"
 	"github.com/gogf/gf/v2/text/gstr"
 	"github.com/gogf/gf/v2/util/gmode"
-	"hotgo/internal/consts"
-	"hotgo/internal/library/cache"
-	"hotgo/internal/library/queue"
-	"hotgo/internal/model/entity"
-	"hotgo/internal/service"
-	"hotgo/utility/charset"
-	"hotgo/utility/simple"
-	"hotgo/utility/validate"
-	"runtime"
-	"strings"
 )
 
 func Init(ctx context.Context) {
@@ -55,7 +56,7 @@ func Init(ctx context.Context) {
 	// 初始化功能库配置
 	service.SysConfig().InitConfig(ctx)
 
-	// 加载超管数据
+	// 加载超管数据(程序启动之前判断是否有超管存在)
 	service.AdminMember().LoadSuperAdmin(ctx)
 
 	// 订阅集群同步
