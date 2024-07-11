@@ -79,12 +79,12 @@
 
   onMounted(() => {
     //是否开放注册
-    if (userStore.loginConfig?.loginRegisterSwitch === 1) {
-      const findItem = modules.find((item) => item.key === 'register');
-      if (!findItem) {
-        modules.push({ key: 'register', label: '注册账号', component: RegisterFrom });
-      }
-    }
+    // if (userStore.loginConfig?.loginRegisterSwitch === 1) {
+    //   const findItem = modules.find((item) => item.key === 'register');
+    //   if (!findItem) {
+    //     modules.push({ key: 'register', label: '注册账号', component: RegisterFrom });
+    //   }
+    // }
 
     const key = router.currentRoute.value.query?.scope as string;
     if (key) {
