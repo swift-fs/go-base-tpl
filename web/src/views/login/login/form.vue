@@ -9,7 +9,7 @@
     <template v-if="mode === 'account'">
       <n-form-item path="username">
         <n-input
-          @keyup.enter="handleSubmit"
+          @keyup.enter="debounceHandleSubmit"
           v-model:value="formInline.username"
           placeholder="请输入用户名"
         >
@@ -22,7 +22,7 @@
       </n-form-item>
       <n-form-item path="pass">
         <n-input
-          @keyup.enter="handleSubmit"
+          @keyup.enter="debounceHandleSubmit"
           v-model:value="formInline.pass"
           type="password"
           show-password-on="click"
@@ -41,7 +41,7 @@
           <n-input
             :style="{ width: '100%' }"
             placeholder="验证码"
-            @keyup.enter="handleSubmit"
+            @keyup.enter="debounceHandleSubmit"
             v-model:value="formInline.code"
           >
             <template #prefix>
@@ -137,6 +137,7 @@
   import { useSendCode } from '@/hooks/common';
   import { SendSms } from '@/api/system/user';
   import { validate } from '@/utils/validateUtil';
+  import { useDebounceFn } from '@vueuse/core';
 
   interface Props {
     mode: string;
@@ -172,7 +173,9 @@
   const { sendLabel, isCounting, loading: sendLoading, activateSend } = useSendCode();
   const emit = defineEmits(['updateActiveModule']);
   const LOGIN_NAME = PageEnum.BASE_LOGIN_NAME;
-
+  const debounceHandleSubmit = useDebounceFn((e) => {
+    handleSubmit(e);
+  }, 500);
   const formInline = ref<FormState>({
     username: '',
     pass: '',
@@ -274,7 +277,7 @@
 
   function handleLogin(e) {
     if (props.mode === 'account') {
-      handleSubmit(e);
+      debounceHandleSubmit(e);
       return;
     }
 
