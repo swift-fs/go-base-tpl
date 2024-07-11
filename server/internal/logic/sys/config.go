@@ -8,12 +8,6 @@ package sys
 import (
 	"context"
 	"fmt"
-	"github.com/gogf/gf/v2/database/gdb"
-	"github.com/gogf/gf/v2/database/gredis"
-	"github.com/gogf/gf/v2/errors/gerror"
-	"github.com/gogf/gf/v2/frame/g"
-	"github.com/gogf/gf/v2/os/gtime"
-	"github.com/gogf/gf/v2/util/gconv"
 	"hotgo/internal/consts"
 	"hotgo/internal/dao"
 	"hotgo/internal/global"
@@ -27,6 +21,13 @@ import (
 	"hotgo/internal/model/input/sysin"
 	"hotgo/internal/service"
 	"hotgo/utility/simple"
+
+	"github.com/gogf/gf/v2/database/gdb"
+	"github.com/gogf/gf/v2/database/gredis"
+	"github.com/gogf/gf/v2/errors/gerror"
+	"github.com/gogf/gf/v2/frame/g"
+	"github.com/gogf/gf/v2/os/gtime"
+	"github.com/gogf/gf/v2/util/gconv"
 )
 
 type sSysConfig struct{}
@@ -292,26 +293,27 @@ func (s *sSysConfig) getConfigByKey(key string, models []*entity.SysConfig) *ent
 
 // syncUpdate 同步更新一些加载配置
 func (s *sSysConfig) syncUpdate(ctx context.Context, in *sysin.UpdateConfigInp) (err error) {
+	var cfg any
 	switch in.Group {
 	case "wechat":
-		wx, err := s.GetWechat(ctx)
+		cfg, err = s.GetWechat(ctx)
 		if err == nil {
-			wechat.SetConfig(wx)
+			wechat.SetConfig(cfg.(*model.WechatConfig))
 		}
 	case "pay":
-		pay, err := s.GetPay(ctx)
+		cfg, err = s.GetPay(ctx)
 		if err == nil {
-			payment.SetConfig(pay)
+			payment.SetConfig(cfg.(*model.PayConfig))
 		}
 	case "upload":
-		upload, err := s.GetUpload(ctx)
+		cfg, err = s.GetUpload(ctx)
 		if err == nil {
-			storager.SetConfig(upload)
+			storager.SetConfig(cfg.(*model.UploadConfig))
 		}
 	case "sms":
-		sm, err := s.GetSms(ctx)
+		cfg, err = s.GetSms(ctx)
 		if err == nil {
-			sms.SetConfig(sm)
+			sms.SetConfig(cfg.(*model.SmsConfig))
 		}
 	}
 
