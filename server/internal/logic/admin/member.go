@@ -8,15 +8,6 @@ package admin
 import (
 	"context"
 	"fmt"
-	"github.com/gogf/gf/v2/container/gvar"
-	"github.com/gogf/gf/v2/crypto/gmd5"
-	"github.com/gogf/gf/v2/database/gdb"
-	"github.com/gogf/gf/v2/database/gredis"
-	"github.com/gogf/gf/v2/errors/gerror"
-	"github.com/gogf/gf/v2/frame/g"
-	"github.com/gogf/gf/v2/os/gtime"
-	"github.com/gogf/gf/v2/text/gstr"
-	"github.com/gogf/gf/v2/util/grand"
 	"hotgo/internal/consts"
 	"hotgo/internal/dao"
 	"hotgo/internal/global"
@@ -31,6 +22,16 @@ import (
 	"hotgo/utility/tree"
 	"hotgo/utility/validate"
 	"sync"
+
+	"github.com/gogf/gf/v2/container/gvar"
+	"github.com/gogf/gf/v2/crypto/gmd5"
+	"github.com/gogf/gf/v2/database/gdb"
+	"github.com/gogf/gf/v2/database/gredis"
+	"github.com/gogf/gf/v2/errors/gerror"
+	"github.com/gogf/gf/v2/frame/g"
+	"github.com/gogf/gf/v2/os/gtime"
+	"github.com/gogf/gf/v2/text/gstr"
+	"github.com/gogf/gf/v2/util/grand"
 )
 
 // SuperAdmin 超级管理员用户
@@ -806,7 +807,7 @@ func (s *sAdminMember) VerifySuperId(ctx context.Context, verifyId int64) bool {
 
 // LoadSuperAdmin 加载超管数据
 func (s *sAdminMember) LoadSuperAdmin(ctx context.Context) {
-	value, err := dao.AdminRole.Ctx(ctx).Where(dao.AdminRole.Columns().Key, consts.SuperRoleKey).Value()
+	value, err := dao.AdminRole.Ctx(ctx).Fields(dao.AdminRole.Columns().Id).Where(dao.AdminRole.Columns().Key, consts.SuperRoleKey).Value()
 	if err != nil {
 		g.Log().Errorf(ctx, "LoadSuperAdmin AdminRole err:%+v", err)
 		return
