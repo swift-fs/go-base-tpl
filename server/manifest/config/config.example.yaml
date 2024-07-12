@@ -66,6 +66,8 @@ server:
 
 # tcp服务
 tcp:
+  # 是否启用tcp服务
+  switch: false
   # 服务器
   server:
     address: ":8099"

@@ -7,11 +7,12 @@ package tcpclient
 
 import (
 	"context"
-	"github.com/gogf/gf/v2/frame/g"
-	"github.com/gogf/gf/v2/os/gctx"
 	"hotgo/internal/library/network/tcp"
 	"hotgo/internal/service"
 	"hotgo/utility/simple"
+
+	"github.com/gogf/gf/v2/frame/g"
+	"github.com/gogf/gf/v2/os/gctx"
 )
 
 // tcp客户端
@@ -34,6 +35,9 @@ func (s *sCronClient) Instance() *tcp.Client {
 
 // Start 启动服务
 func (s *sCronClient) Start(ctx context.Context) {
+	if !g.Cfg().MustGet(ctx, "tcp.switch", true).Bool() {
+		return
+	}
 	g.Log().Debug(ctx, "CronClient start..")
 
 	config, err := service.SysConfig().GetLoadTCP(ctx)

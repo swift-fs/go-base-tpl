@@ -7,10 +7,11 @@ package tcpserver
 
 import (
 	"context"
-	"github.com/gogf/gf/v2/frame/g"
 	"hotgo/internal/library/network/tcp"
 	"hotgo/internal/service"
 	"hotgo/utility/simple"
+
+	"github.com/gogf/gf/v2/frame/g"
 )
 
 type sTCPServer struct {
@@ -32,6 +33,9 @@ func (s *sTCPServer) Instance() *tcp.Server {
 
 // Start 启动服务
 func (s *sTCPServer) Start(ctx context.Context) {
+	if !g.Cfg().MustGet(ctx, "tcp.switch", true).Bool() {
+		return
+	}
 	simple.SafeGo(ctx, func(ctx context.Context) {
 		g.Log().Debug(ctx, "TCPServer start..")
 
