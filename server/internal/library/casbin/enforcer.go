@@ -18,6 +18,7 @@ import (
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/os/gfile"
 	"github.com/gogf/gf/v2/os/gres"
+	"github.com/gogf/gf/v2/text/gstr"
 )
 
 const (
@@ -78,10 +79,9 @@ func loadPermissions(ctx context.Context) {
 		polices []*Policy
 		err     error
 	)
-
-	err = g.Model(dao.AdminRole.Table()+" r").
-		LeftJoin(dao.AdminRoleMenu.Table()+" rm", "r.id=rm.role_id").
-		LeftJoin(dao.AdminMenu.Table()+" m", "rm.menu_id=m.id").
+	err = g.Model(gstr.Join([]string{dao.AdminRole.Table(), "r"}, " ")).
+		LeftJoin(gstr.Join([]string{dao.AdminRoleMenu.Table(), "rm"}, " "), "r.id=rm.role_id").
+		LeftJoin(gstr.Join([]string{dao.AdminMenu.Table(), "m"}, " "), "rm.menu_id=m.id").
 		Fields("r.key,m.permissions").
 		Where("r.status", consts.StatusEnabled).
 		Where("m.status", consts.StatusEnabled).
