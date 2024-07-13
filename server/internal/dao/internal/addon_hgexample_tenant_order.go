@@ -11,14 +11,14 @@ import (
 	"github.com/gogf/gf/v2/frame/g"
 )
 
-// AddonHgexampleTenantOrderDao is the data access object for table hg_addon_hgexample_tenant_order.
+// AddonHgexampleTenantOrderDao is the data access object for table gc_addon_hgexample_tenant_order.
 type AddonHgexampleTenantOrderDao struct {
 	table   string                           // table is the underlying table name of the DAO.
 	group   string                           // group is the database configuration group name of current DAO.
 	columns AddonHgexampleTenantOrderColumns // columns contains all the column names of Table for convenient usage.
 }
 
-// AddonHgexampleTenantOrderColumns defines and stores column names for table hg_addon_hgexample_tenant_order.
+// AddonHgexampleTenantOrderColumns defines and stores column names for table gc_addon_hgexample_tenant_order.
 type AddonHgexampleTenantOrderColumns struct {
 	Id          string // 主键
 	TenantId    string // 租户ID
@@ -33,7 +33,7 @@ type AddonHgexampleTenantOrderColumns struct {
 	UpdatedAt   string // 修改时间
 }
 
-// addonHgexampleTenantOrderColumns holds the columns for table hg_addon_hgexample_tenant_order.
+// addonHgexampleTenantOrderColumns holds the columns for table gc_addon_hgexample_tenant_order.
 var addonHgexampleTenantOrderColumns = AddonHgexampleTenantOrderColumns{
 	Id:          "id",
 	TenantId:    "tenant_id",
@@ -52,7 +52,7 @@ var addonHgexampleTenantOrderColumns = AddonHgexampleTenantOrderColumns{
 func NewAddonHgexampleTenantOrderDao() *AddonHgexampleTenantOrderDao {
 	return &AddonHgexampleTenantOrderDao{
 		group:   "default",
-		table:   "hg_addon_hgexample_tenant_order",
+		table:   "gc_addon_hgexample_tenant_order",
 		columns: addonHgexampleTenantOrderColumns,
 	}
 }

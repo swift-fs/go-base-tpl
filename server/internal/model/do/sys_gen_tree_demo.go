@@ -9,9 +9,9 @@ import (
 	"github.com/gogf/gf/v2/os/gtime"
 )
 
-// SysGenTreeDemo is the golang structure of table hg_sys_gen_tree_demo for DAO operations like Where/Data.
+// SysGenTreeDemo is the golang structure of table gc_sys_gen_tree_demo for DAO operations like Where/Data.
 type SysGenTreeDemo struct {
-	g.Meta      `orm:"table:hg_sys_gen_tree_demo, do:true"`
+	g.Meta      `orm:"table:gc_sys_gen_tree_demo, do:true"`
 	Id          interface{} // ID
 	Pid         interface{} // 上级ID
 	Level       interface{} // 关系树级别

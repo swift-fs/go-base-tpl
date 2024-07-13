@@ -108,11 +108,11 @@
 
 #### 操作人字段维护
 
-- 生成列表中存在并且勾选展示字段`created_by`(创建者)、`updated_by`(修改者)、`deleted_by`(删除者)时，会自动到表`hg_admin_member`中获取操作人的基本信息摘要，并渲染到列表中，效果如下：
+- 生成列表中存在并且勾选展示字段`created_by`(创建者)、`updated_by`(修改者)、`deleted_by`(删除者)时，会自动到表`gc_admin_member`中获取操作人的基本信息摘要，并渲染到列表中，效果如下：
 
 ![](images/sys-db-by.png)
 
-- 生成列表中存在并且勾选查询字段`created_by`(创建者)、`updated_by`(修改者)、`deleted_by`(删除者)时，会强制将查询表单改为关键词查询，从`hg_admin_member`查询操作人。效果如下：
+- 生成列表中存在并且勾选查询字段`created_by`(创建者)、`updated_by`(修改者)、`deleted_by`(删除者)时，会强制将查询表单改为关键词查询，从`gc_admin_member`查询操作人。效果如下：
   
 ![](images/sys-db-by2.png)
 

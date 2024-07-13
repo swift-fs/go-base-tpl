@@ -9,15 +9,18 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"hotgo/internal/dao"
+	"math"
+	"strings"
+
 	"github.com/casbin/casbin/v2/model"
 	"github.com/casbin/casbin/v2/persist"
 	"github.com/gogf/gf/v2/database/gdb"
-	"math"
-	"strings"
 )
 
+var defaultTableName = dao.AdminRoleCasbin.Table()
+
 const (
-	defaultTableName     = "hg_admin_role_casbin"
 	dropPolicyTableSql   = `DROP TABLE IF EXISTS %s`
 	createPolicyTableSql = `
 CREATE TABLE IF NOT EXISTS %s (
@@ -82,7 +85,6 @@ var (
 func NewAdapter(link string) (adp *adapter, err error) {
 	adp = &adapter{table: defaultTableName}
 	config := strings.SplitN(link, ":", 2)
-
 	if len(config) != 2 {
 		err = errInvalidDatabaseLink
 		return

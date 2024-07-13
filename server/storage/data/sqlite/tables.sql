@@ -1,4 +1,4 @@
-CREATE TABLE `hg_addon_hgexample_table` (                 -- 插件_案例_表格
+CREATE TABLE `gc_addon_hgexample_table` (                 -- 插件_案例_表格
 `id` INTEGER NOT NULL  ,                                  -- ID
 `category_id` INTEGER NOT NULL ,                          -- 分类ID
 `flag` TEXT   DEFAULT NULL ,                              -- 标签
@@ -38,7 +38,7 @@ CREATE TABLE `hg_addon_hgexample_table` (                 -- 插件_案例_表�
 `deleted_at` datetime DEFAULT NULL ,                      -- 删除时间
 PRIMARY KEY (`id`)
 );
-CREATE TABLE `hg_addon_hgexample_tenant_order` (          -- 多租户_充值订单
+CREATE TABLE `gc_addon_hgexample_tenant_order` (          -- 多租户_充值订单
   `id` INTEGER NOT NULL  ,                                -- ID
   `tenant_id` INTEGER DEFAULT NULL,                       -- 租户ID
   `merchant_id` INTEGER NOT NULL,                         -- 商户ID
@@ -52,7 +52,7 @@ CREATE TABLE `hg_addon_hgexample_tenant_order` (          -- 多租户_充值订
   `updated_at` datetime DEFAULT NULL,                     -- 修改时间
   PRIMARY KEY (`id`)
 );
-CREATE TABLE `hg_admin_cash` (                            -- 管理员_提现记录表
+CREATE TABLE `gc_admin_cash` (                            -- 管理员_提现记录表
 `id` INTEGER NOT NULL  ,                                  -- ID
 `member_id` INTEGER NOT NULL ,                            -- 管理员ID
 `money` decimal(10,2) NOT NULL ,                          -- 提现金额
@@ -65,7 +65,7 @@ CREATE TABLE `hg_admin_cash` (                            -- 管理员_提现记
 `created_at` datetime NOT NULL ,                          -- 申请时间
 PRIMARY KEY (`id`)
 );
-CREATE TABLE `hg_admin_credits_log` (                     -- 管理员_资产变动表
+CREATE TABLE `gc_admin_credits_log` (                     -- 管理员_资产变动表
   `id` INTEGER NOT NULL PRIMARY KEY,                      -- 变动ID
   `member_id` INTEGER DEFAULT 0,                          -- 管理员ID
   `app_id` TEXT DEFAULT NULL,                             -- 应用id
@@ -82,7 +82,7 @@ CREATE TABLE `hg_admin_credits_log` (                     -- 管理员_资产变
   `created_at` datetime DEFAULT NULL,                     -- 创建时间
   `updated_at` datetime DEFAULT NULL                      -- 修改时间
 );
-CREATE TABLE `hg_admin_dept` (                            -- 管理员_部门
+CREATE TABLE `gc_admin_dept` (                            -- 管理员_部门
   `id` INTEGER NOT NULL PRIMARY KEY,                      -- 部门ID
   `pid` INTEGER DEFAULT 0,                                -- 父部门ID
   `name` TEXT DEFAULT NULL,                               -- 部门名称
@@ -98,7 +98,7 @@ CREATE TABLE `hg_admin_dept` (                            -- 管理员_部门
   `created_at` datetime DEFAULT NULL,                     -- 创建时间
   `updated_at` datetime DEFAULT NULL                      -- 更新时间
 );
-CREATE TABLE `hg_admin_member` (                          -- 管理员_用户表
+CREATE TABLE `gc_admin_member` (                          -- 管理员_用户表
   `id` INTEGER NOT NULL PRIMARY KEY,                      -- 管理员ID
   `dept_id` INTEGER DEFAULT 0,                            -- 部门ID
   `role_id` INTEGER DEFAULT 10,                           -- 角色ID
@@ -128,17 +128,17 @@ CREATE TABLE `hg_admin_member` (                          -- 管理员_用户表
   `created_at` datetime DEFAULT NULL,                     -- 创建时间
   `updated_at` datetime DEFAULT NULL                      -- 修改时间
 );
-CREATE TABLE `hg_admin_member_post` (                     -- 管理员_用户岗位关联
+CREATE TABLE `gc_admin_member_post` (                     -- 管理员_用户岗位关联
   `member_id` INTEGER NOT NULL,                           -- 管理员ID
   `post_id` INTEGER NOT NULL,                             -- 岗位ID
   PRIMARY KEY (`member_id`, `post_id`)
 );
-CREATE TABLE `hg_admin_member_role` (                     -- 管理员_用户角色关联
+CREATE TABLE `gc_admin_member_role` (                     -- 管理员_用户角色关联
   `member_id` INTEGER NOT NULL,                           -- 管理员ID
   `role_id` INTEGER NOT NULL,                             -- 角色ID
   PRIMARY KEY (`member_id`, `role_id`)
 );
-CREATE TABLE `hg_admin_menu` (                            -- 管理员_菜单权限
+CREATE TABLE `gc_admin_menu` (                            -- 管理员_菜单权限
   `id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,        -- 菜单ID
   `pid` INTEGER DEFAULT 0,                                -- 父菜单ID
   `level` INTEGER NOT NULL DEFAULT 1,                     -- 关系树等级
@@ -166,7 +166,7 @@ CREATE TABLE `hg_admin_menu` (                            -- 管理员_菜单权
   `updated_at` datetime DEFAULT NULL,                     -- 更新时间
   `created_at` datetime DEFAULT NULL                      -- 创建时间
 );
-CREATE TABLE `hg_admin_notice` (                          -- 管理员_通知公告
+CREATE TABLE `gc_admin_notice` (                          -- 管理员_通知公告
   `id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,        -- 公告ID
   `title` TEXT NOT NULL,                                  -- 公告标题
   `type` INTEGER NOT NULL,                                -- 公告类型
@@ -182,7 +182,7 @@ CREATE TABLE `hg_admin_notice` (                          -- 管理员_通知公
   `updated_at` datetime DEFAULT NULL,                     -- 更新时间
   `deleted_at` datetime DEFAULT NULL                      -- 删除时间
 );
-CREATE TABLE `hg_admin_notice_read` (                     -- 管理员_公告已读记录
+CREATE TABLE `gc_admin_notice_read` (                     -- 管理员_公告已读记录
   `id` INTEGER NOT NULL ,                                 -- 记录ID
   `notice_id` INTEGER NOT NULL,                           -- 公告ID
   `member_id` INTEGER NOT NULL,                           -- 会员ID
@@ -191,7 +191,7 @@ CREATE TABLE `hg_admin_notice_read` (                     -- 管理员_公告已
   `created_at` datetime DEFAULT NULL,                     -- 阅读时间
 PRIMARY KEY (`id`)
 );
-CREATE TABLE `hg_admin_oauth` (                           -- 管理员_第三方登录
+CREATE TABLE `gc_admin_oauth` (                           -- 管理员_第三方登录
   `id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,        -- 主键
   `member_id` INTEGER DEFAULT 0,                          -- 用户ID
   `unionid` TEXT DEFAULT '',                              -- 唯一ID
@@ -208,7 +208,7 @@ CREATE TABLE `hg_admin_oauth` (                           -- 管理员_第三方
   `created_at` datetime DEFAULT NULL,                     -- 创建时间
   `updated_at` datetime DEFAULT NULL                      -- 修改时间
 );
-CREATE TABLE `hg_admin_order` (                           -- 管理员_充值订单
+CREATE TABLE `gc_admin_order` (                           -- 管理员_充值订单
   `id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,        -- 主键
   `member_id` INTEGER DEFAULT 0,                          -- 管理员id
   `order_type` TEXT NOT NULL,                             -- 订单类型
@@ -222,7 +222,7 @@ CREATE TABLE `hg_admin_order` (                           -- 管理员_充值订
   `created_at` datetime DEFAULT NULL,                     -- 创建时间
   `updated_at` datetime DEFAULT NULL                      -- 修改时间
 );
-CREATE TABLE `hg_admin_post` (                            -- 管理员_岗位
+CREATE TABLE `gc_admin_post` (                            -- 管理员_岗位
   `id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,        -- 岗位ID
   `code` TEXT NOT NULL,                                   -- 岗位编码
   `name` TEXT NOT NULL,                                   -- 岗位名称
@@ -232,7 +232,7 @@ CREATE TABLE `hg_admin_post` (                            -- 管理员_岗位
   `created_at` datetime DEFAULT NULL,                     -- 创建时间
   `updated_at` datetime DEFAULT NULL                      -- 更新时间
 );
-CREATE TABLE `hg_admin_role` (                            -- 管理员_角色信息
+CREATE TABLE `gc_admin_role` (                            -- 管理员_角色信息
   `id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,        -- 角色ID
   `name` TEXT NOT NULL,                                   -- 角色名称
   `key` TEXT NOT NULL,                                    -- 角色权限字符串
@@ -247,7 +247,7 @@ CREATE TABLE `hg_admin_role` (                            -- 管理员_角色信
   `created_at` datetime DEFAULT NULL,                     -- 创建时间
   `updated_at` datetime DEFAULT NULL                      -- 更新时间
 );
-CREATE TABLE `hg_admin_role_casbin` (
+CREATE TABLE `gc_admin_role_casbin` (
 `id` INTEGER NOT NULL ,
 `p_type` TEXT DEFAULT NULL,
 `v0` TEXT DEFAULT NULL,
@@ -258,12 +258,12 @@ CREATE TABLE `hg_admin_role_casbin` (
 `v5` TEXT DEFAULT NULL,
 PRIMARY KEY (`id`)
 );
-CREATE TABLE `hg_admin_role_menu` (                       -- 管理员_角色菜单关联
+CREATE TABLE `gc_admin_role_menu` (                       -- 管理员_角色菜单关联
   `role_id` INTEGER NOT NULL,                             -- 角色ID
   `menu_id` INTEGER NOT NULL,                             -- 菜单ID
   PRIMARY KEY (`role_id`, `menu_id`)
 );
-CREATE TABLE `hg_pay_log` (                               -- 支付_支付日志
+CREATE TABLE `gc_pay_log` (                               -- 支付_支付日志
   `id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,        -- 主键
   `member_id` INTEGER DEFAULT 0,                          -- 会员ID
   `app_id` TEXT DEFAULT NULL,                             -- 应用ID
@@ -295,7 +295,7 @@ CREATE TABLE `hg_pay_log` (                               -- 支付_支付日志
   `created_at` datetime DEFAULT NULL,                     -- 创建时间
   `updated_at` datetime DEFAULT NULL                      -- 修改时间
 );
-CREATE TABLE `hg_pay_refund` (                            -- 支付_退款记录
+CREATE TABLE `gc_pay_refund` (                            -- 支付_退款记录
   `id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,        -- 主键ID
   `member_id` INTEGER DEFAULT 0,                          -- 会员ID
   `app_id` TEXT DEFAULT NULL,                             -- 应用ID
@@ -310,7 +310,7 @@ CREATE TABLE `hg_pay_refund` (                            -- 支付_退款记录
   `created_at` datetime DEFAULT NULL,                     -- 申请时间
   `updated_at` datetime DEFAULT NULL                      -- 更新时间
 );
-CREATE TABLE `hg_sys_addons_config` (                     -- 系统_插件配置
+CREATE TABLE `gc_sys_addons_config` (                     -- 系统_插件配置
   `id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,        -- 配置ID
   `addon_name` TEXT NOT NULL,                             -- 插件名称
   `group` TEXT NOT NULL,                                  -- 分组
@@ -326,7 +326,7 @@ CREATE TABLE `hg_sys_addons_config` (                     -- 系统_插件配置
   `created_at` datetime DEFAULT NULL,                     -- 创建时间
   `updated_at` datetime DEFAULT NULL                      -- 更新时间
 );
-CREATE TABLE `hg_sys_addons_install` (                    -- 系统_插件安装记录
+CREATE TABLE `gc_sys_addons_install` (                    -- 系统_插件安装记录
   `id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,        -- 主键
   `name` TEXT NOT NULL,                                   -- 插件名称
   `version` TEXT NOT NULL DEFAULT '',                     -- 版本号
@@ -334,7 +334,7 @@ CREATE TABLE `hg_sys_addons_install` (                    -- 系统_插件安装
   `created_at` datetime DEFAULT NULL,                     -- 创建时间
   `updated_at` datetime DEFAULT NULL                      -- 更新时间
 );
-CREATE TABLE `hg_sys_attachment` (                        -- 系统_附件管理
+CREATE TABLE `gc_sys_attachment` (                        -- 系统_附件管理
   `id` INTEGER NOT NULL PRIMARY KEY ,                     -- 文件ID
   `app_id` TEXT NOT NULL,                                 -- 应用ID
   `member_id` INTEGER DEFAULT 0,                          -- 管理员ID
@@ -353,7 +353,7 @@ CREATE TABLE `hg_sys_attachment` (                        -- 系统_附件管理
   `created_at` datetime DEFAULT NULL,                     -- 创建时间
   `updated_at` datetime DEFAULT NULL                      -- 修改时间
 );
-CREATE TABLE `hg_sys_blacklist` (                         -- 系统_访问黑名单
+CREATE TABLE `gc_sys_blacklist` (                         -- 系统_访问黑名单
   `id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,        -- 黑名单ID
   `ip` TEXT DEFAULT '',                                   -- IP地址
   `remark` TEXT DEFAULT NULL,                             -- 备注
@@ -361,7 +361,7 @@ CREATE TABLE `hg_sys_blacklist` (                         -- 系统_访问黑名
   `created_at` datetime DEFAULT NULL,                     -- 创建时间
   `updated_at` datetime DEFAULT NULL                      -- 更新时间
 );
-CREATE TABLE `hg_sys_config` (                            -- 系统_配置
+CREATE TABLE `gc_sys_config` (                            -- 系统_配置
   `id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,        -- 配置ID
   `group` TEXT NOT NULL,                                  -- 配置分组
   `name` TEXT DEFAULT '',                                 -- 参数名称
@@ -376,7 +376,7 @@ CREATE TABLE `hg_sys_config` (                            -- 系统_配置
   `created_at` datetime DEFAULT NULL,                     -- 创建时间
   `updated_at` datetime DEFAULT NULL                      -- 更新时间
 );
-CREATE TABLE `hg_sys_cron` (                              -- 系统_定时任务
+CREATE TABLE `gc_sys_cron` (                              -- 系统_定时任务
   `id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,        -- 任务ID
   `group_id` INTEGER NOT NULL,                            -- 分组ID
   `title` TEXT NOT NULL,                                  -- 任务标题
@@ -391,7 +391,7 @@ CREATE TABLE `hg_sys_cron` (                              -- 系统_定时任务
   `created_at` datetime DEFAULT NULL,                     -- 创建时间
   `updated_at` datetime DEFAULT NULL                      -- 更新时间
 );
-CREATE TABLE `hg_sys_cron_group` (                        -- 系统_定时任务分组
+CREATE TABLE `gc_sys_cron_group` (                        -- 系统_定时任务分组
   `id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,        -- 任务分组ID
   `pid` INTEGER NOT NULL,                                 -- 父类任务分组ID
   `name` TEXT DEFAULT '',                                 -- 分组名称
@@ -402,7 +402,7 @@ CREATE TABLE `hg_sys_cron_group` (                        -- 系统_定时任务
   `created_at` datetime DEFAULT NULL,                     -- 创建时间
   `updated_at` datetime DEFAULT NULL                      -- 更新时间
 );
-CREATE TABLE `hg_sys_dict_data` (                         -- 系统_字典数据
+CREATE TABLE `gc_sys_dict_data` (                         -- 系统_字典数据
   `id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,        -- 字典数据ID
   `label` TEXT DEFAULT NULL,                              -- 字典标签
   `value` TEXT DEFAULT NULL,                              -- 字典键值
@@ -416,7 +416,7 @@ CREATE TABLE `hg_sys_dict_data` (                         -- 系统_字典数据
   `created_at` datetime DEFAULT NULL,                     -- 创建时间
   `updated_at` datetime DEFAULT NULL                      -- 更新时间
 );
-CREATE TABLE `hg_sys_dict_type` (                         -- 系统_字典类型
+CREATE TABLE `gc_sys_dict_type` (                         -- 系统_字典类型
   `id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,        -- 字典类型ID
   `pid` INTEGER NOT NULL,                                 -- 父类字典类型ID
   `name` TEXT DEFAULT '',                                 -- 字典类型名称
@@ -427,7 +427,7 @@ CREATE TABLE `hg_sys_dict_type` (                         -- 系统_字典类型
   `created_at` datetime DEFAULT NULL,                     -- 创建时间
   `updated_at` datetime DEFAULT NULL                      -- 更新时间
 );
-CREATE TABLE `hg_sys_ems_log` (                           -- 系统_邮件发送记录
+CREATE TABLE `gc_sys_ems_log` (                           -- 系统_邮件发送记录
   `id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,        -- 主键
   `event` TEXT NOT NULL,                                  -- 事件
   `email` TEXT NOT NULL,                                  -- 邮箱地址，多个用;隔开
@@ -439,7 +439,7 @@ CREATE TABLE `hg_sys_ems_log` (                           -- 系统_邮件发送
   `created_at` datetime DEFAULT NULL,                     -- 创建时间
   `updated_at` datetime DEFAULT NULL                      -- 更新时间
 );
-CREATE TABLE `hg_sys_gen_codes` (                         -- 系统_代码生成记录
+CREATE TABLE `gc_sys_gen_codes` (                         -- 系统_代码生成记录
   `id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,        -- 生成ID
   `gen_type` INTEGER UNSIGNED NOT NULL,                   -- 生成类型
   `gen_template` INTEGER DEFAULT 0,                       -- 生成模板
@@ -455,7 +455,7 @@ CREATE TABLE `hg_sys_gen_codes` (                         -- 系统_代码生成
   `created_at` datetime DEFAULT NULL,                     -- 创建时间
   `updated_at` datetime DEFAULT NULL                      -- 更新时间
 );
-CREATE TABLE `hg_sys_gen_curd_demo` (                     -- 系统_生成curd演示
+CREATE TABLE `gc_sys_gen_curd_demo` (                     -- 系统_生成curd演示
   `id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,        -- ID
   `category_id` INTEGER DEFAULT 0,                        -- 分类ID
   `title` TEXT NOT NULL,                                  -- 标题
@@ -473,7 +473,7 @@ CREATE TABLE `hg_sys_gen_curd_demo` (                     -- 系统_生成curd�
   `updated_at` datetime DEFAULT NULL,                     -- 修改时间
   `deleted_at` datetime DEFAULT NULL                      -- 删除时间
 );
-CREATE TABLE `hg_sys_gen_tree_demo` (                     -- 系统_生成树演示
+CREATE TABLE `gc_sys_gen_tree_demo` (                     -- 系统_生成树演示
   `id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,        -- ID
   `pid` INTEGER DEFAULT NULL,                             -- 上级ID
   `level` INTEGER DEFAULT 1,                              -- 关系树级别
@@ -489,7 +489,7 @@ CREATE TABLE `hg_sys_gen_tree_demo` (                     -- 系统_生成树演
   `updated_at` datetime DEFAULT NULL,                     -- 修改时间
   `deleted_at` datetime DEFAULT NULL                      -- 删除时间
 );
-CREATE TABLE `hg_sys_log` (                               -- 系统_全局日志
+CREATE TABLE `gc_sys_log` (                               -- 系统_全局日志
   `id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,        -- 日志ID
   `req_id` TEXT DEFAULT NULL,                             -- 对外ID
   `app_id` TEXT DEFAULT '',                               -- 应用ID
@@ -514,7 +514,7 @@ CREATE TABLE `hg_sys_log` (                               -- 系统_全局日志
   `created_at` datetime DEFAULT NULL,                     -- 创建时间
   `updated_at` datetime DEFAULT NULL                      -- 修改时间
 );
-CREATE TABLE IF NOT EXISTS "hg_sys_login_log" (           -- 系统_登录日志
+CREATE TABLE IF NOT EXISTS "gc_sys_login_log" (           -- 系统_登录日志
   `id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,        -- 日志ID
   `req_id` TEXT DEFAULT NULL,                             -- 请求ID
   `member_id` INTEGER DEFAULT 0,                          -- 用户ID
@@ -530,7 +530,7 @@ CREATE TABLE IF NOT EXISTS "hg_sys_login_log" (           -- 系统_登录日志
   `created_at` datetime DEFAULT NULL,                     -- 创建时间
   `updated_at` datetime DEFAULT NULL                      -- 修改时间
 );
-CREATE TABLE `hg_sys_serve_license` (                     -- 系统_服务许可证
+CREATE TABLE `gc_sys_serve_license` (                     -- 系统_服务许可证
   `id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,        -- 许可ID
   `group` TEXT NOT NULL,                                  -- 分组
   `name` TEXT NOT NULL,                                   -- 许可名称
@@ -549,7 +549,7 @@ CREATE TABLE `hg_sys_serve_license` (                     -- 系统_服务许可
   `created_at` datetime DEFAULT NULL,                     -- 创建时间
   `updated_at` datetime DEFAULT NULL                      -- 修改时间
 );
-CREATE TABLE `hg_sys_serve_log` (                         -- 系统_服务日志
+CREATE TABLE `gc_sys_serve_log` (                         -- 系统_服务日志
   `id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,        -- 日志ID
   `trace_id` TEXT DEFAULT NULL,                           -- 链路ID
   `level_format` TEXT DEFAULT NULL,                       -- 日志级别
@@ -561,7 +561,7 @@ CREATE TABLE `hg_sys_serve_log` (                         -- 系统_服务日志
   `created_at` datetime DEFAULT NULL,                     -- 创建时间
   `updated_at` datetime DEFAULT NULL                      -- 修改时间
 );
-CREATE TABLE `hg_sys_sms_log` (                           -- 系统_短信发送记录
+CREATE TABLE `gc_sys_sms_log` (                           -- 系统_短信发送记录
   `id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,        -- 主键
   `event` TEXT NOT NULL,                                  -- 事件
   `mobile` TEXT NOT NULL DEFAULT '',                      -- 手机号
@@ -572,7 +572,7 @@ CREATE TABLE `hg_sys_sms_log` (                           -- 系统_短信发送
   `created_at` datetime DEFAULT NULL,                     -- 创建时间
   `updated_at` datetime DEFAULT NULL                      -- 更新时间
 );
-CREATE TABLE `hg_test_category` (                         -- 测试分类
+CREATE TABLE `gc_test_category` (                         -- 测试分类
   `id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,        -- 分类ID
   `name` TEXT NOT NULL,                                   -- 分类名称
   `short_name` TEXT DEFAULT NULL,                         -- 简称
@@ -584,7 +584,7 @@ CREATE TABLE `hg_test_category` (                         -- 测试分类
   `updated_at` datetime DEFAULT NULL,                     -- 修改时间
   `deleted_at` datetime DEFAULT NULL                      -- 删除时间
 );
-CREATE TABLE `hg_sys_provinces` (                         -- 系统_省市区编码
+CREATE TABLE `gc_sys_provinces` (                         -- 系统_省市区编码
   `id` INTEGER NOT NULL PRIMARY KEY,                      -- 省市区ID
   `title` TEXT NOT NULL DEFAULT '',                       -- 栏目名称
   `pinyin` TEXT DEFAULT '',                               -- 拼音
@@ -598,7 +598,7 @@ CREATE TABLE `hg_sys_provinces` (                         -- 系统_省市区编
   `created_at` datetime DEFAULT NULL,                     -- 创建时间
   `updated_at` datetime DEFAULT NULL                      -- 更新时间
 );
-CREATE TABLE `hg_gen_curd_test` (                         -- 测试_代码生成
+CREATE TABLE `gc_gen_curd_test` (                         -- 测试_代码生成
   `id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,        -- ID
   "name" VARCHAR(50),                                     -- 姓名
   "email" VARCHAR(255),                                   -- 邮箱
@@ -613,44 +613,44 @@ CREATE TABLE `hg_gen_curd_test` (                         -- 测试_代码生成
   "deleted_at" DATETIME                                   -- 删除时间
 );
 
-CREATE INDEX `hg_addon_hgexample_tenant_order_order_sn` ON `hg_addon_hgexample_tenant_order` (`order_sn`);
-CREATE INDEX `hg_addon_hgexample_tenant_order_member_id` ON `hg_addon_hgexample_tenant_order` (`user_id`);
-CREATE INDEX `hg_addon_hgexample_tenant_order_merchant_id` ON `hg_addon_hgexample_tenant_order` (`merchant_id`);
-CREATE INDEX `hg_addon_hgexample_tenant_order_agent_id` ON `hg_addon_hgexample_tenant_order` (`tenant_id`);
-CREATE INDEX `hg_admin_cash_admin_id` ON `hg_admin_cash` (`member_id`);
-CREATE INDEX `hg_admin_credits_log_member_id` ON `hg_admin_credits_log` (`member_id`);
-CREATE INDEX `hg_admin_dept_pid` ON `hg_admin_dept` (`pid`);
-CREATE UNIQUE INDEX `hg_admin_member_invite_code` ON `hg_admin_member` (`invite_code`);
-CREATE INDEX `hg_admin_member_dept_id` ON `hg_admin_member` (`dept_id`);
-CREATE INDEX `hg_admin_member_pid` ON `hg_admin_member` (`pid`);
-CREATE UNIQUE INDEX `hg_admin_menu_name` ON `hg_admin_menu` (`name`);
-CREATE INDEX `hg_admin_menu_pid` ON `hg_admin_menu` (`pid`);
-CREATE INDEX `hg_admin_menu_status` ON `hg_admin_menu` (`status`);
-CREATE INDEX `hg_admin_menu_type` ON `hg_admin_menu` (`type`);
-CREATE INDEX `hg_admin_oauth_oauth_client` ON `hg_admin_oauth` (`oauth_client`);
-CREATE INDEX `hg_admin_oauth_member_id` ON `hg_admin_oauth` (`member_id`);
-CREATE INDEX `hg_admin_order_order_sn` ON `hg_admin_order` (`order_sn`);
-CREATE INDEX `hg_admin_order_member_id` ON `hg_admin_order` (`member_id`);
-CREATE UNIQUE INDEX `hg_pay_log_order_sn` ON `hg_pay_log` (`order_sn`);
-CREATE INDEX `hg_pay_log_member_id` ON `hg_pay_log` (`member_id`);
-CREATE INDEX `hg_pay_refund_order_sn` ON `hg_pay_refund` (`order_sn`);
-CREATE UNIQUE INDEX `hg_sys_addons_config_addon_name_2` ON `hg_sys_addons_config` (`addon_name`);
-CREATE INDEX `hg_addons_config_addon_name` ON `hg_sys_addons_config` (`addon_name`);
-CREATE UNIQUE INDEX `hg_sys_addons_install_name` ON `hg_sys_addons_install` (`name`);
-CREATE INDEX `hg_sys_attachment_md5` ON `hg_sys_attachment` (`md5`);
-CREATE UNIQUE INDEX `hg_sys_blacklist_name` ON `hg_sys_blacklist` (`ip`);
-CREATE INDEX `hg_sys_config_group` ON `hg_sys_config` (`group`);
-CREATE INDEX `hg_sys_config_key` ON `hg_sys_config` (`key`);
-CREATE INDEX `hg_sys_dict_data_dict_data_idx` ON `hg_sys_dict_data` (`type`);
-CREATE UNIQUE INDEX `hg_sys_dict_type_dict_type` ON `hg_sys_dict_type` (`type`);
-CREATE INDEX `hg_sys_ems_log_email` ON `hg_sys_ems_log` (`email`);
-CREATE INDEX `hg_sys_log_error_code` ON `hg_sys_log` (`error_code`);
-CREATE INDEX `hg_sys_log_req_id` ON `hg_sys_log` (`req_id`);
-CREATE INDEX `hg_sys_log_member_id` ON `hg_sys_log` (`member_id`);
-CREATE INDEX `hg_sys_login_log_member_id` ON `hg_sys_login_log` (`member_id`);
-CREATE INDEX `hg_sys_login_log_req_id` ON `hg_sys_login_log` (`req_id`);
-CREATE INDEX `hg_sys_provinces_pid` ON `hg_sys_provinces` (`pid`);
-CREATE UNIQUE INDEX `hg_sys_serve_license_appid` ON `hg_sys_serve_license` (`appid`);
-CREATE INDEX `hg_sys_serve_log_member_id` ON `hg_sys_serve_log` (`level_format`);
-CREATE INDEX `hg_sys_serve_log_traceid` ON `hg_sys_serve_log` (`trace_id`);
-CREATE INDEX `hg_sys_sms_log_mobile` ON `hg_sys_sms_log` (`mobile`);
+CREATE INDEX `gc_addon_hgexample_tenant_order_order_sn` ON `gc_addon_hgexample_tenant_order` (`order_sn`);
+CREATE INDEX `gc_addon_hgexample_tenant_order_member_id` ON `gc_addon_hgexample_tenant_order` (`user_id`);
+CREATE INDEX `gc_addon_hgexample_tenant_order_merchant_id` ON `gc_addon_hgexample_tenant_order` (`merchant_id`);
+CREATE INDEX `gc_addon_hgexample_tenant_order_agent_id` ON `gc_addon_hgexample_tenant_order` (`tenant_id`);
+CREATE INDEX `gc_admin_cash_admin_id` ON `gc_admin_cash` (`member_id`);
+CREATE INDEX `gc_admin_credits_log_member_id` ON `gc_admin_credits_log` (`member_id`);
+CREATE INDEX `gc_admin_dept_pid` ON `gc_admin_dept` (`pid`);
+CREATE UNIQUE INDEX `gc_admin_member_invite_code` ON `gc_admin_member` (`invite_code`);
+CREATE INDEX `gc_admin_member_dept_id` ON `gc_admin_member` (`dept_id`);
+CREATE INDEX `gc_admin_member_pid` ON `gc_admin_member` (`pid`);
+CREATE UNIQUE INDEX `gc_admin_menu_name` ON `gc_admin_menu` (`name`);
+CREATE INDEX `gc_admin_menu_pid` ON `gc_admin_menu` (`pid`);
+CREATE INDEX `gc_admin_menu_status` ON `gc_admin_menu` (`status`);
+CREATE INDEX `gc_admin_menu_type` ON `gc_admin_menu` (`type`);
+CREATE INDEX `gc_admin_oauth_oauth_client` ON `gc_admin_oauth` (`oauth_client`);
+CREATE INDEX `gc_admin_oauth_member_id` ON `gc_admin_oauth` (`member_id`);
+CREATE INDEX `gc_admin_order_order_sn` ON `gc_admin_order` (`order_sn`);
+CREATE INDEX `gc_admin_order_member_id` ON `gc_admin_order` (`member_id`);
+CREATE UNIQUE INDEX `gc_pay_log_order_sn` ON `gc_pay_log` (`order_sn`);
+CREATE INDEX `gc_pay_log_member_id` ON `gc_pay_log` (`member_id`);
+CREATE INDEX `gc_pay_refund_order_sn` ON `gc_pay_refund` (`order_sn`);
+CREATE UNIQUE INDEX `gc_sys_addons_config_addon_name_2` ON `gc_sys_addons_config` (`addon_name`);
+CREATE INDEX `gc_addons_config_addon_name` ON `gc_sys_addons_config` (`addon_name`);
+CREATE UNIQUE INDEX `gc_sys_addons_install_name` ON `gc_sys_addons_install` (`name`);
+CREATE INDEX `gc_sys_attachment_md5` ON `gc_sys_attachment` (`md5`);
+CREATE UNIQUE INDEX `gc_sys_blacklist_name` ON `gc_sys_blacklist` (`ip`);
+CREATE INDEX `gc_sys_config_group` ON `gc_sys_config` (`group`);
+CREATE INDEX `gc_sys_config_key` ON `gc_sys_config` (`key`);
+CREATE INDEX `gc_sys_dict_data_dict_data_idx` ON `gc_sys_dict_data` (`type`);
+CREATE UNIQUE INDEX `gc_sys_dict_type_dict_type` ON `gc_sys_dict_type` (`type`);
+CREATE INDEX `gc_sys_ems_log_email` ON `gc_sys_ems_log` (`email`);
+CREATE INDEX `gc_sys_log_error_code` ON `gc_sys_log` (`error_code`);
+CREATE INDEX `gc_sys_log_req_id` ON `gc_sys_log` (`req_id`);
+CREATE INDEX `gc_sys_log_member_id` ON `gc_sys_log` (`member_id`);
+CREATE INDEX `gc_sys_login_log_member_id` ON `gc_sys_login_log` (`member_id`);
+CREATE INDEX `gc_sys_login_log_req_id` ON `gc_sys_login_log` (`req_id`);
+CREATE INDEX `gc_sys_provinces_pid` ON `gc_sys_provinces` (`pid`);
+CREATE UNIQUE INDEX `gc_sys_serve_license_appid` ON `gc_sys_serve_license` (`appid`);
+CREATE INDEX `gc_sys_serve_log_member_id` ON `gc_sys_serve_log` (`level_format`);
+CREATE INDEX `gc_sys_serve_log_traceid` ON `gc_sys_serve_log` (`trace_id`);
+CREATE INDEX `gc_sys_sms_log_mobile` ON `gc_sys_sms_log` (`mobile`);

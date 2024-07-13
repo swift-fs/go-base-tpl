@@ -11,14 +11,14 @@ import (
 	"github.com/gogf/gf/v2/frame/g"
 )
 
-// SysGenTreeDemoDao is the data access object for table hg_sys_gen_tree_demo.
+// SysGenTreeDemoDao is the data access object for table gc_sys_gen_tree_demo.
 type SysGenTreeDemoDao struct {
 	table   string                // table is the underlying table name of the DAO.
 	group   string                // group is the database configuration group name of current DAO.
 	columns SysGenTreeDemoColumns // columns contains all the column names of Table for convenient usage.
 }
 
-// SysGenTreeDemoColumns defines and stores column names for table hg_sys_gen_tree_demo.
+// SysGenTreeDemoColumns defines and stores column names for table gc_sys_gen_tree_demo.
 type SysGenTreeDemoColumns struct {
 	Id          string // ID
 	Pid         string // 上级ID
@@ -36,7 +36,7 @@ type SysGenTreeDemoColumns struct {
 	DeletedAt   string // 删除时间
 }
 
-// sysGenTreeDemoColumns holds the columns for table hg_sys_gen_tree_demo.
+// sysGenTreeDemoColumns holds the columns for table gc_sys_gen_tree_demo.
 var sysGenTreeDemoColumns = SysGenTreeDemoColumns{
 	Id:          "id",
 	Pid:         "pid",
@@ -58,7 +58,7 @@ var sysGenTreeDemoColumns = SysGenTreeDemoColumns{
 func NewSysGenTreeDemoDao() *SysGenTreeDemoDao {
 	return &SysGenTreeDemoDao{
 		group:   "default",
-		table:   "hg_sys_gen_tree_demo",
+		table:   "gc_sys_gen_tree_demo",
 		columns: sysGenTreeDemoColumns,
 	}
 }

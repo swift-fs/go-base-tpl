@@ -15,7 +15,7 @@
 hggen:
   allowedIPs: [ "127.0.0.1", "*" ]                                      # 白名单，*代表所有，只有允许的IP后台才能使用生成代码功能
   selectDbs: [ "default" ]                                              # 可选生成表的数据库配置名称，支持多库
-  disableTables: [ "hg_sys_gen_codes","hg_admin_role_casbin" ]          # 禁用的表，禁用以后将不会在选择表中看到
+  disableTables: [ "gc_sys_gen_codes","gc_admin_role_casbin" ]          # 禁用的表，禁用以后将不会在选择表中看到
   delimiters: [ "@{", "}" ]                                             # 模板引擎变量分隔符号
   # 生成应用模型，所有生成模板允许自定义，可以参考default模板进行改造
   application:
@@ -94,8 +94,8 @@ gfcli:
       - link: "mysql:hotgo:hg123456.@tcp(127.0.0.1:3306)/hotgo?loc=Local&parseTime=true"
         group: "default"                                                # 分组 使用hotgo代码生成功能时必须填
         #        tables:          ""                                    # 指定当前数据库中需要执行代码生成的数据表。如果为空，表示数据库的所有表都会生成。
-        tablesEx:        "hg_sys_addons_install"                        # 指定当前数据库中需要排除代码生成的数据表。
-        removePrefix: "hg_"
+        tablesEx:        "gc_sys_addons_install"                        # 指定当前数据库中需要排除代码生成的数据表。
+        removePrefix: "gc_"
         descriptionTag: true
         noModelComment: true
         jsonCase: "CamelLower"
@@ -119,8 +119,8 @@ gfcli:
     dao:
       - link: "mysql:hotgo:hg123456.@tcp(127.0.0.1:3306)/hotgo?loc=Local&parseTime=true"
         group: "default"                                                # 分组 使用hotgo代码生成功能时必须填
-        tablesEx:        "hg_sys_addons_install"                        # 指定当前数据库中需要排除代码生成的数据表。
-        removePrefix: "hg_"
+        tablesEx:        "gc_sys_addons_install"                        # 指定当前数据库中需要排除代码生成的数据表。
+        removePrefix: "gc_"
         descriptionTag: true
         noModelComment: true
         jsonCase: "CamelLower"
@@ -128,7 +128,7 @@ gfcli:
         clear: false
       - link: "mysql:hotgo2:hg123456.@tcp(127.0.0.1:3306)/hotgo2?loc=Local&parseTime=true"
         group: "default2"                                                # 分组 使用hotgo代码生成功能时必须填
-        tablesEx:        "hg_sys_addons_install"                         # 指定当前数据库中需要排除代码生成的数据表。
+        tablesEx:        "gc_sys_addons_install"                         # 指定当前数据库中需要排除代码生成的数据表。
         removePrefix: ""
         descriptionTag: true
         noModelComment: true
@@ -148,7 +148,7 @@ database:
   default:
     link: "mysql:hotgo:hg123456.@tcp(127.0.0.1:3306)/hotgo?loc=Local&parseTime=true"
     debug: true
-    Prefix: "hg_"
+    Prefix: "gc_"
   default2:
     link: "mysql:hotgo2:hg123456.@tcp(127.0.0.1:3306)/hotgo2?loc=Local&parseTime=true"
     debug: true
@@ -160,7 +160,7 @@ database:
 hggen:
   allowedIPs: ["127.0.0.1", "*"]                                      # 白名单，*代表所有，只有允许的IP后台才能使用生成代码功能
   selectDbs: [ "default", "default2" ]                                # 可选生成表的数据库配置名称，支持多库
-  disableTables : ["hg_sys_gen_codes","hg_admin_role_casbin"]         # 禁用的表，禁用以后将不会在选择表中看到
+  disableTables : ["gc_sys_gen_codes","gc_admin_role_casbin"]         # 禁用的表，禁用以后将不会在选择表中看到
   delimiters: ["@{", "}"]                                             # 模板引擎变量分隔符号
 ```
 

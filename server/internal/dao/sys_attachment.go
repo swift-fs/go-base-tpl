@@ -11,14 +11,14 @@ import (
 // internalSysAttachmentDao is internal type for wrapping internal DAO implements.
 type internalSysAttachmentDao = *internal.SysAttachmentDao
 
-// sysAttachmentDao is the data access object for table hg_sys_attachment.
+// sysAttachmentDao is the data access object for table gc_sys_attachment.
 // You can define custom methods on it to extend its functionality as you wish.
 type sysAttachmentDao struct {
 	internalSysAttachmentDao
 }
 
 var (
-	// SysAttachment is globally public accessible object for table hg_sys_attachment operations.
+	// SysAttachment is globally public accessible object for table gc_sys_attachment operations.
 	SysAttachment = sysAttachmentDao{
 		internal.NewSysAttachmentDao(),
 	}

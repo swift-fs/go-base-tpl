@@ -31,7 +31,7 @@
 hggen:
   allowedIPs: [ "127.0.0.1", "*" ]                                      # 白名单，*代表所有，只有允许的IP后台才能使用生成代码功能
   selectDbs: [ "default" ]                                              # 可选生成表的数据库配置名称，支持多库
-  disableTables: [ "hg_sys_gen_codes","hg_admin_role_casbin" ]          # 禁用的表，禁用以后将不会在选择表中看到
+  disableTables: [ "gc_sys_gen_codes","gc_admin_role_casbin" ]          # 禁用的表，禁用以后将不会在选择表中看到
   delimiters: [ "@{", "}" ]                                             # 模板引擎变量分隔符号
   # 生成应用模型，所有生成模板允许自定义，可以参考default模板进行改造
   application:
@@ -110,8 +110,8 @@ gfcli:
       - link: "mysql:hotgo:hg123456.@tcp(127.0.0.1:3306)/hotgo?loc=Local&parseTime=true"
         group: "default"                                                # 分组 使用hotgo代码生成功能时必须填
         #        tables:          ""                                    # 指定当前数据库中需要执行代码生成的数据表。如果为空，表示数据库的所有表都会生成。
-        tablesEx:        "hg_sys_addons_install"                        # 指定当前数据库中需要排除代码生成的数据表。
-        removePrefix: "hg_"
+        tablesEx:        "gc_sys_addons_install"                        # 指定当前数据库中需要排除代码生成的数据表。
+        removePrefix: "gc_"
         descriptionTag: true
         noModelComment: true
         jsonCase: "CamelLower"
@@ -132,9 +132,9 @@ gfcli:
 
 1、创建数据表
 
-1.1 创建测试表格表`hg_test_table`
+1.1 创建测试表格表`gc_test_table`
 ```mysql
-CREATE TABLE `hg_test_table` (
+CREATE TABLE `gc_test_table` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'ID',
   `category_id` bigint(20) NOT NULL COMMENT '分类ID',
   `title` varchar(64) NOT NULL COMMENT '标题',
@@ -156,10 +156,10 @@ CREATE TABLE `hg_test_table` (
 
 ```
 
-1.2 测试分类表`hg_test_category`:
+1.2 测试分类表`gc_test_category`:
 - 注意：该表为了方便功能演示已经内置无需再次创建，此处提示表结构只是为了方便大家梳理关联表关系
 ```mysql
-CREATE TABLE `hg_test_category` (
+CREATE TABLE `gc_test_category` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '分类ID',
   `name` varchar(255) NOT NULL COMMENT '分类名称',
   `description` varchar(255) DEFAULT NULL COMMENT '描述',
@@ -176,7 +176,7 @@ CREATE TABLE `hg_test_category` (
 
 1.3 插入测试数据
 ```mysql
-INSERT INTO `hg_test_table` (`id`, `category_id`, `title`, `description`, `content`, `image`, `attachfile`, `city_id`, `switch`, `sort`, `status`, `created_by`, `updated_by`, `created_at`, `updated_at`, `deleted_at`) VALUES (1, 1, '测试标题', '描述', '<h2><strong>不知道写点啥！</strong></h2><p><br></p><iframe class=\"ql-video\" frameborder=\"0\" allowfullscreen=\"true\" src=\"https://media.w3.org/2010/05/sintel/trailer.mp4\"></iframe><p><br></p><p><img src=\"http://bufanyun.cn-bj.ufileos.com/hotgo/attachment/2023-02-09/cqdq9iuv0phsg8patk.png\"></p>', 'https://bufanyun.cn-bj.ufileos.com/hotgo/logo.sig.png', 'http://bufanyun.cn-bj.ufileos.com/hotgo/attachment/2022-12-30/cpf1x44idoycrtajf2.xlsx', 110102, 1, 10, 1, 0, 1, '2022-12-15 19:30:14', '2023-02-23 13:55:32', NULL);
+INSERT INTO `gc_test_table` (`id`, `category_id`, `title`, `description`, `content`, `image`, `attachfile`, `city_id`, `switch`, `sort`, `status`, `created_by`, `updated_by`, `created_at`, `updated_at`, `deleted_at`) VALUES (1, 1, '测试标题', '描述', '<h2><strong>不知道写点啥！</strong></h2><p><br></p><iframe class=\"ql-video\" frameborder=\"0\" allowfullscreen=\"true\" src=\"https://media.w3.org/2010/05/sintel/trailer.mp4\"></iframe><p><br></p><p><img src=\"http://bufanyun.cn-bj.ufileos.com/hotgo/attachment/2023-02-09/cqdq9iuv0phsg8patk.png\"></p>', 'https://bufanyun.cn-bj.ufileos.com/hotgo/logo.sig.png', 'http://bufanyun.cn-bj.ufileos.com/hotgo/attachment/2022-12-30/cpf1x44idoycrtajf2.xlsx', 110102, 1, 10, 1, 0, 1, '2022-12-15 19:30:14', '2023-02-23 13:55:32', NULL);
 
 ```
 
@@ -198,7 +198,7 @@ INSERT INTO `hg_test_table` (`id`, `category_id`, `title`, `description`, `conte
 
 - 如果你对默认的生成配置不满意，可以根据页面表单提示，自定义表格属性和字段属性
 
-- 这里假设我们要一个关联表，让表`hg_test_table`字段`category_id`去关联 表`hg_test_category`字段`id`，我们可以这样做：
+- 这里假设我们要一个关联表，让表`gc_test_table`字段`category_id`去关联 表`gc_test_category`字段`id`，我们可以这样做：
 
 ![生成关联配置](images/sys-code-config-join.png)
 
@@ -268,8 +268,8 @@ INSERT INTO `hg_test_table` (`id`, `category_id`, `title`, `description`, `conte
     dao:
       - link: "mysql:hotgo:hg123456.@tcp(127.0.0.1:3306)/hotgo?loc=Local&parseTime=true"
         group: "default"                                                # 分组 使用hotgo代码生成功能时必须填
-        tablesEx:        "hg_sys_addons_install"                        # 指定当前数据库中需要排除代码生成的数据表。
-        removePrefix: "hg_"
+        tablesEx:        "gc_sys_addons_install"                        # 指定当前数据库中需要排除代码生成的数据表。
+        removePrefix: "gc_"
         descriptionTag: true
         noModelComment: true
         jsonCase: "CamelLower"
@@ -277,7 +277,7 @@ INSERT INTO `hg_test_table` (`id`, `category_id`, `title`, `description`, `conte
         clear: false
       - link: "mysql:hotgo2:hg123456.@tcp(127.0.0.1:3306)/hotgo2?loc=Local&parseTime=true"
         group: "default2"                                                # 分组 使用hotgo代码生成功能时必须填
-        tablesEx:        "hg_sys_addons_install"                         # 指定当前数据库中需要排除代码生成的数据表。
+        tablesEx:        "gc_sys_addons_install"                         # 指定当前数据库中需要排除代码生成的数据表。
         removePrefix: ""
         descriptionTag: true
         noModelComment: true
@@ -297,7 +297,7 @@ database:
   default:
     link: "mysql:hotgo:hg123456.@tcp(127.0.0.1:3306)/hotgo?loc=Local&parseTime=true"
     debug: true
-    Prefix: "hg_"
+    Prefix: "gc_"
   default2:
     link: "mysql:hotgo2:hg123456.@tcp(127.0.0.1:3306)/hotgo2?loc=Local&parseTime=true"
     debug: true
@@ -309,7 +309,7 @@ database:
 hggen:
   allowedIPs: ["127.0.0.1", "*"]                                      # 白名单，*代表所有，只有允许的IP后台才能使用生成代码功能
   selectDbs: [ "default", "default2" ]                                # 可选生成表的数据库配置名称，支持多库
-  disableTables : ["hg_sys_gen_codes","hg_admin_role_casbin"]         # 禁用的表，禁用以后将不会在选择表中看到
+  disableTables : ["gc_sys_gen_codes","gc_admin_role_casbin"]         # 禁用的表，禁用以后将不会在选择表中看到
   delimiters: ["@{", "}"]                                             # 模板引擎变量分隔符号
 ```
 

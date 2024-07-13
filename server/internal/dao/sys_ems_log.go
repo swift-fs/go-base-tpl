@@ -11,14 +11,14 @@ import (
 // internalSysEmsLogDao is internal type for wrapping internal DAO implements.
 type internalSysEmsLogDao = *internal.SysEmsLogDao
 
-// sysEmsLogDao is the data access object for table hg_sys_ems_log.
+// sysEmsLogDao is the data access object for table gc_sys_ems_log.
 // You can define custom methods on it to extend its functionality as you wish.
 type sysEmsLogDao struct {
 	internalSysEmsLogDao
 }
 
 var (
-	// SysEmsLog is globally public accessible object for table hg_sys_ems_log operations.
+	// SysEmsLog is globally public accessible object for table gc_sys_ems_log operations.
 	SysEmsLog = sysEmsLogDao{
 		internal.NewSysEmsLogDao(),
 	}

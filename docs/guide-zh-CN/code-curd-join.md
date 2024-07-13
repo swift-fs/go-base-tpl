@@ -19,9 +19,9 @@ yarn dev
 - 以下表结构和数据为了方便功能演示已经内置无需再次创建
 
 
-- 创建主表：hg_sys_gen_curd_demo
+- 创建主表：gc_sys_gen_curd_demo
 ```sql
-CREATE TABLE `hg_sys_gen_curd_demo` (
+CREATE TABLE `gc_sys_gen_curd_demo` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'ID',
   `category_id` bigint(20) DEFAULT '0' COMMENT '分类ID',
   `title` varchar(64) NOT NULL COMMENT '标题',
@@ -42,9 +42,9 @@ CREATE TABLE `hg_sys_gen_curd_demo` (
 ) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COMMENT='系统_生成curd演示';
 ```
 
-创建关联表：hg_test_category
+创建关联表：gc_test_category
 ```sql
-CREATE TABLE `hg_test_category` (
+CREATE TABLE `gc_test_category` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '分类ID',
   `name` varchar(255) NOT NULL COMMENT '分类名称',
   `short_name` varchar(128) DEFAULT NULL COMMENT '简称',

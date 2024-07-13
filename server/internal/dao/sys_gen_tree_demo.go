@@ -11,14 +11,14 @@ import (
 // internalSysGenTreeDemoDao is internal type for wrapping internal DAO implements.
 type internalSysGenTreeDemoDao = *internal.SysGenTreeDemoDao
 
-// sysGenTreeDemoDao is the data access object for table hg_sys_gen_tree_demo.
+// sysGenTreeDemoDao is the data access object for table gc_sys_gen_tree_demo.
 // You can define custom methods on it to extend its functionality as you wish.
 type sysGenTreeDemoDao struct {
 	internalSysGenTreeDemoDao
 }
 
 var (
-	// SysGenTreeDemo is globally public accessible object for table hg_sys_gen_tree_demo operations.
+	// SysGenTreeDemo is globally public accessible object for table gc_sys_gen_tree_demo operations.
 	SysGenTreeDemo = sysGenTreeDemoDao{
 		internal.NewSysGenTreeDemoDao(),
 	}

@@ -19,7 +19,7 @@ yarn dev
 - 以下表结构和数据为了方便功能演示已经内置无需再次创建
 
 ```sql
-CREATE TABLE `hg_sys_gen_tree_demo` (
+CREATE TABLE `gc_sys_gen_tree_demo` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'ID',
   `pid` bigint(20) DEFAULT NULL COMMENT '上级ID',
   `level` int(11) DEFAULT '1' COMMENT '关系树级别',

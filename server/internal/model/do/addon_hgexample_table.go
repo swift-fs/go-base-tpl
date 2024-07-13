@@ -10,9 +10,9 @@ import (
 	"github.com/gogf/gf/v2/os/gtime"
 )
 
-// AddonHgexampleTable is the golang structure of table hg_addon_hgexample_table for DAO operations like Where/Data.
+// AddonHgexampleTable is the golang structure of table gc_addon_hgexample_table for DAO operations like Where/Data.
 type AddonHgexampleTable struct {
-	g.Meta      `orm:"table:hg_addon_hgexample_table, do:true"`
+	g.Meta      `orm:"table:gc_addon_hgexample_table, do:true"`
 	Id          interface{} // ID
 	Pid         interface{} // 上级ID
 	Level       interface{} // 树等级

@@ -297,7 +297,7 @@ func (s *sAdminPost) Option(ctx context.Context) (opts []*model.Option, err erro
 #### 内置字典和系统字典的区分
 
 ##### 主要区别
-- 系统字典由表：`hg_sys_dict_type`和`hg_sys_dict_data`共同进行维护，使用时需通过后台到字典管理中进行添加
+- 系统字典由表：`gc_sys_dict_type`和`gc_sys_dict_data`共同进行维护，使用时需通过后台到字典管理中进行添加
 - 内置字典是系统开发期间在代码层面事先定义和注册好的数据选项
 
 

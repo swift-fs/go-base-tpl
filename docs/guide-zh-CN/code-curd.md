@@ -19,7 +19,7 @@ yarn dev
 - 以下表结构和数据为了方便功能演示已经内置无需再次创建
 
 ```sql
-CREATE TABLE `hg_test_category` (
+CREATE TABLE `gc_test_category` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '分类ID',
   `name` varchar(255) NOT NULL COMMENT '分类名称',
   `short_name` varchar(128) DEFAULT NULL COMMENT '简称',

@@ -9,9 +9,9 @@ import (
 	"github.com/gogf/gf/v2/os/gtime"
 )
 
-// SysAttachment is the golang structure of table hg_sys_attachment for DAO operations like Where/Data.
+// SysAttachment is the golang structure of table gc_sys_attachment for DAO operations like Where/Data.
 type SysAttachment struct {
-	g.Meta    `orm:"table:hg_sys_attachment, do:true"`
+	g.Meta    `orm:"table:gc_sys_attachment, do:true"`
 	Id        interface{} // 文件ID
 	AppId     interface{} // 应用ID
 	MemberId  interface{} // 管理员ID

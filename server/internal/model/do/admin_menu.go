@@ -9,9 +9,9 @@ import (
 	"github.com/gogf/gf/v2/os/gtime"
 )
 
-// AdminMenu is the golang structure of table hg_admin_menu for DAO operations like Where/Data.
+// AdminMenu is the golang structure of table gc_admin_menu for DAO operations like Where/Data.
 type AdminMenu struct {
-	g.Meta         `orm:"table:hg_admin_menu, do:true"`
+	g.Meta         `orm:"table:gc_admin_menu, do:true"`
 	Id             interface{} // 菜单ID
 	Pid            interface{} // 父菜单ID
 	Level          interface{} // 关系树等级

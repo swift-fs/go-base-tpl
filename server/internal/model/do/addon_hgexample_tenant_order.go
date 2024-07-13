@@ -9,9 +9,9 @@ import (
 	"github.com/gogf/gf/v2/os/gtime"
 )
 
-// AddonHgexampleTenantOrder is the golang structure of table hg_addon_hgexample_tenant_order for DAO operations like Where/Data.
+// AddonHgexampleTenantOrder is the golang structure of table gc_addon_hgexample_tenant_order for DAO operations like Where/Data.
 type AddonHgexampleTenantOrder struct {
-	g.Meta      `orm:"table:hg_addon_hgexample_tenant_order, do:true"`
+	g.Meta      `orm:"table:gc_addon_hgexample_tenant_order, do:true"`
 	Id          interface{} // 主键
 	TenantId    interface{} // 租户ID
 	MerchantId  interface{} // 商户ID
