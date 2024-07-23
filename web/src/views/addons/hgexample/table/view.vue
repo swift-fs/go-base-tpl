@@ -4,7 +4,7 @@
       <n-card :bordered="false" title="基础详情"> 基础详情，有时也用于显示只读信息。 </n-card>
     </div>
     <n-card :bordered="false" class="proCard mt-4" size="small" :segmented="{ content: true }">
-      <n-descriptions label-placement="left" class="py-2" column="4">
+      <n-descriptions label-placement="left" class="py-2" :column="4">
         <n-descriptions-item>
           <template #label>分类ID</template>
           {{ formValue.categoryId }}
@@ -13,10 +13,10 @@
         <n-descriptions-item label="标签">
           <template v-for="(item, key) in formValue?.flag" :key="key">
             <n-tag
-              :type="getOptionTag(options.sys_notice_type, item)"
+              :type="dict.getType('sys_notice_type', item)"
               size="small"
               class="min-left-space"
-              >{{ getOptionLabel(options.sys_notice_type, item) }}</n-tag
+              >{{ dict.getLabel('sys_notice_type', item) }}</n-tag
             >
           </template>
         </n-descriptions-item>
@@ -37,19 +37,19 @@
     </n-card>
 
     <n-card :bordered="false" class="proCard mt-4" size="small" :segmented="{ content: true }">
-      <n-descriptions label-placement="top" title="内容" class="py-2" column="1">
+      <n-descriptions label-placement="top" title="内容" class="py-2" :column="1">
         <n-descriptions-item><span v-html="formValue.content"></span></n-descriptions-item>
       </n-descriptions>
     </n-card>
 
     <n-card :bordered="false" class="proCard mt-4" size="small" :segmented="{ content: true }">
-      <n-descriptions label-placement="top" title="单图" class="py-2" column="1">
+      <n-descriptions label-placement="top" title="单图" class="py-2" :column="1">
         <n-descriptions-item>
           <n-image style="margin-left: 10px; height: 100px; width: 100px" :src="formValue.image"
         /></n-descriptions-item>
       </n-descriptions>
 
-      <n-descriptions label-placement="top" title="多图" class="py-2" column="1">
+      <n-descriptions label-placement="top" title="多图" class="py-2" :column="1">
         <n-descriptions-item>
           <n-image-group>
             <n-space>
@@ -61,7 +61,7 @@
         </n-descriptions-item>
       </n-descriptions>
 
-      <n-descriptions label-placement="top" title="附件" class="py-2" column="1">
+      <n-descriptions label-placement="top" title="附件" class="py-2" :column="1">
         <n-descriptions-item>
           <div
             class="upload-card"
@@ -79,7 +79,7 @@
         </n-descriptions-item>
       </n-descriptions>
 
-      <n-descriptions label-placement="top" title="多附件" class="py-2" column="1">
+      <n-descriptions label-placement="top" title="多附件" class="py-2" :column="1">
         <n-descriptions-item>
           <div class="upload-card">
             <n-space style="gap: 0px 0px">
@@ -110,10 +110,11 @@
   import { useRouter } from 'vue-router';
   import { useMessage } from 'naive-ui';
   import { View } from '@/api/addons/hgexample/table';
-  import { newState, options } from './model';
-  import { getOptionLabel, getOptionTag } from '@/utils/hotgo';
+  import { newState } from './model';
   import { getFileExt } from '@/utils/urlUtils';
+  import { useDictStore } from '@/store/modules/dict';
 
+  const dict = useDictStore();
   const message = useMessage();
   const router = useRouter();
   const id = Number(router.currentRoute.value.params.id);

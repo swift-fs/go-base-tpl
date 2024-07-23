@@ -119,7 +119,10 @@
         class="py-4"
       >
         <n-form-item label="事件模板" path="event">
-          <n-select :options="options.config_sms_template" v-model:value="formParams.event" />
+          <n-select
+            :options="dict.getOptionUnRef('config_sms_template')"
+            v-model:value="formParams.event"
+          />
         </n-form-item>
 
         <n-form-item label="手机号" path="mobile">
@@ -153,8 +156,7 @@
   import { ref, onMounted } from 'vue';
   import { useMessage } from 'naive-ui';
   import { getConfig, sendTestSms, updateConfig } from '@/api/sys/config';
-  import { Dicts } from '@/api/dict/dict';
-  import { Options } from '@/utils/hotgo';
+  import { useDictStore } from '@/store/modules/dict';
 
   const group = ref('pay');
   const show = ref(false);
@@ -165,11 +167,7 @@
   const formTestRef = ref<any>();
   const formRef: any = ref(null);
   const message = useMessage();
-
-  const options = ref<Options>({
-    config_sms_template: [],
-    config_sms_drive: [],
-  });
+  const dict = useDictStore();
 
   const formValue = ref({
     payDebug: true,
@@ -188,11 +186,6 @@
     payQQPayApiKey: '',
   });
 
-  function sendTest() {
-    showModal.value = true;
-    formBtnLoading.value = false;
-  }
-
   function formSubmit() {
     formRef.value.validate((errors) => {
       if (!errors) {
@@ -206,28 +199,20 @@
     });
   }
 
-  onMounted(() => {
-    load();
-  });
-
-  async function load() {
+  function load() {
     show.value = true;
-    await loadOptions();
-    new Promise((_resolve, _reject) => {
-      getConfig({ group: group.value })
-        .then((res) => {
-          formValue.value = res.list;
-        })
-        .finally(() => {
-          show.value = false;
-        });
-    });
+    loadOptions();
+    getConfig({ group: group.value })
+      .then((res) => {
+        formValue.value = res.list;
+      })
+      .finally(() => {
+        show.value = false;
+      });
   }
 
-  async function loadOptions() {
-    options.value = await Dicts({
-      types: ['config_sms_template', 'config_sms_drive'],
-    });
+  function loadOptions() {
+    dict.loadOptions(['config_sms_template', 'config_sms_drive']);
   }
 
   function confirmForm(e) {
@@ -245,4 +230,8 @@
       formBtnLoading.value = false;
     });
   }
+
+  onMounted(() => {
+    load();
+  });
 </script>

@@ -70,8 +70,8 @@
       </BasicTable>
     </n-card>
     <Edit
-      @reloadTable="reloadTable"
-      @updateShowModal="updateShowModal"
+      @reload-table="reloadTable"
+      @update-show-modal="updateShowModal"
       :showModal="showModal"
       :formParams="formParams"
     />
@@ -99,7 +99,7 @@
           ref="transfer"
           v-model:value="formParams.routes"
           virtual-scroll
-          :options="options.routes"
+          :options="routesOptions"
           source-filterable
           :render-source-label="renderLabel"
           :render-target-label="renderLabel"
@@ -117,17 +117,20 @@
 </template>
 
 <script lang="ts" setup>
-  import { computed, h, reactive, ref } from 'vue';
+  import { computed, h, onMounted, reactive, ref } from 'vue';
   import { useDialog, useMessage, NTag } from 'naive-ui';
   import { BasicTable, TableAction } from '@/components/Table';
   import { BasicForm, useForm } from '@/components/Form/index';
   import { usePermission } from '@/hooks/web/usePermission';
   import { Delete, Export, List, Status, AssignRouter } from '@/api/serveLicense';
-  import { columns, newState, options, schemas, State } from './model';
+  import { columns, newState, loadOptions, schemas, State } from './model';
   import { DeleteOutlined, ExportOutlined, PlusOutlined } from '@vicons/antd';
-  import { adaModalWidth, adaTableScrollX, getOptionLabel } from '@/utils/hotgo';
+  import { adaModalWidth, adaTableScrollX } from '@/utils/hotgo';
   import Edit from './edit.vue';
+  import { NetOption } from '@/api/monitor/monitor';
+  import { useDictStore } from '@/store/modules/dict';
 
+  const dict = useDictStore();
   const { hasPermission } = usePermission();
   const actionRef = ref();
   const dialog = useDialog();
@@ -136,10 +139,11 @@
   const batchDeleteDisabled = ref(true);
   const checkedIds = ref([]);
   const showModal = ref(false);
-  const formParams = ref<State>();
+  const formParams = ref<State>(newState(null));
   const showRoutesModal = ref(false);
   const formBtnLoading = ref(false);
   const formRef = ref<any>({});
+  const routesOptions = ref([]);
   const dialogWidth = computed(() => {
     return adaModalWidth();
   });
@@ -265,7 +269,7 @@
 
   function handleStatus(record: Recordable, status: number) {
     Status({ id: record.id, status: status }).then((_res) => {
-      message.success('设为' + getOptionLabel(options.value.sys_normal_disable, status) + '成功');
+      message.success('设为' + dict.getLabel('sys_normal_disable', status) + '成功');
       setTimeout(() => {
         reloadTable();
       });
@@ -276,7 +280,6 @@
     e.preventDefault();
     formBtnLoading.value = true;
     formRef.value.validate((errors) => {
-      console.log('formParams.value:' + JSON.stringify(formParams.value));
       if (!errors) {
         AssignRouter(formParams.value).then((_res) => {
           message.success('操作成功');
@@ -340,6 +343,17 @@
       }
     );
   }
+
+  function loadRoutesOptions() {
+    NetOption().then((res) => {
+      routesOptions.value = res.routes;
+    });
+  }
+
+  onMounted(async () => {
+    loadOptions();
+    loadRoutesOptions();
+  });
 </script>
 
 <style lang="less" scoped></style>

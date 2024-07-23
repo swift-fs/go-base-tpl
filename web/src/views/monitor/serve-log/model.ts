@@ -1,57 +1,13 @@
 import { h, ref } from 'vue';
 import { NTag, NButton } from 'naive-ui';
-import { cloneDeep } from 'lodash-es';
 import { FormSchema } from '@/components/Form';
-import { Dicts } from '@/api/dict/dict';
-
-import { isNullObject } from '@/utils/is';
 import { defRangeShortcuts } from '@/utils/dateUtil';
 import { format } from 'date-fns';
-import { getOptionLabel, getOptionTag, Options } from '@/utils/hotgo';
-import { renderIcon, renderTooltip } from '@/utils';
+import { renderIcon, renderOptionTag, renderTooltip } from '@/utils';
 import { HelpCircleOutline } from '@vicons/ionicons5';
+import { useDictStore } from '@/store/modules/dict';
 
-export interface State {
-  id: number;
-  env: string;
-  traceid: string;
-  levelFormat: string;
-  content: string;
-  stack: any;
-  line: string;
-  triggerNs: number;
-  status: number;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export const defaultState = {
-  id: 0,
-  env: '',
-  traceid: '',
-  levelFormat: '',
-  content: '',
-  stack: null,
-  line: '',
-  triggerNs: 0,
-  status: 1,
-  createdAt: '',
-  updatedAt: '',
-};
-
-export function newState(state: State | null): State {
-  if (state !== null) {
-    return cloneDeep(state);
-  }
-  return cloneDeep(defaultState);
-}
-
-export const options = ref<Options>({
-  sys_normal_disable: [],
-  sys_log_type: [],
-});
-
-export const rules = {};
+const dict = useDictStore();
 
 export const schemas = ref<FormSchema[]>([
   {
@@ -66,13 +22,24 @@ export const schemas = ref<FormSchema[]>([
     },
   },
   {
+    field: 'content',
+    component: 'NInput',
+    label: '日志内容',
+    componentProps: {
+      placeholder: '请输入日志内容关键词',
+      onUpdateValue: (e: any) => {
+        console.log(e);
+      },
+    },
+  },
+  {
     field: 'levelFormat',
     component: 'NSelect',
     label: '日志级别',
     defaultValue: null,
     componentProps: {
       placeholder: '请选择日志级别',
-      options: [],
+      options: dict.getOption('sys_log_type'),
       onUpdateValue: (e: any) => {
         console.log(e);
       },
@@ -138,22 +105,7 @@ export const columns = [
     title: '日志级别',
     key: 'levelFormat',
     render(row) {
-      if (isNullObject(row.levelFormat)) {
-        return ``;
-      }
-      return h(
-        NTag,
-        {
-          style: {
-            marginRight: '6px',
-          },
-          type: getOptionTag(options.value.sys_log_type, row.levelFormat),
-          bordered: false,
-        },
-        {
-          default: () => getOptionLabel(options.value.sys_log_type, row.levelFormat),
-        }
-      );
+      return renderOptionTag('sys_log_type', row.levelFormat);
     },
     width: 120,
   },
@@ -162,11 +114,6 @@ export const columns = [
     key: 'content',
     width: 320,
   },
-  // {
-  //   title: '调用行',
-  //   key: 'line',
-  //   width: 150,
-  // },
   {
     title: '触发时间',
     key: 'triggerNs',
@@ -185,20 +132,6 @@ export const columns = [
   },
 ];
 
-async function loadOptions() {
-  options.value = await Dicts({
-    types: ['sys_normal_disable', 'sys_log_type'],
-  });
-  for (const item of schemas.value) {
-    switch (item.field) {
-      case 'status':
-        item.componentProps.options = options.value.sys_normal_disable;
-        break;
-      case 'levelFormat':
-        item.componentProps.options = options.value.sys_log_type;
-        break;
-    }
-  }
+export function loadOptions() {
+  dict.loadOptions(['sys_normal_disable', 'sys_log_type']);
 }
-
-await loadOptions();

@@ -1,15 +1,16 @@
 import { h, ref } from 'vue';
-import { NImage, NAvatar, NSwitch, NTag } from 'naive-ui';
+import { NImage, NAvatar, NSwitch } from 'naive-ui';
 import { cloneDeep } from 'lodash-es';
 import { FormSchema } from '@/components/Form';
-import { Dicts } from '@/api/dict/dict';
-import { isNullObject } from '@/utils/is';
 import { getFileExt } from '@/utils/urlUtils';
 import { defRangeShortcuts } from '@/utils/dateUtil';
-import { Option, errorImg, getOptionLabel, getOptionTag } from '@/utils/hotgo';
+import { fallbackSrc } from '@/utils/hotgo';
 import { renderPopoverMemberSumma, MemberSumma } from '@/utils';
 import { Switch } from '@/api/curdDemo';
+import { useDictStore } from '@/store/modules/dict';
 import { usePermission } from '@/hooks/web/usePermission';
+
+const dict = useDictStore();
 const { hasPermission } = usePermission();
 const $message = window['$message'];
 
@@ -76,12 +77,6 @@ export const rules = {
     type: 'number',
     message: '请输入排序',
   },
-  categoryId: {
-    required: true,
-    trigger: ['blur', 'input'],
-    type: 'number',
-    message: '请输入测试分类',
-  },
 };
 
 // 表格搜索表单
@@ -120,19 +115,6 @@ export const schemas = ref<FormSchema[]>([
     },
   },
   {
-    field: 'status',
-    component: 'NSelect',
-    label: '状态',
-    defaultValue: null,
-    componentProps: {
-      placeholder: '请选择状态',
-      options: [],
-      onUpdateValue: (e: any) => {
-        console.log(e);
-      },
-    },
-  },
-  {
     field: 'createdBy',
     component: 'NInput',
     label: '创建者',
@@ -151,19 +133,6 @@ export const schemas = ref<FormSchema[]>([
       type: 'datetimerange',
       clearable: true,
       shortcuts: defRangeShortcuts(),
-      onUpdateValue: (e: any) => {
-        console.log(e);
-      },
-    },
-  },
-  {
-    field: 'categoryId',
-    component: 'NSelect',
-    label: '测试分类',
-    defaultValue: null,
-    componentProps: {
-      placeholder: '请选择测试分类',
-      options: [],
       onUpdateValue: (e: any) => {
         console.log(e);
       },
@@ -212,8 +181,7 @@ export const columns = [
         width: 32,
         height: 32,
         src: row.image,
-        fallbackSrc: errorImg,
-        onError: errorImg,
+        fallbackSrc: fallbackSrc(),
         style: {
           width: '32px',
           height: '32px',
@@ -271,30 +239,6 @@ export const columns = [
     },
   },
   {
-    title: '状态',
-    key: 'status',
-    align: 'left',
-    width: 100,
-    render(row) {
-      if (isNullObject(row.status)) {
-        return ``;
-      }
-      return h(
-        NTag,
-        {
-          style: {
-            marginRight: '6px',
-          },
-          type: getOptionTag(options.value.sys_normal_disable, row.status),
-          bordered: false,
-        },
-        {
-          default: () => getOptionLabel(options.value.sys_normal_disable, row.status),
-        }
-      );
-    },
-  },
-  {
     title: '创建者',
     key: 'createdBy',
     align: 'left',
@@ -325,30 +269,6 @@ export const columns = [
     width: 180,
   },
   {
-    title: '测试分类',
-    key: 'categoryId',
-    align: 'left',
-    width: 100,
-    render(row) {
-      if (isNullObject(row.categoryId)) {
-        return ``;
-      }
-      return h(
-        NTag,
-        {
-          style: {
-            marginRight: '6px',
-          },
-          type: getOptionTag(options.value.testCategoryOption, row.categoryId),
-          bordered: false,
-        },
-        {
-          default: () => getOptionLabel(options.value.testCategoryOption, row.categoryId),
-        }
-      );
-    },
-  },
-  {
     title: '关联分类',
     key: 'testCategoryName',
     align: 'left',
@@ -356,27 +276,7 @@ export const columns = [
   },
 ];
 
-// 字典数据选项
-export const options = ref({
-  sys_normal_disable: [] as Option[],
-  testCategoryOption: [] as Option[],
-});
-
 // 加载字典数据选项
 export function loadOptions() {
-  Dicts({
-    types: ['sys_normal_disable', 'testCategoryOption'],
-  }).then((res) => {
-    options.value = res;
-    for (const item of schemas.value) {
-      switch (item.field) {
-        case 'status':
-          item.componentProps.options = options.value.sys_normal_disable;
-          break;
-        case 'categoryId':
-          item.componentProps.options = options.value.testCategoryOption;
-          break;
-      }
-    }
-  });
+  dict.loadOptions(['sys_normal_disable', 'testCategoryOption']);
 }

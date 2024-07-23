@@ -44,9 +44,9 @@
         primaryColorHover: lightenStr,
         primaryColorPressed: lightenStr,
         // 纵向滚动条宽
-        scrollbarWidth: '10px',
+        scrollbarWidth: '8px',
         // 横向滚动条高
-        scrollbarHeight: '10px',
+        scrollbarHeight: '8px',
       },
       LoadingBar: {
         colorLoading: appTheme,

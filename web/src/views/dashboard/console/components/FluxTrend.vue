@@ -3,9 +3,7 @@
 </template>
 <script lang="ts">
   import { defineComponent, onMounted, ref, Ref } from 'vue';
-
   import { useECharts } from '@/hooks/web/useECharts';
-
   import { basicProps } from './props';
 
   export default defineComponent({

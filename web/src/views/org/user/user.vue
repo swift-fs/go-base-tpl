@@ -12,9 +12,9 @@
         @before-leave="handleBeforeLeave"
       >
         <n-tab-pane
-          :name="item.id.toString()"
-          :tab="item.name"
-          v-for="item in options.roleTabs"
+          :name="item.key.toString()"
+          :tab="item.label"
+          v-for="item in dict.getOptionUnRef('roleTabs')"
           :key="item.key"
         >
           <List :type="defaultTab" />
@@ -28,8 +28,10 @@
   import { onMounted, ref } from 'vue';
   import List from './list.vue';
   import { useRouter } from 'vue-router';
-  import { options } from './model';
+  import { loadOptions } from './model';
+  import { useDictStore } from '@/store/modules/dict';
 
+  const dict = useDictStore();
   const router = useRouter();
   const defaultTab = ref('-1');
 
@@ -37,6 +39,7 @@
     if (router.currentRoute.value.query?.type) {
       defaultTab.value = router.currentRoute.value.query.type as string;
     }
+    loadOptions();
   });
 
   function handleBeforeLeave(tabName: string): boolean | Promise<boolean> {

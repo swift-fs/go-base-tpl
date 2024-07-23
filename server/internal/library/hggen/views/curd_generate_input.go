@@ -165,6 +165,32 @@ func (l *gCurd) generateStructFieldDefinition(in *CurdPreviewInput, field *sysin
 		return result
 	}
 
+	isUpdateOrInsertInputFields := func() bool {
+		if !isMaster {
+			return field.IsEdit
+		}
+
+		if field.IsEdit {
+			return true
+		}
+
+		// 树表内部维护字段
+		if in.options.Step.IsTreeTable && gstr.InArray(defaultTreeFields, field.Name) {
+			return true
+		}
+
+		// 修改人
+		if inputType == InputTypeUpdateFields && field.GoName == "UpdatedBy" {
+			return true
+		}
+
+		// 创建人
+		if inputType == InputTypeInsertFields && field.GoName == "CreatedBy" {
+			return true
+		}
+		return false
+	}
+
 	isQuery := false
 
 	switch inputType {
@@ -225,12 +251,12 @@ func (l *gCurd) generateStructFieldDefinition(in *CurdPreviewInput, field *sysin
 		}
 		result = []string{rule}
 	case InputTypeUpdateFields:
-		if !field.IsEdit && field.GoName != "UpdatedBy" {
+		if !isUpdateOrInsertInputFields() {
 			return nil
 		}
 		addResult()
 	case InputTypeInsertFields:
-		if !field.IsEdit && field.GoName != "CreatedBy" {
+		if !isUpdateOrInsertInputFields() {
 			return nil
 		}
 		addResult()

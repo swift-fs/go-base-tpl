@@ -2,10 +2,12 @@ import { h, ref } from 'vue';
 import { NTag } from 'naive-ui';
 import { cloneDeep } from 'lodash-es';
 import { FormSchema } from '@/components/Form';
-import { Dicts } from '@/api/dict/dict';
 import { isNullObject } from '@/utils/is';
 import { defRangeShortcuts } from '@/utils/dateUtil';
-import { Option, getOptionLabel, getOptionTag } from '@/utils/hotgo';
+import { useDictStore } from '@/store/modules/dict';
+import type { FormRules } from 'naive-ui/es/form/src/interface';
+
+const dict = useDictStore();
 
 export class State {
   public id = 0; // 分类ID
@@ -37,7 +39,7 @@ export function newState(state: State | Record<string, any> | null): State {
 }
 
 // 表单验证规则
-export const rules = {
+export const rules: FormRules = {
   name: {
     required: true,
     trigger: ['blur', 'input'],
@@ -83,7 +85,7 @@ export const schemas = ref<FormSchema[]>([
     defaultValue: null,
     componentProps: {
       placeholder: '请选择状态',
-      options: [],
+      options: dict.getOption('sys_normal_disable'),
       onUpdateValue: (e: any) => {
         console.log(e);
       },
@@ -145,11 +147,11 @@ export const columns = [
           style: {
             marginRight: '6px',
           },
-          type: getOptionTag(options.value.sys_normal_disable, row.status),
+          type: dict.getType('sys_normal_disable', row.status),
           bordered: false,
         },
         {
-          default: () => getOptionLabel(options.value.sys_normal_disable, row.status),
+          default: () => dict.getLabel('sys_normal_disable', row.status),
         }
       );
     },
@@ -162,23 +164,7 @@ export const columns = [
   },
 ];
 
-// 字典数据选项
-export const options = ref({
-  sys_normal_disable: [] as Option[],
-});
-
 // 加载字典数据选项
 export function loadOptions() {
-  Dicts({
-    types: ['sys_normal_disable'],
-  }).then((res) => {
-    options.value = res;
-    for (const item of schemas.value) {
-      switch (item.field) {
-        case 'status':
-          item.componentProps.options = options.value.sys_normal_disable;
-          break;
-      }
-    }
-  });
+  dict.loadOptions(['sys_normal_disable']);
 }

@@ -30,9 +30,9 @@ type (
 		// DeliverUserContext 将用户信息传递到上下文中
 		DeliverUserContext(r *ghttp.Request) (err error)
 		// IsExceptAuth 是否是不需要验证权限的路由地址
-		IsExceptAuth(ctx context.Context, appName, path string) bool
+		IsExceptAuth(ctx context.Context, appName string, path string) bool
 		// IsExceptLogin 是否是不需要登录的路由地址
-		IsExceptLogin(ctx context.Context, appName, path string) bool
+		IsExceptLogin(ctx context.Context, appName string, path string) bool
 		// Blacklist IP黑名单限制中间件
 		Blacklist(r *ghttp.Request)
 		// Develop 开发工具白名单过滤

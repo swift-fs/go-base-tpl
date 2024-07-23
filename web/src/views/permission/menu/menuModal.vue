@@ -21,13 +21,13 @@
   import { computed, ref } from 'vue';
   import Menu from './menu.vue';
   import { adaModalWidth } from '@/utils/hotgo';
+
+  const emit = defineEmits(['reloadTable']);
   const showModal = ref(false);
   const isModal = ref(true);
   const dialogWidth = computed(() => {
     return adaModalWidth(1280);
   });
-
-  const emit = defineEmits(['reloadTable']);
 
   function openModal() {
     showModal.value = true;

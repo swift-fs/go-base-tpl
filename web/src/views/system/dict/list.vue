@@ -57,7 +57,7 @@
           <n-select
             :render-tag="renderTag"
             v-model:value="formParams.listClass"
-            :options="labelOptions"
+            :options="dict.getOptionUnRef('tagTypeOptions')"
           />
         </n-form-item>
         <n-form-item label="字典键值" path="value">
@@ -72,7 +72,7 @@
         <n-form-item label="状态" path="status">
           <n-radio-group v-model:value="formParams.status" name="status">
             <n-radio-button
-              v-for="status in statusOptions"
+              v-for="status in dict.getOptionUnRef('sys_normal_disable')"
               :key="status.value"
               :value="status.value"
               :label="status.label"
@@ -103,17 +103,17 @@
   import { getDataList, getDictSelect, EditData, DeleteData } from '@/api/dict/dict';
   import { columns } from './columns';
   import { PlusOutlined } from '@vicons/antd';
-  import { statusOptions } from '@/enums/optionsiEnum';
   import { TypeSelect } from '@/api/sys/config';
-  import { Option } from '@/utils/hotgo';
   import { findTreeNode } from '@/utils';
   import { cloneDeep } from 'lodash-es';
-  import { defRangeShortcuts } from '@/utils/dateUtil';
+  import { Option, useDictStore } from '@/store/modules/dict';
+  import { State } from '@/views/system/dict/model';
 
   interface Props {
     checkedId?: number;
   }
 
+  const dict = useDictStore();
   const props = withDefaults(defineProps<Props>(), { checkedId: 0 });
   const typeList = ref<any>([]);
   const rules = {
@@ -162,44 +162,11 @@
     return h(
       NTag,
       {
-        type: option.type as 'success' | 'warning' | 'error' | 'info' | 'primary' | 'default',
+        type: option.listClass as 'success' | 'warning' | 'error' | 'info' | 'primary' | 'default',
       },
       { default: () => option.label }
     );
   };
-
-  const labelOptions = ref([
-    {
-      label: '绿色',
-      value: 'success',
-      type: 'success',
-    },
-    {
-      label: '橙色',
-      value: 'warning',
-      type: 'warning',
-    },
-    {
-      label: '红色',
-      value: 'error',
-      type: 'error',
-    },
-    {
-      label: '蓝色',
-      value: 'info',
-      type: 'info',
-    },
-    {
-      label: '灰色',
-      value: 'default',
-      type: 'default',
-    },
-    {
-      label: '主题色',
-      value: 'primary',
-      type: 'primary',
-    },
-  ]);
 
   const formRef: any = ref(null);
   const message = useMessage();
@@ -207,8 +174,10 @@
   const actionRef = ref();
   const showModal = ref(false);
   const formBtnLoading = ref(false);
-  const formParams = ref<any>({ typeId: 0 });
+  const formParams = ref<State>(new State());
   const options = ref<Option>();
+  const typeId = ref(0);
+
   const params = ref({
     pageSize: 10,
     typeId: props.checkedId,
@@ -217,7 +186,7 @@
   });
 
   const actionColumn = reactive({
-    width: 120,
+    width: 140,
     title: '操作',
     key: 'action',
     fixed: 'right',
@@ -246,16 +215,10 @@
 
   function addTable() {
     showModal.value = true;
-    formParams.value = {
-      typeId: props.checkedId,
-      label: '',
-      value: '',
-      listClass: 'default',
-      valueType: 'string',
-      sort: 0,
-      status: 1,
-      remark: '',
-    };
+    formParams.value = new State();
+    if (typeId.value > 0) {
+      formParams.value.typeId = typeId.value;
+    }
   }
 
   const loadDataTable = async (res) => {
@@ -272,25 +235,26 @@
 
   function confirmForm(e) {
     e.preventDefault();
-    formBtnLoading.value = true;
+
     formRef.value.validate((errors) => {
       if (!errors) {
-        EditData(formParams.value).then((_res) => {
-          message.success('操作成功');
-          setTimeout(() => {
+        formBtnLoading.value = true;
+        EditData(formParams.value)
+          .then((_res) => {
+            message.success('操作成功');
             showModal.value = false;
             reloadTable();
+          })
+          .finally(() => {
+            formBtnLoading.value = false;
           });
-        });
       } else {
         message.error('请填写完整信息');
       }
-      formBtnLoading.value = false;
     });
   }
 
   function handleDelete(record: Recordable) {
-    console.log('点击了删除', record);
     dialog.warning({
       title: '警告',
       content: '你确定要删除？',
@@ -307,7 +271,7 @@
 
   function handleEdit(record: Recordable) {
     showModal.value = true;
-    formParams.value = cloneDeep(record);
+    formParams.value = cloneDeep(record) as unknown as State;
   }
 
   function handleSubmit(_values: Recordable) {
@@ -316,15 +280,9 @@
 
   function handleReset(_values: Recordable) {
     params.value.label = '';
+    params.value.value = '';
     reloadTable();
   }
-
-  watch(props, (newVal, _oldVal) => {
-    params.value.typeId = newVal.checkedId;
-    formParams.value.typeId = newVal.checkedId;
-    actionRef.value.reload();
-    setDictSelect();
-  });
 
   async function setDictSelect() {
     const tmp = await getDictSelect({});
@@ -344,13 +302,23 @@
     formParams.value.type = row.type;
   }
 
-  async function loadOptions() {
-    options.value = await TypeSelect();
+  function loadOptions() {
+    dict.loadOptions(['sys_normal_disable']);
+    TypeSelect().then((res) => {
+      options.value = res;
+    });
   }
 
+  watch(props, (newVal, _oldVal) => {
+    params.value.typeId = newVal.checkedId;
+    typeId.value = newVal.checkedId;
+    actionRef.value.reload();
+    setDictSelect();
+  });
+
   onMounted(async () => {
+    loadOptions();
     await setDictSelect();
-    await loadOptions();
   });
 </script>
 

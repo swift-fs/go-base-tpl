@@ -44,7 +44,7 @@
               </n-gi>
               <n-gi span="1">
                 <n-form-item label="状态" path="status">
-                  <n-select v-model:value="formValue.status" :options="options.sys_normal_disable" />
+                  <n-select v-model:value="formValue.status" :options="dict.getOptionUnRef('sys_normal_disable')" />
                 </n-form-item>
               </n-gi>
               <n-gi span="2">
@@ -72,8 +72,9 @@
 
 <script lang="ts" setup>
   import { ref, computed } from 'vue';
+  import { useDictStore } from '@/store/modules/dict';
   import { Edit, View, MaxSort } from '@/api/testCategory';
-  import { options, State, newState, rules } from './model';
+  import { State, newState, rules } from './model';
   import { useProjectSettingStore } from '@/store/modules/projectSetting';
   import { useMessage } from 'naive-ui';
   import { adaModalWidth } from '@/utils/hotgo';
@@ -81,6 +82,7 @@
   const emit = defineEmits(['reloadTable']);
   const message = useMessage();
   const settingStore = useProjectSettingStore();
+  const dict = useDictStore();
   const loading = ref(false);
   const showModal = ref(false);
   const formValue = ref<State>(newState(null));
@@ -119,25 +121,28 @@
       });
   }
 
+  // 提交表单
   function confirmForm(e) {
     e.preventDefault();
-    formBtnLoading.value = true;
     formRef.value.validate((errors) => {
       if (!errors) {
-        Edit(formValue.value).then((_res) => {
-          message.success('操作成功');
-          setTimeout(() => {
+        formBtnLoading.value = true;
+        Edit(formValue.value)
+          .then((_res) => {
+            message.success('操作成功');
             closeForm();
             emit('reloadTable');
+          })
+          .finally(() => {
+            formBtnLoading.value = false;
           });
-        });
       } else {
         message.error('请填写完整信息');
       }
-      formBtnLoading.value = false;
     });
   }
 
+  // 关闭表单
   function closeForm() {
     showModal.value = false;
     loading.value = false;

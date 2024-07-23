@@ -3,7 +3,7 @@
 // @Copyright  Copyright (c) 2024 HotGo CLI
 // @Author  Ms <133814250@qq.com>
 // @License  https://github.com/bufanyun/hotgo/blob/master/LICENSE
-// @AutoGenerate Version 2.13.1
+// @AutoGenerate Version 2.15.1
 package curddemo
 
 import (
@@ -67,6 +67,14 @@ type MaxSortReq struct {
 type MaxSortRes struct {
 	*sysin.CurdDemoMaxSortModel
 }
+
+// StatusReq 更新CURD列表状态
+type StatusReq struct {
+	g.Meta `path:"/curdDemo/status" method:"post" tags:"CURD列表" summary:"更新CURD列表状态"`
+	sysin.CurdDemoStatusInp
+}
+
+type StatusRes struct{}
 
 // SwitchReq 更新CURD列表开关状态
 type SwitchReq struct {

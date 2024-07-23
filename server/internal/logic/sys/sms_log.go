@@ -134,7 +134,7 @@ func (s *sSysSmsLog) SendCode(ctx context.Context, in *sysin.SendCodeInp) (err e
 	data.Mobile = in.Mobile
 	data.Code = in.Code
 	data.Ip = location.GetClientIp(ghttp.RequestFromCtx(ctx))
-	data.Status = consts.SmsStatusNotUsed
+	data.Status = consts.CodeStatusNotUsed
 	data.CreatedAt = gtime.Now()
 	data.UpdatedAt = gtime.Now()
 
@@ -261,7 +261,7 @@ func (s *sSysSmsLog) VerifyCode(ctx context.Context, in *sysin.VerifyCodeInp) (e
 	}
 
 	if in.Event != consts.SmsTemplateCode {
-		if models.Status == consts.SmsStatusUsed {
+		if models.Status == consts.CodeStatusUsed {
 			err = gerror.New("验证码已使用，请重新发送！")
 			return
 		}
@@ -280,7 +280,7 @@ func (s *sSysSmsLog) VerifyCode(ctx context.Context, in *sysin.VerifyCodeInp) (e
 
 	_, err = dao.SysSmsLog.Ctx(ctx).WherePri(models.Id).Data(g.Map{
 		cols.Times:     models.Times + 1,
-		cols.Status:    consts.SmsStatusUsed,
+		cols.Status:    consts.CodeStatusUsed,
 		cols.UpdatedAt: gtime.Now(),
 	}).Update()
 	return

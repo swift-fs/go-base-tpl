@@ -100,7 +100,7 @@
 </template>
 
 <script lang="ts" setup>
-  import { computed, h, reactive, ref } from 'vue';
+  import { computed, h, onMounted, reactive, ref } from 'vue';
   import { useDialog, useMessage } from 'naive-ui';
   import { BasicTable, TableAction } from '@/components/Table';
   import { BasicForm, useForm } from '@/components/Form/index';
@@ -112,6 +112,7 @@
   import { JsonViewer } from 'vue3-json-viewer';
   import 'vue3-json-viewer/dist/index.css';
   import { adaTableScrollX } from '@/utils/hotgo';
+  import { loadOptions } from './model';
 
   const { hasPermission } = usePermission();
   const router = useRouter();
@@ -198,9 +199,6 @@
           reloadTable();
         });
       },
-      onNegativeClick: () => {
-        // message.error('取消');
-      },
     });
   }
 
@@ -218,9 +216,6 @@
           reloadTable();
         });
       },
-      onNegativeClick: () => {
-        // message.error('取消');
-      },
     });
   }
 
@@ -228,6 +223,10 @@
     message.loading('正在导出列表...', { duration: 1200 });
     Export(searchFormRef.value?.formModel);
   }
+
+  onMounted(async () => {
+    loadOptions();
+  });
 </script>
 
 <style lang="less" scoped></style>

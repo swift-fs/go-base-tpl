@@ -1,11 +1,11 @@
-import { ref } from 'vue';
 import { cloneDeep } from 'lodash-es';
-import { Option } from '@/utils/hotgo';
-import { Dicts } from '@/api/dict/dict';
+import { useDictStore } from '@/store/modules/dict';
+
+const dict = useDictStore();
 
 export interface State {
   id: number;
-  pid?: number;
+  pid?: number | null;
   title: string;
   name: string;
   path: string;
@@ -15,7 +15,7 @@ export interface State {
   redirect: string;
   permissions: string;
   permissionName: string;
-  component?: string;
+  component?: string | null;
   alwaysShow: number;
   activeMenu: string;
   isRoot: number;
@@ -27,7 +27,7 @@ export interface State {
   status: number;
   sort: number;
   disabled: boolean;
-  children?: State[];
+  children?: State[] | null;
 }
 
 export const defaultState: State = {
@@ -66,7 +66,10 @@ export function newState(state: State | null): State {
 
 // 默认值校正，主要为了解决历史数据格式不规范问题
 export function defaultValueCheck(state: State): State {
-  if (state.pid < 1) {
+  if (!state) {
+    state = newState(null);
+  }
+  if (!state.pid || state.pid < 1) {
     state.pid = null;
   }
   if (state.alwaysShow != 1) {
@@ -93,19 +96,7 @@ export function defaultValueCheck(state: State): State {
   return state;
 }
 
-// 字典数据选项
-export const options = ref({
-  sys_menu_types: [] as Option[],
-  sys_menu_component: [] as Option[],
-  sys_normal_disable: [] as Option[],
-  sys_switch: [] as Option[],
-});
-
 // 加载字典数据选项
 export function loadOptions() {
-  Dicts({
-    types: ['sys_menu_types', 'sys_menu_component', 'sys_normal_disable', 'sys_switch'],
-  }).then((res) => {
-    options.value = res;
-  });
+  dict.loadOptions(['sys_menu_types', 'sys_menu_component', 'sys_normal_disable', 'sys_switch']);
 }

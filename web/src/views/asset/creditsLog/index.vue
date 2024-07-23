@@ -26,19 +26,21 @@
   import { onMounted, ref } from 'vue';
   import List from './list.vue';
   import { useRouter } from 'vue-router';
+  import { loadOptions } from './model';
 
   const router = useRouter();
   const defaultTab = ref('');
+
+  function handleBeforeLeave(tabName: string) {
+    defaultTab.value = tabName;
+  }
 
   onMounted(() => {
     if (router.currentRoute.value.query?.type) {
       defaultTab.value = router.currentRoute.value.query.type as string;
     }
+    loadOptions();
   });
-
-  function handleBeforeLeave(tabName: string) {
-    defaultTab.value = tabName;
-  }
 </script>
 
 <style lang="less" scoped></style>

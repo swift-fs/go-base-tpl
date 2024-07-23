@@ -86,20 +86,21 @@
 
   function confirmForm(e) {
     e.preventDefault();
-    formBtnLoading.value = true;
     formRef.value.validate((errors) => {
       if (!errors) {
-        ApplyRefund(params.value).then((_res) => {
-          message.success('操作成功');
-          setTimeout(() => {
+        formBtnLoading.value = true;
+        ApplyRefund(params.value)
+          .then((_res) => {
+            message.success('操作成功');
             isShowModal.value = false;
             emit('reloadTable');
+          })
+          .finally(() => {
+            formBtnLoading.value = false;
           });
-        });
       } else {
         message.error('请填写完整信息');
       }
-      formBtnLoading.value = false;
     });
   }
 

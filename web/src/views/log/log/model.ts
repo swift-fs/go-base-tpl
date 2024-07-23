@@ -1,8 +1,39 @@
 import { FormSchema } from '@/components/Form';
 import { ref } from 'vue';
 import { defRangeShortcuts } from '@/utils/dateUtil';
-import { Option } from '@/utils/hotgo';
-import { Dicts } from '@/api/dict/dict';
+import { useDictStore } from '@/store/modules/dict';
+
+const dict = useDictStore();
+
+export class State {
+  id = 0;
+  reqId = '';
+  appId = '';
+  merchantId = 0;
+  memberId = 0;
+  method = '';
+  module = '';
+  url = '';
+  getData: Record<string, any> | null = null;
+  postData: Record<string, string[]> | null = null;
+  headerData: Record<string, string[]> | null = null;
+  ip = '';
+  provinceId = 0;
+  cityId = 0;
+  errorCode = 0;
+  errorMsg = '';
+  errorData: string[] = [];
+  userAgent = '';
+  takeUpTime = 0;
+  timestamp = 0;
+  status = 0;
+  createdAt = '';
+  updatedAt = '';
+  cityLabel = '';
+  tags = '';
+  summary = '';
+  description = '';
+}
 
 export const schemas = ref<FormSchema[]>([
   {
@@ -40,6 +71,17 @@ export const schemas = ref<FormSchema[]>([
     },
   },
   {
+    field: 'keyword',
+    component: 'NInput',
+    label: '关键词',
+    componentProps: {
+      placeholder: '请输入关键词',
+      onInput: (e: any) => {
+        console.log(e);
+      },
+    },
+  },
+  {
     field: 'ip',
     component: 'NInput',
     label: '访问IP',
@@ -56,7 +98,7 @@ export const schemas = ref<FormSchema[]>([
     label: '请求方式',
     componentProps: {
       placeholder: '请选择请求方式',
-      options: [],
+      options: dict.getOption('HTTPMethod'),
       onUpdateValue: (e: any) => {
         console.log(e);
       },
@@ -81,7 +123,7 @@ export const schemas = ref<FormSchema[]>([
     label: '请求耗时',
     componentProps: {
       placeholder: '请选择请求耗时',
-      options: [],
+      options: dict.getOption('HTTPHandlerTime'),
       onUpdateValue: (e: any) => {
         console.log(e);
       },
@@ -94,7 +136,7 @@ export const schemas = ref<FormSchema[]>([
     labelMessage: '支持填入自定义状态码',
     componentProps: {
       placeholder: '请选择状态码',
-      options: [],
+      options: dict.getOption('HTTPApiCode'),
       filterable: true,
       tag: true,
       onUpdateValue: (e: any) => {
@@ -104,31 +146,7 @@ export const schemas = ref<FormSchema[]>([
   },
 ]);
 
-// 字典数据选项
-export const options = ref({
-  HTTPMethod: [] as Option[],
-  HTTPHandlerTime: [] as Option[],
-  HTTPApiCode: [] as Option[],
-});
-
 // 加载字典数据选项
 export function loadOptions() {
-  Dicts({
-    types: ['HTTPMethod', 'HTTPHandlerTime', 'HTTPApiCode'],
-  }).then((res) => {
-    options.value = res;
-    for (const item of schemas.value) {
-      switch (item.field) {
-        case 'method':
-          item.componentProps.options = options.value.HTTPMethod;
-          break;
-        case 'takeUpTime':
-          item.componentProps.options = options.value.HTTPHandlerTime;
-          break;
-        case 'errorCode':
-          item.componentProps.options = options.value.HTTPApiCode;
-          break;
-      }
-    }
-  });
+  dict.loadOptions(['HTTPMethod', 'HTTPHandlerTime', 'HTTPApiCode']);
 }

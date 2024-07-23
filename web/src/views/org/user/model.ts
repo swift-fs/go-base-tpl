@@ -3,11 +3,12 @@ import { ref } from 'vue';
 import { getDeptOption } from '@/api/org/dept';
 import { getRoleOption } from '@/api/system/role';
 import { FormSchema, useForm } from '@/components/Form';
-import { statusOptions } from '@/enums/optionsiEnum';
 import { defRangeShortcuts } from '@/utils/dateUtil';
-import { Dicts } from '@/api/dict/dict';
+import { useDictStore, Option } from '@/store/modules/dict';
 
 // 增加余额/积分.
+
+const dict = useDictStore();
 
 export interface addState {
   id: number;
@@ -166,7 +167,7 @@ const schemas: FormSchema[] = [
     defaultValue: null,
     componentProps: {
       placeholder: '请选择类型',
-      options: statusOptions,
+      options: dict.getOption('sys_normal_disable'),
       onUpdateValue: (e: any) => {
         console.log(e);
       },
@@ -193,42 +194,44 @@ export const [register, {}] = useForm({
   schemas,
 });
 
-export const options = ref<any>({
-  role: [],
-  roleTabs: [{ id: -1, name: '全部' }],
-  dept: [],
-  post: [],
-  sys_user_sex: [],
-  sys_normal_disable: [],
-});
+export const deptTreeOptions = ref([]);
+export const roleTreeOptions = ref([]);
 
 export async function loadOptions() {
-  const dept = await getDeptOption();
-  if (dept.list) {
-    options.value.dept = dept.list;
-  }
+  dict.loadOptions(['adminPostOption', 'sys_user_sex', 'sys_normal_disable']);
 
-  const role = await getRoleOption();
-  if (role.list) {
-    options.value.role = role.list;
-    options.value.roleTabs = [{ id: -1, name: '全部' }];
-    treeDataToCompressed(role.list);
-  }
-
-  const tmpOptions = await Dicts({
-    types: ['adminPostOption', 'sys_user_sex', 'sys_normal_disable'],
+  getDeptOption().then((res) => {
+    if (res.list) {
+      deptTreeOptions.value = res.list;
+    }
   });
-  options.value.post = tmpOptions?.adminPostOption;
-  options.value.sys_user_sex = tmpOptions?.sys_user_sex;
-  options.value.sys_normal_disable = tmpOptions?.sys_normal_disable;
+
+  getRoleOption().then((res) => {
+    if (res.list) {
+      roleTreeOptions.value = res.list;
+      registerRoleTabsOption();
+    }
+  });
 }
 
-function treeDataToCompressed(source) {
+// 将角色Tabs选项注册到字典
+function registerRoleTabsOption() {
+  const items = [{ id: -1, name: '全部' }];
+  treeDataToCompressed(items, roleTreeOptions.value);
+
+  const roleTabs: Option[] = [];
+  for (const item of items) {
+    roleTabs.push(dict.genOption(item.id, item.name));
+  }
+  dict.setOption('roleTabs', roleTabs);
+}
+
+function treeDataToCompressed(items: any[], source: any) {
   for (const i in source) {
-    options.value.roleTabs.push(source[i]);
+    items.push(source[i]);
     source[i].children && source[i].children.length > 0
-      ? treeDataToCompressed(source[i].children)
+      ? treeDataToCompressed(items, source[i].children)
       : ''; // 子级递归
   }
-  return options.value.roleTabs;
+  return items;
 }

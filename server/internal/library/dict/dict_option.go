@@ -12,63 +12,111 @@ import (
 )
 
 // GenDefaultOption 生成默认表格回显样式
-func GenDefaultOption(key interface{}, label string) *model.Option {
+func GenDefaultOption(key interface{}, label string, extra ...any) *model.Option {
+	e := interface{}(nil)
+	if len(extra) > 0 {
+		e = extra[0]
+	}
 	return &model.Option{
 		Key:       key,
 		Label:     label,
 		Value:     key,
 		ListClass: "default",
+		Extra:     e,
 	}
 }
 
-func GenSuccessOption(key interface{}, label string) *model.Option {
+func GenSuccessOption(key interface{}, label string, extra ...any) *model.Option {
+	e := interface{}(nil)
+	if len(extra) > 0 {
+		e = extra[0]
+	}
 	return &model.Option{
 		Key:       key,
 		Label:     label,
 		Value:     key,
 		ListClass: "success",
+		Extra:     e,
 	}
 }
 
-func GenWarningOption(key interface{}, label string) *model.Option {
+func GenWarningOption(key interface{}, label string, extra ...any) *model.Option {
+	e := interface{}(nil)
+	if len(extra) > 0 {
+		e = extra[0]
+	}
 	return &model.Option{
 		Key:       key,
 		Label:     label,
 		Value:     key,
 		ListClass: "warning",
+		Extra:     e,
 	}
 }
 
-func GenErrorOption(key interface{}, label string) *model.Option {
+func GenErrorOption(key interface{}, label string, extra ...any) *model.Option {
+	e := interface{}(nil)
+	if len(extra) > 0 {
+		e = extra[0]
+	}
 	return &model.Option{
 		Key:       key,
 		Label:     label,
 		Value:     key,
 		ListClass: "error",
+		Extra:     e,
 	}
 }
 
-func GenInfoOption(key interface{}, label string) *model.Option {
+func GenInfoOption(key interface{}, label string, extra ...any) *model.Option {
+	e := interface{}(nil)
+	if len(extra) > 0 {
+		e = extra[0]
+	}
 	return &model.Option{
 		Key:       key,
 		Label:     label,
 		Value:     key,
 		ListClass: "info",
+		Extra:     e,
+	}
+}
+
+func GenPrimaryOption(key interface{}, label string, extra ...any) *model.Option {
+	e := interface{}(nil)
+	if len(extra) > 0 {
+		e = extra[0]
+	}
+	return &model.Option{
+		Key:       key,
+		Label:     label,
+		Value:     key,
+		ListClass: "primary",
+		Extra:     e,
 	}
 }
 
 // GenCustomOption 生成自定义表格回显样式
-func GenCustomOption(key interface{}, label string, custom string) *model.Option {
+func GenCustomOption(key interface{}, label string, custom string, extra ...any) *model.Option {
+	e := interface{}(nil)
+	if len(extra) > 0 {
+		e = extra[0]
+	}
 	return &model.Option{
 		Key:       key,
 		Label:     label,
 		Value:     key,
 		ListClass: custom,
+		Extra:     e,
 	}
 }
 
 // GenHashOption 根据不同label以hash算法生成表格回显样式
-func GenHashOption(key interface{}, label string) *model.Option {
+func GenHashOption(key interface{}, label string, extra ...any) *model.Option {
+	e := interface{}(nil)
+	if len(extra) > 0 {
+		e = extra[0]
+	}
 	strings := []string{"default", "primary", "info", "success", "warning", "error"}
 	hash := fnv.New32()
 
@@ -84,6 +132,7 @@ func GenHashOption(key interface{}, label string) *model.Option {
 		Label:     label,
 		Value:     key,
 		ListClass: tag,
+		Extra:     e,
 	}
 }
 
@@ -94,7 +143,7 @@ func GetOptionLabel(ses []*model.Option, key interface{}) string {
 			return v.Label
 		}
 	}
-	return `Unknown`
+	return ``
 }
 
 // HasOptionKey 是否存在指定key

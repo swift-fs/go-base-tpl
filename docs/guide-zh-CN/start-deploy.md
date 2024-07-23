@@ -43,6 +43,7 @@ rm -rf ./resource/public/admin/                       # 删除之前的web资源
 mkdir ./resource/public/admin/                        # 重新创建web资源存放目录，除首次编译后续可以跳过执行此步骤
 cd ../web && yarn build                               # 切换到web项目下，编译web项目
 \cp -rf ./dist/*  ../server/resource/public/admin/    # 将编译好的web资源复制到server对应的资源存放路径下
+cd ../server                                          # 切换回服务端目录下
 echo "y" | gf build                                   # 编译hotgo服务端
 
 # 不出意外你已经编译好了hotgo可执行文件！

@@ -1,67 +1,7 @@
 import { NAvatar, NTag, NText, SelectRenderLabel, SelectRenderTag } from 'naive-ui';
 import { Component, h } from 'vue';
-import { getOptionLabel, getOptionTag, Option } from '@/utils/hotgo';
 import { BellOutlined, NotificationOutlined, SendOutlined } from '@vicons/antd';
-
-export const noticeTypeOptions: Option[] = [
-  {
-    key: 1,
-    value: 1,
-    label: '通知',
-    listClass: 'warning',
-  },
-  {
-    key: 2,
-    value: 2,
-    label: '公告',
-    listClass: 'error',
-  },
-  {
-    key: 3,
-    value: 3,
-    label: '私信',
-    listClass: 'info',
-  },
-];
-
-export const noticeTagOptions: Option[] = [
-  {
-    value: 0,
-    label: '无标签',
-    key: 0,
-    listClass: 'default',
-  },
-  {
-    value: 1,
-    label: '一般',
-    key: 1,
-    listClass: 'info',
-  },
-  {
-    value: 2,
-    label: '紧急',
-    key: 2,
-    listClass: 'error',
-  },
-  {
-    value: 3,
-    label: '重要',
-    key: 3,
-    listClass: 'warning',
-  },
-  {
-    value: 4,
-    label: '提醒',
-    key: 4,
-    listClass: 'success',
-  },
-  {
-    value: 5,
-    label: '次要',
-    key: 5,
-    listClass: 'default',
-  },
-];
+import { useDictStore } from '@/store/modules/dict';
 
 export interface personOption {
   value: number;
@@ -231,8 +171,9 @@ export function parseMessage(row): MessageRow {
   if (row.tag <= 0) {
     return row;
   }
-
-  row.tagTitle = getOptionLabel(noticeTagOptions, row.tag);
-  row.tagProps = { type: getOptionTag(noticeTagOptions, row.tag) };
+  const dict = useDictStore();
+  const label = dict.getLabel('noticeTagOptions', row.tag);
+  row.tagTitle = label;
+  row.tagProps = { type: label };
   return row;
 }

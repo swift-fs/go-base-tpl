@@ -6,7 +6,6 @@
 package consts
 
 // 短信驱动
-
 const (
 	SmsDriveAliYun  = "aliyun"  // 阿里云
 	SmsDriveTencent = "tencent" // 腾讯云
@@ -31,10 +30,4 @@ var (
 		SmsTemplateBind:     "绑定手机号",
 		SmsTemplateCash:     "申请提现",
 	}
-)
-
-// 验证码状态
-const (
-	SmsStatusNotUsed = 1 // 未使用
-	SmsStatusUsed    = 2 // 已使用
 )

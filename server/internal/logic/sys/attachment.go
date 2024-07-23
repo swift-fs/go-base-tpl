@@ -11,8 +11,10 @@ import (
 	"github.com/gogf/gf/v2/errors/gerror"
 	"hotgo/internal/dao"
 	"hotgo/internal/library/contexts"
+	"hotgo/internal/library/dict"
 	"hotgo/internal/library/hgorm/handler"
 	"hotgo/internal/library/storager"
+	"hotgo/internal/model"
 	"hotgo/internal/model/input/sysin"
 	"hotgo/internal/service"
 	"hotgo/utility/format"
@@ -26,6 +28,7 @@ func NewSysAttachment() *sSysAttachment {
 
 func init() {
 	service.RegisterSysAttachment(NewSysAttachment())
+	dict.RegisterFunc("AttachmentKindOption", "上传类型选项", service.SysAttachment().AttachmentKindOption)
 }
 
 // Model ORM模型
@@ -109,5 +112,17 @@ func (s *sSysAttachment) ClearKind(ctx context.Context, in *sysin.AttachmentClea
 	if _, err = s.Model(ctx).Where(dao.SysAttachment.Columns().MemberId, memberId).Where(dao.SysAttachment.Columns().Kind, in.Kind).Delete(); err != nil {
 		err = gerror.Wrap(err, "删除附件上传类型失败，请稍后重试！")
 	}
+	return
+}
+
+// AttachmentKindOption 上传类型选项
+func (s *sSysAttachment) AttachmentKindOption(ctx context.Context) (opts []*model.Option, err error) {
+	opts = append(opts, dict.GenDefaultOption("", "全部"))
+	opts = append(opts, dict.GenSuccessOption(storager.KindImg, "图片", "PictureOutlined"))
+	opts = append(opts, dict.GenPrimaryOption(storager.KindDoc, "文档", "FileWordOutlined"))
+	opts = append(opts, dict.GenSuccessOption(storager.KindAudio, "音频", "CustomerServiceOutlined"))
+	opts = append(opts, dict.GenSuccessOption(storager.KindVideo, "视频", "PlaySquareOutlined"))
+	opts = append(opts, dict.GenSuccessOption(storager.KindZip, "压缩包", "FileZipOutlined"))
+	opts = append(opts, dict.GenSuccessOption(storager.KindOther, "其他", "PlusOutlined"))
 	return
 }

@@ -66,8 +66,8 @@
       </BasicTable>
     </n-card>
     <Edit
-      @reloadTable="reloadTable"
-      @updateShowModal="updateShowModal"
+      @reload-table="reloadTable"
+      @update-show-modal="updateShowModal"
       :showModal="showModal"
       :formParams="formParams"
     />
@@ -75,18 +75,20 @@
 </template>
 
 <script lang="ts" setup>
-  import { computed, h, reactive, ref } from 'vue';
+  import { computed, h, onMounted, reactive, ref } from 'vue';
   import { useDialog, useMessage } from 'naive-ui';
   import { BasicTable, TableAction } from '@/components/Table';
   import { BasicForm, useForm } from '@/components/Form/index';
   import { useSorter } from '@/hooks/common';
   import { Delete, List, Status, Export } from '@/api/addons/hgexample/table';
-  import { State, columns, schemas, options, newState } from './model';
+  import { State, columns, schemas, newState, loadOptions } from './model';
   import { DeleteOutlined, PlusOutlined, ExportOutlined } from '@vicons/antd';
   import { useRouter } from 'vue-router';
-  import { adaTableScrollX, getOptionLabel } from '@/utils/hotgo';
+  import { adaTableScrollX } from '@/utils/hotgo';
   import Edit from './edit.vue';
+  import { useDictStore } from '@/store/modules/dict';
 
+  const dict = useDictStore();
   const router = useRouter();
   const dialog = useDialog();
   const message = useMessage();
@@ -218,9 +220,6 @@
           reloadTable();
         });
       },
-      onNegativeClick: () => {
-        // message.error('取消');
-      },
     });
   }
 
@@ -238,9 +237,6 @@
           reloadTable();
         });
       },
-      onNegativeClick: () => {
-        // message.error('取消');
-      },
     });
   }
 
@@ -251,12 +247,16 @@
 
   function handleStatus(record: Recordable, status: number) {
     Status({ id: record.id, status: status }).then((_res) => {
-      message.success('设为' + getOptionLabel(options.value.sys_normal_disable, status) + '成功');
+      message.success('设为' + dict.getLabel('sys_normal_disable', status) + '成功');
       setTimeout(() => {
         reloadTable();
       });
     });
   }
+
+  onMounted(() => {
+    loadOptions();
+  });
 </script>
 
 <style lang="less" scoped></style>

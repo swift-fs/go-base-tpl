@@ -97,8 +97,8 @@
         preset="dialog"
         :title="
           formParams.id > 0
-            ? '编辑' + getOptionLabel(noticeTypeOptions, formParams.type) + ' #' + formParams.id
-            : '发送' + getOptionLabel(noticeTypeOptions, formParams.type)
+            ? '编辑' + dict.getLabel('noticeTypeOptions', formParams.type) + ' #' + formParams.id
+            : '发送' + dict.getLabel('noticeTypeOptions', formParams.type)
         "
         :style="{
           width: dialogWidth,
@@ -152,7 +152,7 @@
                   placeholder="可以不填"
                   :render-tag="renderTag"
                   v-model:value="formParams.tag"
-                  :options="noticeTagOptions"
+                  :options="dict.getOptionUnRef('noticeTagOptions')"
                 />
               </n-form-item>
             </n-gi>
@@ -208,23 +208,19 @@
     MaxSort,
     Status,
   } from '@/api/apply/notice';
-  import { columns } from './columns';
+  import { columns, loadOptions } from './columns';
   import { BellOutlined, DeleteOutlined, NotificationOutlined, SendOutlined } from '@vicons/antd';
   import { statusOptions } from '@/enums/optionsiEnum';
-  import {
-    noticeTagOptions,
-    noticeTypeOptions,
-    personOption,
-    renderLabel,
-    renderMultipleSelectTag,
-  } from '@/enums/systemMessageEnum';
-  import { adaModalWidth, getOptionLabel } from '@/utils/hotgo';
+  import { personOption, renderLabel, renderMultipleSelectTag } from '@/enums/systemMessageEnum';
+  import { adaModalWidth } from '@/utils/hotgo';
   import { renderTag } from '@/utils';
   import Editor from '@/components/Editor/editor.vue';
   import { cloneDeep } from 'lodash-es';
   import { GetMemberOption } from '@/api/org/user';
   import { usePermission } from '@/hooks/web/usePermission';
+  import { useDictStore } from '@/store/modules/dict';
 
+  const dict = useDictStore();
   const rules = {
     title: {
       required: true,
@@ -241,7 +237,7 @@
       defaultValue: null,
       componentProps: {
         placeholder: '请选择消息类型',
-        options: noticeTypeOptions,
+        options: dict.getOption('noticeTypeOptions'),
         onUpdateValue: (e: any) => {
           console.log(e);
         },
@@ -278,7 +274,7 @@
       defaultValue: null,
       componentProps: {
         placeholder: '请选择类型',
-        options: statusOptions,
+        options: dict.getOption('sys_normal_disable'),
         onUpdateValue: (e: any) => {
           console.log(e);
         },
@@ -483,6 +479,7 @@
   }
 
   onMounted(async () => {
+    loadOptions();
     await getMemberOption();
   });
 </script>

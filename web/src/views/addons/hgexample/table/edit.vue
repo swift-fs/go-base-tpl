@@ -29,7 +29,7 @@
           <n-checkbox-group v-model:value="params.flag">
             <n-space>
               <n-checkbox
-                v-for="item in options.sys_notice_type"
+                v-for="item in dict.getOptionUnRef('sys_notice_type')"
                 :key="item.value"
                 :value="item.value"
                 :label="item.label"
@@ -96,7 +96,10 @@
         </n-form-item>
 
         <n-form-item label="用户渠道" path="channel">
-          <n-select v-model:value="params.channel" :options="options.sys_user_channel" />
+          <n-select
+            v-model:value="params.channel"
+            :options="dict.getOptionUnRef('sys_user_channel')"
+          />
         </n-form-item>
 
         <n-form-item label="所在城市" path="cityId">
@@ -104,7 +107,11 @@
         </n-form-item>
 
         <n-form-item label="用户爱好" path="hobby">
-          <n-select multiple v-model:value="params.hobby" :options="options.sys_user_hobby" />
+          <n-select
+            multiple
+            v-model:value="params.hobby"
+            :options="dict.getOptionUnRef('sys_user_hobby')"
+          />
         </n-form-item>
 
         <n-form-item label="QQ" path="qq">
@@ -126,7 +133,7 @@
         <n-form-item label="状态" path="status">
           <n-radio-group v-model:value="params.status" name="status">
             <n-radio-button
-              v-for="status in options.sys_normal_disable"
+              v-for="status in dict.getOptionUnRef('sys_normal_disable')"
               :key="Number(status.value)"
               :value="Number(status.value)"
               :label="status.label"
@@ -151,7 +158,7 @@
 
 <script lang="ts" setup>
   import { ref, computed, watch } from 'vue';
-  import { rules, options, State, newState } from './model';
+  import { rules, State, newState } from './model';
   import { Edit, MaxSort } from '@/api/addons/hgexample/table';
   import { useMessage } from 'naive-ui';
   import { adaModalWidth } from '@/utils/hotgo';
@@ -161,6 +168,7 @@
   import UploadFile from '@/components/Upload/uploadFile.vue';
   import CitySelector from '@/components/CitySelector/citySelector.vue';
   import FileChooser from '@/components/FileChooser/index.vue';
+  import { useDictStore } from '@/store/modules/dict';
   const emit = defineEmits(['reloadTable', 'updateShowModal']);
 
   interface Props {
@@ -188,6 +196,7 @@
     return props.formParams;
   });
 
+  const dict = useDictStore();
   const message = useMessage();
   const formRef = ref<any>({});
   const formBtnLoading = ref(false);

@@ -2,14 +2,18 @@ import { h, ref } from 'vue';
 import { NAvatar, NImage, NTag, NSwitch, NRate } from 'naive-ui';
 import { cloneDeep } from 'lodash-es';
 import { FormSchema } from '@/components/Form';
-import { Dicts } from '@/api/dict/dict';
 import { Switch } from '@/api/addons/hgexample/table';
 import { isNullObject } from '@/utils/is';
 import { getFileExt } from '@/utils/urlUtils';
 import { defRangeShortcuts, defShortcuts, formatToDate } from '@/utils/dateUtil';
 import { validate } from '@/utils/validateUtil';
-import { errorImg, getOptionLabel, getOptionTag, Options } from '@/utils/hotgo';
+import { fallbackSrc } from '@/utils/hotgo';
+import { useDictStore } from '@/store/modules/dict';
+import { renderOptionTag } from '@/utils';
+
+const dict = useDictStore();
 const $message = window['$message'];
+
 export interface State {
   id: number;
   memberId: number;
@@ -21,7 +25,7 @@ export interface State {
   images: string[] | null;
   attachfile: string;
   attachfiles: string[] | null;
-  map: unknown[] | null;
+  map: any | null;
   star: number;
   description: string;
   price: number;
@@ -94,15 +98,6 @@ export function newState(state: State | null): State {
   }
   return cloneDeep(defaultState);
 }
-
-export const options = ref<Options>({
-  sys_normal_disable: [],
-  sys_user_sex: [],
-  sys_notice_type: [],
-  sys_user_channel: [],
-  sys_user_hobby: [],
-  sys_switch: [],
-});
 
 export const rules = {
   title: {
@@ -207,7 +202,7 @@ export const schemas = ref<FormSchema[]>([
     },
     componentProps: {
       placeholder: '请选择标签',
-      options: [],
+      options: dict.getOption('sys_notice_type'),
       onUpdateChecked: (e: any) => {
         console.log(e);
       },
@@ -221,7 +216,7 @@ export const schemas = ref<FormSchema[]>([
       //span: 24,
     },
     componentProps: {
-      options: [],
+      options: dict.getOption('sys_switch'),
       onUpdateChecked: (e: any) => {
         console.log(e);
       },
@@ -235,7 +230,7 @@ export const schemas = ref<FormSchema[]>([
     componentProps: {
       multiple: true,
       placeholder: '请选择爱好',
-      options: [],
+      options: dict.getOption('sys_user_hobby'),
       onUpdateValue: (e: any) => {
         console.log(e);
       },
@@ -248,7 +243,7 @@ export const schemas = ref<FormSchema[]>([
     defaultValue: null,
     componentProps: {
       placeholder: '请选择类型',
-      options: [],
+      options: dict.getOption('sys_normal_disable'),
       onUpdateValue: (e: any) => {
         console.log(e);
       },
@@ -280,19 +275,7 @@ export const columns = [
         return ``;
       }
       return row.flag.map((tagKey) => {
-        return h(
-          NTag,
-          {
-            style: {
-              marginRight: '6px',
-            },
-            type: getOptionTag(options.value.sys_notice_type, tagKey),
-            bordered: false,
-          },
-          {
-            default: () => getOptionLabel(options.value.sys_notice_type, tagKey),
-          }
-        );
+        return renderOptionTag('sys_notice_type', tagKey);
       });
     },
   },
@@ -304,7 +287,7 @@ export const columns = [
         width: 32,
         height: 32,
         src: row.image,
-        fallbackSrc: errorImg,
+        fallbackSrc: fallbackSrc(),
         style: {
           width: '32px',
           height: '32px',
@@ -326,7 +309,7 @@ export const columns = [
           width: 32,
           height: 32,
           src: image,
-          fallbackSrc: errorImg,
+          fallbackSrc: fallbackSrc(),
           style: {
             width: '32px',
             height: '32px',
@@ -443,46 +426,14 @@ export const columns = [
     title: '状态',
     key: 'status',
     render(row) {
-      if (isNullObject(row.status)) {
-        return ``;
-      }
-      return h(
-        NTag,
-        {
-          style: {
-            marginRight: '6px',
-          },
-          type: getOptionTag(options.value.sys_normal_disable, row.status),
-          bordered: false,
-        },
-        {
-          default: () => getOptionLabel(options.value.sys_normal_disable, row.status),
-        }
-      );
+      return renderOptionTag('sys_normal_disable', row.status);
     },
   },
   {
     title: '爱好',
     key: 'hobby',
     render(row) {
-      if (isNullObject(row.hobby)) {
-        return ``;
-      }
-      return row.hobby.map((tagKey) => {
-        return h(
-          NTag,
-          {
-            style: {
-              marginRight: '6px',
-            },
-            type: getOptionTag(options.value.sys_user_hobby, tagKey),
-            bordered: false,
-          },
-          {
-            default: () => getOptionLabel(options.value.sys_user_hobby, tagKey),
-          }
-        );
-      });
+      return renderOptionTag('sys_user_hobby', row.hobby);
     },
   },
   {
@@ -497,33 +448,13 @@ export const columns = [
   },
 ];
 
-async function loadOptions() {
-  options.value = await Dicts({
-    types: [
-      'sys_normal_disable',
-      'sys_user_sex',
-      'sys_notice_type',
-      'sys_switch',
-      'sys_user_hobby',
-      'sys_user_channel',
-    ],
-  });
-  for (const item of schemas.value) {
-    switch (item.field) {
-      case 'status':
-        item.componentProps.options = options.value.sys_normal_disable;
-        break;
-      case 'flag':
-        item.componentProps.options = options.value.sys_notice_type;
-        break;
-      case 'switch':
-        item.componentProps.options = options.value.sys_switch;
-        break;
-      case 'hobby':
-        item.componentProps.options = options.value.sys_user_hobby;
-        break;
-    }
-  }
+export function loadOptions() {
+  dict.loadOptions([
+    'sys_normal_disable',
+    'sys_user_sex',
+    'sys_notice_type',
+    'sys_switch',
+    'sys_user_hobby',
+    'sys_user_channel',
+  ]);
 }
-
-await loadOptions();

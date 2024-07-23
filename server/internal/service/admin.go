@@ -218,7 +218,7 @@ type (
 	}
 	IAdminRole interface {
 		// Verify 验证权限
-		Verify(ctx context.Context, path, method string) bool
+		Verify(ctx context.Context, path string, method string) bool
 		// List 获取列表
 		List(ctx context.Context, in *adminin.RoleListInp) (res *adminin.RoleListModel, totalCount int, err error)
 		// GetName 获取指定角色的名称

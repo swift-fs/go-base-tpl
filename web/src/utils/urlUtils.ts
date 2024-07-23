@@ -1,3 +1,6 @@
+import { RouteLocationRaw } from 'vue-router';
+import router from '@/router';
+
 /**
  * 将对象添加当作参数拼接到URL上面
  * @param baseUrl 需要拼接的url
@@ -48,4 +51,15 @@ export function getFileExt(fileName: string) {
 export function getNowUrl(): string {
   const w = window.location;
   return w.protocol + '//' + w.host + w.pathname;
+}
+
+// 返回上一页
+export function goBackOrToPage(to: RouteLocationRaw): void {
+  if (router.currentRoute.value.matched.length > 0) {
+    router.go(-1);
+  } else {
+    router.push(to).catch((e) => {
+      console.log('返回上一页失败:', e);
+    });
+  }
 }

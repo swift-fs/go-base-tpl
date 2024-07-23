@@ -18,12 +18,6 @@ const (
 	EmsTemplateCash     = "cash"     // 申请提现
 )
 
-// 验证码状态
-const (
-	EmsStatusNotUsed = 1 // 未使用
-	EmsStatusUsed    = 2 // 已使用
-)
-
 var EmsSubjectMap = g.MapStrStr{
 	EmsTemplateText:     "这是一封来自HotGo的邮件",
 	EmsTemplateCode:     "验证码",

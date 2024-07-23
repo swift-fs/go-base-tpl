@@ -100,7 +100,6 @@
       >
         <n-form
           :model="paymentParams"
-          :rules="rules"
           ref="PaymentRef"
           label-placement="left"
           :label-width="100"
@@ -329,15 +328,14 @@
     formBtnLoading.value = true;
     formRef.value.validate((errors) => {
       if (!errors) {
-        Apply({ money: formParams.value.money })
-          .then((_res) => {
-            message.success('操作成功');
-            setTimeout(() => {
-              showModal.value = false;
-              reloadTable();
-              formParams.value = ref(resetFormParams);
-            });
+        Apply({ money: formParams.value.money }).then((_res) => {
+          message.success('操作成功');
+          setTimeout(() => {
+            showModal.value = false;
+            reloadTable();
+            formParams.value = ref(resetFormParams);
           });
+        });
       } else {
         message.error('请填写完整信息');
       }
@@ -358,15 +356,14 @@
           id: PaymentRef.value.model.id,
           status: PaymentRef.value.model.status,
           msg: PaymentRef.value.model.msg,
-        })
-          .then((_res) => {
-            message.success('操作成功');
-            setTimeout(() => {
-              showPaymentModal.value = false;
-              reloadTable();
-              PaymentRef.value = ref(resetPaymentParams);
-            });
+        }).then((_res) => {
+          message.success('操作成功');
+          setTimeout(() => {
+            showPaymentModal.value = false;
+            reloadTable();
+            PaymentRef.value = ref(resetPaymentParams);
           });
+        });
       } else {
         message.error('请填写完整信息');
       }

@@ -1,12 +1,11 @@
 import { h, ref } from 'vue';
-import { NTag } from 'naive-ui';
 import { cloneDeep } from 'lodash-es';
 import { FormSchema } from '@/components/Form';
-import { Dicts } from '@/api/dict/dict';
-import { isNullObject } from '@/utils/is';
 import { defRangeShortcuts, formatBefore } from '@/utils/dateUtil';
-import { getOptionLabel, getOptionTag, Options } from '@/utils/hotgo';
-import { NetOption } from '@/api/monitor/monitor';
+import { useDictStore } from '@/store/modules/dict';
+import { renderOptionTag } from '@/utils';
+
+const dict = useDictStore();
 
 export interface State {
   id: number;
@@ -55,12 +54,6 @@ export function newState(state: State | null): State {
   return cloneDeep(defaultState);
 }
 
-export const options = ref<Options>({
-  sys_normal_disable: [],
-  group: [],
-  routes: [],
-});
-
 export const rules = {
   group: {
     required: true,
@@ -107,7 +100,7 @@ export const schemas = ref<FormSchema[]>([
     defaultValue: null,
     componentProps: {
       placeholder: '请选择授权分组',
-      options: options.value.group,
+      options: dict.getOption('ServerLicenseGroupOptions'),
       onUpdateValue: (e: any) => {
         console.log(e);
       },
@@ -142,7 +135,7 @@ export const schemas = ref<FormSchema[]>([
     defaultValue: null,
     componentProps: {
       placeholder: '请选择状态',
-      options: [],
+      options: dict.getOption('sys_normal_disable'),
       onUpdateValue: (e: any) => {
         console.log(e);
       },
@@ -187,19 +180,7 @@ export const columns = [
     key: 'group',
     width: 100,
     render(row) {
-      return h(
-        NTag,
-        {
-          style: {
-            marginRight: '6px',
-          },
-          type: 'info',
-          bordered: false,
-        },
-        {
-          default: () => getOptionLabel(options.value.group, row.group),
-        }
-      );
+      return renderOptionTag('ServerLicenseGroupOptions', row.group);
     },
   },
   {
@@ -235,22 +216,7 @@ export const columns = [
     key: 'status',
     width: 100,
     render(row) {
-      if (isNullObject(row.status)) {
-        return ``;
-      }
-      return h(
-        NTag,
-        {
-          style: {
-            marginRight: '6px',
-          },
-          type: getOptionTag(options.value.sys_normal_disable, row.status),
-          bordered: false,
-        },
-        {
-          default: () => getOptionLabel(options.value.sys_normal_disable, row.status),
-        }
-      );
+      return renderOptionTag('sys_normal_disable', row.status);
     },
   },
   {
@@ -283,25 +249,6 @@ export const columns = [
   },
 ];
 
-async function loadOptions() {
-  options.value = await Dicts({
-    types: ['sys_normal_disable'],
-  });
-
-  const netOption = await NetOption();
-  options.value.group = netOption.licenseGroup;
-  options.value.routes = netOption.routes;
-
-  for (const item of schemas.value) {
-    switch (item.field) {
-      case 'status':
-        item.componentProps.options = options.value.sys_normal_disable;
-        break;
-      case 'group':
-        item.componentProps.options = options.value.group;
-        break;
-    }
-  }
+export function loadOptions() {
+  dict.loadOptions(['sys_normal_disable', 'ServerLicenseGroupOptions']);
 }
-
-await loadOptions();

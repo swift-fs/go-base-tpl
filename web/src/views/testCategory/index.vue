@@ -42,10 +42,11 @@
   import { BasicTable, TableAction } from '@/components/Table';
   import { BasicForm, useForm } from '@/components/Form/index';
   import { usePermission } from '@/hooks/web/usePermission';
+  import { useDictStore } from '@/store/modules/dict';
   import { List, Delete, Status } from '@/api/testCategory';
   import { PlusOutlined, DeleteOutlined } from '@vicons/antd';
-  import { columns, schemas, options, loadOptions } from './model';
-  import { adaTableScrollX, getOptionLabel } from '@/utils/hotgo';
+  import { columns, schemas, loadOptions } from './model';
+  import { adaTableScrollX } from '@/utils/hotgo';
   import Edit from './edit.vue';
 
   const dialog = useDialog();
@@ -54,6 +55,7 @@
   const actionRef = ref();
   const searchFormRef = ref<any>({});
   const editRef = ref();
+  const dict = useDictStore();
 
   const checkedIds = ref([]);
 
@@ -175,7 +177,7 @@
   // 修改状态
   function handleStatus(record: Recordable, status: number) {
     Status({ id: record.id, status: status }).then((_res) => {
-      message.success('设为' + getOptionLabel(options.value.sys_normal_disable, status) + '成功');
+      message.success('设为' + dict.getLabel('sys_normal_disable', status) + '成功');
       setTimeout(() => {
         reloadTable();
       });
@@ -184,6 +186,7 @@
 
   onMounted(() => {
     loadOptions();
+
   });
 </script>
 

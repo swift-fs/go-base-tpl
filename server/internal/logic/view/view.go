@@ -91,7 +91,7 @@ func (s *sView) RenderTpl(ctx context.Context, tpl string, data ...model.View) {
 		}
 
 		content := ""
-		if !gres.IsEmpty() {
+		if !gres.IsEmpty() && gres.Contains(tpl) {
 			content = string(gres.GetContent(tpl))
 		} else {
 			content = gfile.GetContents(tpl)

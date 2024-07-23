@@ -83,7 +83,7 @@
   const checkedIds = ref([]);
 
   const actionColumn = reactive({
-    width: 180,
+    width: 160,
     title: '操作',
     key: 'action',
     fixed: 'right',

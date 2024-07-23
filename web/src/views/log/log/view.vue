@@ -8,7 +8,17 @@
         :segmented="{ content: true }"
         :title="data.id ? '日志详情 ID：' + data.id : '日志详情'"
       >
-        <n-descriptions label-placement="left" class="py-2">
+        <template #header-extra>
+          <n-button icon-placement="right" @click="goBackOrToPage({ name: 'log' })">
+            <template #icon>
+              <n-icon>
+                <ArrowRightOutlined />
+              </n-icon>
+            </template>
+            返回
+          </n-button>
+        </template>
+        <n-descriptions label-placement="left" class="py-2" :column="settingStore.isMobile ? 1 : 3">
           <n-descriptions-item label="请求方式">{{ data.method }}</n-descriptions-item>
           <n-descriptions-item>
             <template #label>请求地址</template>
@@ -131,18 +141,23 @@
   import { useMessage } from 'naive-ui';
   import { View } from '@/api/log/log';
   import { timestampToTime } from '@/utils/dateUtil';
+  import { ArrowRightOutlined } from '@vicons/antd';
+  import { goBackOrToPage } from '@/utils/urlUtils';
+  import { State } from '@/views/log/log/model';
+  import { useProjectSettingStore } from '@/store/modules/projectSetting';
 
   const message = useMessage();
   const router = useRouter();
+  const settingStore = useProjectSettingStore();
   const params = router.currentRoute.value.params;
   const loading = ref(false);
-  const data = ref({});
+  const data = ref<State>(new State());
 
   const getInfo = () => {
     loading.value = true;
     View(params)
       .then((res) => {
-        data.value = res;
+        data.value = res as unknown as State;
       })
       .finally(() => {
         loading.value = false;

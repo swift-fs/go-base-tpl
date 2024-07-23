@@ -50,7 +50,7 @@
                 <n-form-item label="部门类型" path="type">
                   <n-radio-group v-model:value="formValue.type" name="type">
                     <n-space>
-                      <n-radio v-for="item in options.deptType" :value="item.value">
+                      <n-radio v-for="item in dict.getOptionUnRef('deptType')" :value="item.value">
                         {{ item.label }}
                       </n-radio>
                     </n-space>
@@ -86,7 +86,7 @@
                 <n-form-item label="状态" path="status">
                   <n-radio-group v-model:value="formValue.status" name="status">
                     <n-radio-button
-                      v-for="status in options.sys_normal_disable"
+                      v-for="status in dict.getOptionUnRef('sys_normal_disable')"
                       :key="status.value"
                       :value="status.value"
                       :label="status.label"
@@ -111,14 +111,16 @@
 <script lang="ts" setup>
   import { ref, computed } from 'vue';
   import { Edit, View, MaxSort } from '@/api/org/dept';
-  import { options, State, newState, treeOption, loadTreeOption, rules } from './model';
+  import { State, newState, treeOption, loadTreeOption, rules } from './model';
   import { useProjectSettingStore } from '@/store/modules/projectSetting';
   import { useMessage } from 'naive-ui';
   import { adaModalWidth } from '@/utils/hotgo';
+  import { useDictStore } from '@/store/modules/dict';
 
   const emit = defineEmits(['reloadTable']);
   const message = useMessage();
   const settingStore = useProjectSettingStore();
+  const dict = useDictStore();
   const loading = ref(false);
   const showModal = ref(false);
   const formValue = ref<State>(newState(null));

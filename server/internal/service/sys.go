@@ -15,6 +15,7 @@ import (
 
 	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/database/gredis"
+	"github.com/gogf/gf/v2/encoding/gjson"
 	"github.com/gogf/gf/v2/net/ghttp"
 )
 
@@ -50,6 +51,8 @@ type (
 		List(ctx context.Context, in *sysin.AttachmentListInp) (list []*sysin.AttachmentListModel, totalCount int, err error)
 		// ClearKind 清空上传类型
 		ClearKind(ctx context.Context, in *sysin.AttachmentClearKindInp) (err error)
+		// AttachmentKindOption 上传类型选项
+		AttachmentKindOption(ctx context.Context) (opts []*model.Option, err error)
 	}
 	ISysBlacklist interface {
 		// Delete 删除
@@ -163,6 +166,8 @@ type (
 		MaxSort(ctx context.Context, in *sysin.CurdDemoMaxSortInp) (res *sysin.CurdDemoMaxSortModel, err error)
 		// View 获取CURD列表指定信息
 		View(ctx context.Context, in *sysin.CurdDemoViewInp) (res *sysin.CurdDemoViewModel, err error)
+		// Status 更新CURD列表状态
+		Status(ctx context.Context, in *sysin.CurdDemoStatusInp) (err error)
 		// Switch 更新CURD列表开关
 		Switch(ctx context.Context, in *sysin.CurdDemoSwitchInp) (err error)
 	}
@@ -253,6 +258,8 @@ type (
 		AutoLog(ctx context.Context) error
 		// AnalysisLog 解析日志数据
 		AnalysisLog(ctx context.Context) entity.SysLog
+		// SimplifyHeaderParams 过滤掉请求头中的大参数
+		SimplifyHeaderParams(data *gjson.Json) *gjson.Json
 		// View 获取指定请求日志信息
 		View(ctx context.Context, in *sysin.LogViewInp) (res *sysin.LogViewModel, err error)
 		// Delete 删除请求日志

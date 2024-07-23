@@ -71,7 +71,10 @@
               </n-gi>
               <n-gi span="1">
                 <n-form-item label="支付状态" path="status">
-                  <n-select v-model:value="formValue.status" :options="options.payStatus" />
+                  <n-select
+                    v-model:value="formValue.status"
+                    :options="dict.getOptionUnRef('payStatus')"
+                  />
                 </n-form-item>
               </n-gi>
             </n-grid>
@@ -91,13 +94,15 @@
 <script lang="ts" setup>
   import { ref, computed } from 'vue';
   import { Edit, View } from '@/api/addons/hgexample/tenantOrder';
-  import { options, State, newState, rules } from './model';
+  import { State, newState, rules } from './model';
   import { useProjectSettingStore } from '@/store/modules/projectSetting';
   import { useMessage } from 'naive-ui';
   import { adaModalWidth } from '@/utils/hotgo';
   import { useUserStore } from '@/store/modules/user';
+  import { useDictStore } from '@/store/modules/dict';
 
   const emit = defineEmits(['reloadTable']);
+  const dict = useDictStore();
   const message = useMessage();
   const settingStore = useProjectSettingStore();
   const userStore = useUserStore();

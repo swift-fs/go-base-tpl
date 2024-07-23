@@ -31,7 +31,12 @@
             </template>
             立即生成
           </n-button>
-          <n-button type="error" @click="batchDelete" :disabled="batchDeleteDisabled" class="min-left-space">
+          <n-button
+            type="error"
+            @click="batchDelete"
+            :disabled="batchDeleteDisabled"
+            class="min-left-space"
+          >
             <template #icon>
               <n-icon>
                 <DeleteOutlined />
@@ -145,14 +150,13 @@
 
 <script lang="ts" setup>
   import { h, onBeforeMount, reactive, ref } from 'vue';
-  import { NTag, TreeSelectOption, useDialog, useMessage } from 'naive-ui';
+  import { NTag, useDialog, useMessage } from 'naive-ui';
   import { BasicTable, TableAction } from '@/components/Table';
   import { BasicForm, FormSchema, useForm } from '@/components/Form/index';
   import { List, Delete, Edit, Selects, TableSelect } from '@/api/develop/code';
   import { useRouter } from 'vue-router';
   import { PlusOutlined, DeleteOutlined } from '@vicons/antd';
   import { newState } from '@/views/develop/code/components/model';
-  import { getOptionLabel } from '@/utils/hotgo';
 
   const selectList = ref({
     db: [],
@@ -347,9 +351,6 @@
           reloadTable();
         });
       },
-      onNegativeClick: () => {
-        // message.error('取消');
-      },
     });
   }
 
@@ -364,9 +365,6 @@
           message.success('操作成功');
           reloadTable();
         });
-      },
-      onNegativeClick: () => {
-        // message.error('取消');
       },
     });
   }
@@ -401,9 +399,7 @@
     e.preventDefault();
     formBtnLoading.value = true;
     formRef.value.validate((errors) => {
-      console.log('formParams:' + JSON.stringify(formParams.value));
       if (!errors) {
-        console.log('formParams:' + JSON.stringify(formParams.value));
         Edit(formParams.value).then((res) => {
           message.success('生成成功，正在前往配置');
           setTimeout(() => {
@@ -427,17 +423,23 @@
     } else {
       dialogWidth.value = def + 'px';
     }
-
     return dialogWidth.value;
   }
 
-  onBeforeMount(async () => {
-    await loadSelect();
-  });
+  function getOptionLabel(options, value) {
+    if (!options || options?.length === 0) {
+      return `unknown`;
+    }
+    for (const item of options) {
+      if (item.value == value) {
+        return item.label;
+      }
+    }
+    return `unknown`;
+  }
 
   const loadSelect = async () => {
     selectList.value = await Selects({});
-
     for (const item of schemas.value) {
       switch (item.field) {
         case 'status':
@@ -452,10 +454,7 @@
 
   const tablesLoading = ref(false);
   // 处理选项更新
-  async function handleDbUpdateValue(
-    value: string | number | Array<string | number> | null,
-    _option: TreeSelectOption | null | Array<TreeSelectOption | null>
-  ) {
+  async function handleDbUpdateValue(value: string | number | Array<string | number> | null) {
     tablesLoading.value = true;
     await loadTableSelect(value);
     tablesLoading.value = false;
@@ -491,6 +490,10 @@
     formParams.value.genTemplate = value;
     selectAddon.value = option.isAddon === true;
   }
+
+  onBeforeMount(async () => {
+    await loadSelect();
+  });
 </script>
 
 <style lang="less" scoped></style>

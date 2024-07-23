@@ -8,6 +8,7 @@ package views
 import (
 	"context"
 	"fmt"
+	"github.com/gogf/gf/v2/util/gutil"
 	"hotgo/internal/consts"
 	"hotgo/internal/library/hggen/views/gohtml"
 	"hotgo/internal/model"
@@ -227,7 +228,7 @@ func ImportWebMethod(vs []string) string {
 
 // CheckTreeTableFields 检查树表字段
 func CheckTreeTableFields(columns []*sysin.GenCodesColumnListModel) (err error) {
-	var fields = []string{"pid", "level", "tree"}
+	var fields = gutil.Copy(defaultTreeFields).([]string)
 	for _, v := range columns {
 		if validate.InSlice(fields, v.Name) {
 			fields = convert.RemoveSlice(fields, v.Name)

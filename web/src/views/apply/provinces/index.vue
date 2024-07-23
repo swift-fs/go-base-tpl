@@ -101,14 +101,14 @@
             </n-space>
           </template>
 
-          <List :checkedId="checkedId" :optionTreeData="optionTreeData" @reloadTable="loadData" />
+          <List :checkedId="checkedId" :optionTreeData="optionTreeData" @reload-table="loadData" />
         </n-card>
       </n-gi>
     </n-grid>
 
     <Edit
-      @reloadTable="loadData"
-      @updateShowModal="updateShowModal"
+      @reload-table="loadData"
+      @update-show-modal="updateShowModal"
       :showModal="showModal"
       :formParams="formParams"
       :optionTreeData="optionTreeData"
@@ -130,7 +130,7 @@
   import List from './list.vue';
   import { getProvincesTree, Delete } from '@/api/apply/provinces';
   import Edit from './edit.vue';
-  import { newState } from './model';
+  import { newState, loadOptions } from './model';
 
   const isUpdate = ref(false);
   const showModal = ref(false);
@@ -196,10 +196,6 @@
     }
   }
 
-  onMounted(async () => {
-    await loadData();
-  });
-
   async function loadData() {
     const treeMenuList = await getProvincesTree();
     Object.assign(
@@ -228,4 +224,9 @@
   function updateShowModal(value) {
     showModal.value = value;
   }
+
+  onMounted(async () => {
+    loadOptions();
+    await loadData();
+  });
 </script>

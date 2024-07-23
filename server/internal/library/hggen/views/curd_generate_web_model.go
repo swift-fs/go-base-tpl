@@ -34,12 +34,13 @@ func (l *gCurd) webModelTplData(ctx context.Context, in *CurdPreviewInput) (data
 	}
 
 	// 根据表单生成情况，按需导包
-	data["import"] = l.generateWebModelImport(ctx, in)
+	data["import"], data["const"] = l.generateWebModelImport(ctx, in)
 	return
 }
 
-func (l *gCurd) generateWebModelImport(ctx context.Context, in *CurdPreviewInput) string {
+func (l *gCurd) generateWebModelImport(ctx context.Context, in *CurdPreviewInput) (string, string) {
 	importBuffer := bytes.NewBuffer(nil)
+	constBuffer := bytes.NewBuffer(nil)
 
 	importBuffer.WriteString("import { h, ref } from 'vue';\n")
 
@@ -53,11 +54,6 @@ func (l *gCurd) generateWebModelImport(ctx context.Context, in *CurdPreviewInput
 	// 导入表单搜索
 	if in.options.Step.HasSearchForm {
 		importBuffer.WriteString("import { FormSchema } from '@/components/Form';\n")
-	}
-
-	// 导入字典选项
-	if in.options.DictOps.Has {
-		importBuffer.WriteString("import { Dicts } from '@/api/dict/dict';\n")
 	}
 
 	// 导入工具类
@@ -97,12 +93,19 @@ func (l *gCurd) generateWebModelImport(ctx context.Context, in *CurdPreviewInput
 		importBuffer.WriteString("import " + ImportWebMethod(importApiMethod) + " from '" + in.options.ImportWebApi + "';\n")
 	}
 
+	// 导入字典选项
+	if in.options.DictOps.Has {
+		importBuffer.WriteString("import { useDictStore } from '@/store/modules/dict';\n")
+		constBuffer.WriteString("const dict = useDictStore();\n")
+	}
+
 	if in.options.Step.HasSwitch {
 		importBuffer.WriteString("import { usePermission } from '@/hooks/web/usePermission';\n")
-		importBuffer.WriteString("const { hasPermission } = usePermission();\n")
-		importBuffer.WriteString("const $message = window['$message'];\n")
+		constBuffer.WriteString("const { hasPermission } = usePermission();\n")
+		constBuffer.WriteString("const $message = window['$message'];\n")
 	}
-	return importBuffer.String()
+
+	return importBuffer.String(), constBuffer.String()
 }
 
 func (l *gCurd) generateWebModelStateItems(ctx context.Context, in *CurdPreviewInput) (items []*StateItem) {
@@ -212,9 +215,6 @@ func (l *gCurd) generateWebModelDictOptions(ctx context.Context, in *CurdPreview
 
 	in.options.DictOps.Has = true
 
-	// 导入选项包
-	in.options.Step.ImportModel.UtilsHotGo = append(in.options.Step.ImportModel.UtilsHotGo, "Option")
-
 	for _, v := range dictTypeList {
 		// 字段映射字典
 		for _, field := range in.masterFields {
@@ -272,6 +272,11 @@ func (l *gCurd) generateWebModelFormSchema(ctx context.Context, in *CurdPreviewI
 	return buffer.String()
 }
 
+// generateWebDictOption 生产字典选项
+func (l *gCurd) generateWebDictOption(typ any) string {
+	return fmt.Sprintf(`dict.getOption('%v')`, typ)
+}
+
 func (l *gCurd) generateWebModelFormSchemaEach(buffer *bytes.Buffer, fields []*sysin.GenCodesColumnListModel, in *CurdPreviewInput) {
 	for _, field := range fields {
 		if !field.IsQuery {
@@ -317,16 +322,16 @@ func (l *gCurd) generateWebModelFormSchemaEach(buffer *bytes.Buffer, fields []*s
 		case FormModeSwitch:
 			fallthrough
 		case FormModeRadio:
-			component = fmt.Sprintf("  {\n    field: '%s',\n    component: '%s',\n    label: '%s',\n    giProps: {\n      //span: 24,\n    },\n    componentProps: {\n      options: [],\n      onUpdateChecked: (e: any) => {\n        console.log(e);\n      },\n    },\n  },\n", field.TsName, "NRadioGroup", field.Dc)
+			component = fmt.Sprintf("  {\n    field: '%s',\n    component: '%s',\n    label: '%s',\n    giProps: {\n      //span: 24,\n    },\n    componentProps: {\n      options: %v,\n      onUpdateChecked: (e: any) => {\n        console.log(e);\n      },\n    },\n  },\n", field.TsName, "NRadioGroup", field.Dc, l.generateWebDictOption(in.options.dictMap[field.TsName]))
 
 		case FormModeCheckbox:
-			component = fmt.Sprintf("  {\n    field: '%s',\n    component: '%s',\n    label: '%s',\n    giProps: {\n      span: 1,\n    },\n    componentProps: {\n      placeholder: '请选择%s',\n      options: [],\n      onUpdateChecked: (e: any) => {\n        console.log(e);\n      },\n    },\n  },\n", field.TsName, "NCheckbox", field.Dc, field.Dc)
+			component = fmt.Sprintf("  {\n    field: '%s',\n    component: '%s',\n    label: '%s',\n    giProps: {\n      span: 1,\n    },\n    componentProps: {\n      placeholder: '请选择%s',\n      options: %v,\n      onUpdateChecked: (e: any) => {\n        console.log(e);\n      },\n    },\n  },\n", field.TsName, "NCheckbox", field.Dc, field.Dc, l.generateWebDictOption(in.options.dictMap[field.TsName]))
 
 		case FormModeSelect:
-			component = fmt.Sprintf("  {\n    field: '%s',\n    component: '%s',\n    label: '%s',\n    defaultValue: null,\n    componentProps: {\n      placeholder: '请选择%s',\n      options: [],\n      onUpdateValue: (e: any) => {\n        console.log(e);\n      },\n    },\n  },\n", field.TsName, "NSelect", field.Dc, field.Dc)
+			component = fmt.Sprintf("  {\n    field: '%s',\n    component: '%s',\n    label: '%s',\n    defaultValue: null,\n    componentProps: {\n      placeholder: '请选择%s',\n      options: %v,\n      onUpdateValue: (e: any) => {\n        console.log(e);\n      },\n    },\n  },\n", field.TsName, "NSelect", field.Dc, field.Dc, l.generateWebDictOption(in.options.dictMap[field.TsName]))
 
 		case FormModeSelectMultiple:
-			component = fmt.Sprintf("  {\n    field: '%s',\n    component: '%s',\n    label: '%s',\n    defaultValue: null,\n    componentProps: {\n      multiple: true,\n      placeholder: '请选择%s',\n      options: [],\n      onUpdateValue: (e: any) => {\n        console.log(e);\n      },\n    },\n  },\n", field.TsName, "NSelect", field.Dc, field.Dc)
+			component = fmt.Sprintf("  {\n    field: '%s',\n    component: '%s',\n    label: '%s',\n    defaultValue: null,\n    componentProps: {\n      multiple: true,\n      placeholder: '请选择%s',\n      options: %v,\n      onUpdateValue: (e: any) => {\n        console.log(e);\n      },\n    },\n  },\n", field.TsName, "NSelect", field.Dc, field.Dc, l.generateWebDictOption(in.options.dictMap[field.TsName]))
 
 		default:
 			component = defaultComponent
@@ -373,7 +378,7 @@ func (l *gCurd) generateWebModelColumnsEach(buffer *bytes.Buffer, in *CurdPrevie
 
 		// 查询用户摘要
 		if in.options.Step.HasHookMemberSummary && IsMemberSummaryField(field.Name) {
-			buffer.WriteString(fmt.Sprintf("  {\n    title: '%v',\n    key: '%v',\n    align: '%v',\n    width: %v,\n    render(row) {\n      return renderPopoverMemberSumma(row.%vSumma);\n    },\n  },\n", field.Dc, field.TsName, field.Align, field.Width, field.TsName))
+			buffer.WriteString(fmt.Sprintf("  {\n    title: '%v',\n    key: '%v',\n    align: '%v',\n    width: %v,\n    render(row: State) {\n      return renderPopoverMemberSumma(row.%vSumma);\n    },\n  },\n", field.Dc, field.TsName, field.Align, field.Width, field.TsName))
 			in.options.Step.ImportModel.UtilsIndex = append(in.options.Step.ImportModel.UtilsIndex, []string{"renderPopoverMemberSumma", "MemberSumma"}...)
 			continue
 		}
@@ -381,7 +386,7 @@ func (l *gCurd) generateWebModelColumnsEach(buffer *bytes.Buffer, in *CurdPrevie
 		// 这里根据编辑表单组件来进行推断，如果没有则使用默认input，这可能会导致和查询条件所需参数不符的情况
 		switch field.FormMode {
 		case FormModeDate:
-			component = fmt.Sprintf("  {\n    title: '%s',\n    key: '%s',\n    align: '%v',\n    width: %v,\n    render(row) {\n      return formatToDate(row.%s);\n    },\n  },\n", field.Dc, field.TsName, field.Align, field.Width, field.TsName)
+			component = fmt.Sprintf("  {\n    title: '%s',\n    key: '%s',\n    align: '%v',\n    width: %v,\n    render(row: State) {\n      return formatToDate(row.%s);\n    },\n  },\n", field.Dc, field.TsName, field.Align, field.Width, field.TsName)
 			in.options.Step.ImportModel.UtilsDate = append(in.options.Step.ImportModel.UtilsDate, "formatToDate")
 
 		case FormModeRadio:
@@ -391,49 +396,46 @@ func (l *gCurd) generateWebModelColumnsEach(buffer *bytes.Buffer, in *CurdPrevie
 				err = gerror.Newf("设置单选下拉框选项时，必须选择字典类型，字段名称:%v", field.Name)
 				return
 			}
-			component = fmt.Sprintf("  {\n    title: '%s',\n    key: '%s',\n    align: '%v',\n    width: %v,\n    render(row) {\n      if (isNullObject(row.%s)) {\n        return ``;\n      }\n      return h(\n        NTag,\n        {\n          style: {\n            marginRight: '6px',\n          },\n          type: getOptionTag(options.value.%s, row.%s),\n          bordered: false,\n        },\n        {\n          default: () => getOptionLabel(options.value.%s, row.%s),\n        }\n      );\n    },\n  },\n", field.Dc, field.TsName, field.Align, field.Width, field.TsName, in.options.dictMap[field.TsName], field.TsName, in.options.dictMap[field.TsName], field.TsName)
-			in.options.Step.ImportModel.NaiveUI = append(in.options.Step.ImportModel.NaiveUI, "NTag")
-			in.options.Step.ImportModel.UtilsIs = append(in.options.Step.ImportModel.UtilsIs, "isNullObject")
-			in.options.Step.ImportModel.UtilsHotGo = append(in.options.Step.ImportModel.UtilsHotGo, []string{"getOptionLabel", "getOptionTag"}...)
+			component = fmt.Sprintf("  {\n    title: '%s',\n    key: '%s',\n    align: '%v',\n    width: %v,\n    render(row: State) {\n      return renderOptionTag('%v', row.%v);\n    },\n  },\n", field.Dc, field.TsName, field.Align, field.Width, in.options.dictMap[field.TsName], field.TsName)
+			in.options.Step.ImportModel.UtilsIndex = append(in.options.Step.ImportModel.UtilsIndex, "renderOptionTag")
 
 		case FormModeSelectMultiple:
 			if g.IsEmpty(in.options.dictMap[field.TsName]) {
 				err = gerror.Newf("设置多选下拉框选项时，必须选择字典类型，字段名称:%v", field.Name)
 				return
 			}
-			component = fmt.Sprintf("  {\n    title: '%s',\n    key: '%s',\n    align: '%v',\n    width: %v,\n    render(row) {\n      if (isNullObject(row.%s) || !isArray(row.%s)) {\n        return ``;\n      }\n      return row.%s.map((tagKey) => {\n        return h(\n          NTag,\n          {\n            style: {\n              marginRight: '6px',\n            },\n            type: getOptionTag(options.value.%s, tagKey),\n            bordered: false,\n          },\n          {\n            default: () => getOptionLabel(options.value.%s, tagKey),\n          }\n        );\n      });\n    },\n  },\n", field.Dc, field.TsName, field.Align, field.Width, field.TsName, field.TsName, field.TsName, in.options.dictMap[field.TsName], in.options.dictMap[field.TsName])
+			component = fmt.Sprintf("  {\n    title: '%s',\n    key: '%s',\n    align: '%v',\n    width: %v,\n    render(row: State) {\n      if (isNullObject(row.%s) || !isArray(row.%s)) {\n        return ``;\n      }\n      return row.%s.map((tagKey) => {\n        return renderOptionTag('%s', row.tagKey)\n      });\n    },\n  },\n", field.Dc, field.TsName, field.Align, field.Width, field.TsName, field.TsName, field.TsName, in.options.dictMap[field.TsName])
 			in.options.Step.ImportModel.NaiveUI = append(in.options.Step.ImportModel.NaiveUI, "NTag")
 			in.options.Step.ImportModel.UtilsIs = append(in.options.Step.ImportModel.UtilsIs, "isNullObject")
-			in.options.Step.ImportModel.UtilsHotGo = append(in.options.Step.ImportModel.UtilsHotGo, []string{"getOptionLabel", "getOptionTag"}...)
 
 		case FormModeUploadImage:
-			component = fmt.Sprintf("  {\n    title: '%s',\n    key: '%s',\n    align: '%v',\n    width: %v,\n    render(row) {\n      return h(%s, {\n        width: 32,\n        height: 32,\n        src: row.%s,\n        fallbackSrc: errorImg,\n        onError: errorImg,\n        style: {\n          width: '32px',\n          height: '32px',\n          'max-width': '100%%',\n          'max-height': '100%%',\n        },\n      });\n    },\n  },\n", field.Dc, field.TsName, field.Align, field.Width, "NImage", field.TsName)
+			component = fmt.Sprintf("  {\n    title: '%s',\n    key: '%s',\n    align: '%v',\n    width: %v,\n    render(row: State) {\n      return h(%s, {\n        width: 32,\n        height: 32,\n        src: row.%s,\n        fallbackSrc: fallbackSrc(),\n        onError: errorImg,\n        style: {\n          width: '32px',\n          height: '32px',\n          'max-width': '100%%',\n          'max-height': '100%%',\n        },\n      });\n    },\n  },\n", field.Dc, field.TsName, field.Align, field.Width, "NImage", field.TsName)
 			in.options.Step.ImportModel.NaiveUI = append(in.options.Step.ImportModel.NaiveUI, "NImage")
-			in.options.Step.ImportModel.UtilsHotGo = append(in.options.Step.ImportModel.UtilsHotGo, "errorImg")
+			in.options.Step.ImportModel.UtilsHotGo = append(in.options.Step.ImportModel.UtilsHotGo, "fallbackSrc")
 
 		case FormModeUploadImages:
-			component = fmt.Sprintf("  {\n    title: '%s',\n    key: '%s',\n    align: '%v',\n    width: %v,\n    render(row) {\n      if (isNullObject(row.%s)) {\n        return ``;\n      }\n      return row.%s.map((image) => {\n        return h(%s, {\n          width: 32,\n          height: 32,\n          src: image,\n        onError: errorImg,\n          style: {\n            width: '32px',\n            height: '32px',\n            'max-width': '100%%',\n            'max-height': '100%%',\n            'margin-left': '2px',\n          },\n        });\n      });\n    },\n  },\n", field.Dc, field.TsName, field.Align, field.Width, field.TsName, field.TsName, "NImage")
+			component = fmt.Sprintf("  {\n    title: '%s',\n    key: '%s',\n    align: '%v',\n    width: %v,\n    render(row: State) {\n      if (isNullObject(row.%s)) {\n        return ``;\n      }\n      return row.%s.map((image) => {\n        return h(%s, {\n          width: 32,\n          height: 32,\n          src: image,\n        onError: errorImg,\n          style: {\n            width: '32px',\n            height: '32px',\n            'max-width': '100%%',\n            'max-height': '100%%',\n            'margin-left': '2px',\n          },\n        });\n      });\n    },\n  },\n", field.Dc, field.TsName, field.Align, field.Width, field.TsName, field.TsName, "NImage")
 			in.options.Step.ImportModel.NaiveUI = append(in.options.Step.ImportModel.NaiveUI, "NImage")
 			in.options.Step.ImportModel.UtilsIs = append(in.options.Step.ImportModel.UtilsIs, "isArray")
 			in.options.Step.ImportModel.UtilsHotGo = append(in.options.Step.ImportModel.UtilsHotGo, "errorImg")
 
 		case FormModeUploadFile:
-			component = fmt.Sprintf("  {\n    title: '%s',\n    key: '%s',\n    align: '%v',\n    width: %v,\n    render(row) {\n      if (row.%s === '') {\n        return ``;\n      }\n      return h(\n        %s,\n        {\n          size: 'small',\n        },\n        {\n          default: () => getFileExt(row.%s),\n        }\n      );\n    },\n  },\n", field.Dc, field.TsName, field.Align, field.Width, field.TsName, "NAvatar", field.TsName)
+			component = fmt.Sprintf("  {\n    title: '%s',\n    key: '%s',\n    align: '%v',\n    width: %v,\n    render(row: State) {\n      if (row.%s === '') {\n        return ``;\n      }\n      return h(\n        %s,\n        {\n          size: 'small',\n        },\n        {\n          default: () => getFileExt(row.%s),\n        }\n      );\n    },\n  },\n", field.Dc, field.TsName, field.Align, field.Width, field.TsName, "NAvatar", field.TsName)
 			in.options.Step.ImportModel.NaiveUI = append(in.options.Step.ImportModel.NaiveUI, "NAvatar")
 			in.options.Step.ImportModel.UtilsUrl = append(in.options.Step.ImportModel.UtilsUrl, "getFileExt")
 
 		case FormModeUploadFiles:
-			component = fmt.Sprintf("  {\n    title: '%s',\n    key: '%s',\n    align: '%v',\n    width: %v,\n    render(row) {\n      if (isNullObject(row.%s)) {\n        return ``;\n      }\n      return row.%s.map((attachfile) => {\n        return h(\n          %s,\n          {\n            size: 'small',\n            style: {\n              'margin-left': '2px',\n            },\n          },\n          {\n            default: () => getFileExt(attachfile),\n          }\n        );\n      });\n    },\n  },\n", field.Dc, field.TsName, field.Align, field.Width, field.TsName, field.TsName, "NAvatar")
+			component = fmt.Sprintf("  {\n    title: '%s',\n    key: '%s',\n    align: '%v',\n    width: %v,\n    render(row: State) {\n      if (isNullObject(row.%s)) {\n        return ``;\n      }\n      return row.%s.map((attachfile) => {\n        return h(\n          %s,\n          {\n            size: 'small',\n            style: {\n              'margin-left': '2px',\n            },\n          },\n          {\n            default: () => getFileExt(attachfile),\n          }\n        );\n      });\n    },\n  },\n", field.Dc, field.TsName, field.Align, field.Width, field.TsName, field.TsName, "NAvatar")
 			in.options.Step.ImportModel.NaiveUI = append(in.options.Step.ImportModel.NaiveUI, "NAvatar")
 			in.options.Step.ImportModel.UtilsIs = append(in.options.Step.ImportModel.UtilsIs, "isNullObject")
 			in.options.Step.ImportModel.UtilsUrl = append(in.options.Step.ImportModel.UtilsUrl, "getFileExt")
 
 		case FormModeSwitch:
-			component = fmt.Sprintf("  {\n    title: '%s',\n    key: '%s',\n    align: '%v',\n    width: %v,\n    render(row) {\n      return h(%s, {\n        value: row.%s === 1,\n        checked: '开启',\n        unchecked: '关闭',\n        disabled: !hasPermission(['%s']),\n        onUpdateValue: function (e) {\n          console.log('onUpdateValue e:' + JSON.stringify(e));\n          row.%s = e ? 1 : 2;\n          Switch({ %s: row.%s, key: '%s', value: row.%s }).then((_res) => {\n            $message.success('操作成功');\n          });\n        },\n      });\n    },\n  },\n", field.Dc, field.TsName, field.Align, field.Width, "NSwitch", field.TsName, "/"+in.options.ApiPrefix+"/switch", field.TsName, in.pk.TsName, in.pk.TsName, convert.CamelCaseToUnderline(field.TsName), field.TsName)
+			component = fmt.Sprintf("  {\n    title: '%s',\n    key: '%s',\n    align: '%v',\n    width: %v,\n    render(row: State) {\n      return h(%s, {\n        value: row.%s === 1,\n        checked: '开启',\n        unchecked: '关闭',\n        disabled: !hasPermission(['%s']),\n        onUpdateValue: function (e) {\n          console.log('onUpdateValue e:' + JSON.stringify(e));\n          row.%s = e ? 1 : 2;\n          Switch({ %s: row.%s, key: '%s', value: row.%s }).then((_res) => {\n            $message.success('操作成功');\n          });\n        },\n      });\n    },\n  },\n", field.Dc, field.TsName, field.Align, field.Width, "NSwitch", field.TsName, "/"+in.options.ApiPrefix+"/switch", field.TsName, in.pk.TsName, in.pk.TsName, convert.CamelCaseToUnderline(field.TsName), field.TsName)
 			in.options.Step.ImportModel.NaiveUI = append(in.options.Step.ImportModel.NaiveUI, "NSwitch")
 
 		case FormModeRate:
-			component = fmt.Sprintf("  {\n    title: '%s',\n    key: '%s',\n    align: '%v',\n    width: %v,\n    render(row) {\n      return h(%s, {\n        allowHalf: true,\n        readonly: true,\n        defaultValue: row.%s,\n      });\n    },\n  },\n", field.Dc, field.TsName, field.Align, field.Width, "NRate", field.TsName)
+			component = fmt.Sprintf("  {\n    title: '%s',\n    key: '%s',\n    align: '%v',\n    width: %v,\n    render(row: State) {\n      return h(%s, {\n        allowHalf: true,\n        readonly: true,\n        defaultValue: row.%s,\n      });\n    },\n  },\n", field.Dc, field.TsName, field.Align, field.Width, "NRate", field.TsName)
 			in.options.Step.ImportModel.NaiveUI = append(in.options.Step.ImportModel.NaiveUI, "NRate")
 
 		default:

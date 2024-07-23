@@ -40,7 +40,7 @@
                   @{end}
 
                   @{ if eq .options.Step.HasBatchDel true }
-                  <n-button v-if="hasPermission(['/@{.apiPrefix}/delete'])" type="error" icon-placement="left" @click="handleEdit(selectedState)" :disabled="selectedState.@{.pk.TsName} < 1">
+                  <n-button v-if="hasPermission(['/@{.apiPrefix}/delete'])" type="error" icon-placement="left" @click="handleDelete(selectedState)" :disabled="selectedState.@{.pk.TsName} < 1">
                     <template #icon>
                       <div class="flex items-center">
                         <n-icon size="14">
@@ -183,7 +183,7 @@
 
 <script lang="ts" setup>
 @{.import}
-
+  @{ if eq .options.DictOps.Has true }const dict = useDictStore();@{end}
   const dialog = useDialog();
   const message = useMessage();
   const { hasPermission } = usePermission();
@@ -194,7 +194,6 @@
   @{ if eq .options.Step.HasCheck true }const checkedIds = ref([]);@{end}
   @{ if and (eq .options.Step.IsTreeTable true) (eq .options.Step.IsOptionTreeTable false) }const expandedKeys = ref([]);
   const allTreeKeys = ref([]);@{end}
-
   @{ if eq .options.Step.IsOptionTreeTable true }const expandedKeys = ref([]);
   const pattern = ref('');
   const selectedState = ref<State>(newState(null));
@@ -205,7 +204,7 @@
     title: '操作',
     key: 'action',
     fixed: 'right',
-    render(record) {
+    render(record: State) {
       return h(TableAction as any, {
         style: 'button',
         actions: [
@@ -391,7 +390,7 @@
   // 修改状态
   function handleStatus(record: Recordable, status: number) {
     Status({ @{.pk.TsName}: record.@{.pk.TsName}, status: status }).then((_res) => {
-      message.success('设为' + getOptionLabel(options.value.sys_normal_disable, status) + '成功');
+      message.success('设为' + dict.getLabel('sys_normal_disable', status) + '成功');
       setTimeout(() => {
         reloadTable();
       });
@@ -414,6 +413,7 @@
   }@{end}
 
   @{ if eq .options.Step.IsOptionTreeTable true }
+  // 选中树节点
   function handleSelected(keys, option) {
     if (keys.length) {
       selectedState.value = newState(option[0]);
@@ -423,10 +423,12 @@
     }
   }
 
+  // 展开指定节点
   function handleOnExpandedKeys(keys) {
     expandedKeys.value = keys;
   }
 
+  // 展开全部节点
   function handleAllExpanded() {
     if (expandedKeys.value.length) {
       expandedKeys.value = [];
@@ -445,10 +447,10 @@
     });
   }@{end}
 
-  @{ if eq .dictOptions.Has true }
+@{ if or (eq .dictOptions.Has true) (eq .options.Step.IsOptionTreeTable true) }
   onMounted(() => {
-    loadOptions();@{ if eq .options.Step.IsOptionTreeTable true }
-    firstLoadTreeOption();@{end}
+    @{ if eq .dictOptions.Has true }loadOptions();@{end}
+    @{ if eq .options.Step.IsOptionTreeTable true }firstLoadTreeOption();@{end}
   });@{end}
 </script>
 

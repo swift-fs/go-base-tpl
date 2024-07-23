@@ -30,7 +30,7 @@
                 </template>
                 编辑
               </n-button>
-              <n-button v-if="hasPermission(['/optionTreeDemo/delete'])" type="error" icon-placement="left" @click="handleEdit(selectedState)" :disabled="selectedState.id < 1">
+              <n-button v-if="hasPermission(['/optionTreeDemo/delete'])" type="error" icon-placement="left" @click="handleDelete(selectedState)" :disabled="selectedState.id < 1">
                 <template #icon>
                   <div class="flex items-center">
                     <n-icon size="14">
@@ -135,12 +135,14 @@
   import { BasicTable, TableAction } from '@/components/Table';
   import { BasicForm, useForm } from '@/components/Form/index';
   import { usePermission } from '@/hooks/web/usePermission';
+  import { useDictStore } from '@/store/modules/dict';
   import { List, Delete, TreeOption } from '@/api/optionTreeDemo';
   import { PlusOutlined, EditOutlined, DeleteOutlined, AlignLeftOutlined, FormOutlined, SearchOutlined } from '@vicons/antd';
   import { columns, schemas, loadOptions, loadTreeOption, treeOption, State, newState } from './model';
   import { adaTableScrollX, getTreeKeys } from '@/utils/hotgo';
   import Edit from './edit.vue';
 
+  const dict = useDictStore();
   const dialog = useDialog();
   const message = useMessage();
   const { hasPermission } = usePermission();
@@ -160,7 +162,7 @@
     title: '操作',
     key: 'action',
     fixed: 'right',
-    render(record) {
+    render(record: State) {
       return h(TableAction as any, {
         style: 'button',
         actions: [
@@ -274,6 +276,7 @@
     });
   }
 
+  // 选中树节点
   function handleSelected(keys, option) {
     if (keys.length) {
       selectedState.value = newState(option[0]);
@@ -283,10 +286,12 @@
     }
   }
 
+  // 展开指定节点
   function handleOnExpandedKeys(keys) {
     expandedKeys.value = keys;
   }
 
+  // 展开全部节点
   function handleAllExpanded() {
     if (expandedKeys.value.length) {
       expandedKeys.value = [];

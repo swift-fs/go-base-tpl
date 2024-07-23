@@ -1,9 +1,10 @@
-import { h, ref } from 'vue';
+import { h } from 'vue';
 import { NTag } from 'naive-ui';
 import { cloneDeep } from 'lodash-es';
-import { getOptionLabel, getOptionTag, Options } from '@/utils/hotgo';
-import { Dicts } from '@/api/dict/dict';
-import { isNullObject } from '@/utils/is';
+import { useDictStore } from '@/store/modules/dict';
+import { renderOptionTag } from '@/utils';
+
+const dict = useDictStore();
 
 export const listColumns = [
   {
@@ -45,22 +46,7 @@ export const listColumns = [
     title: '状态',
     key: 'status',
     render(row) {
-      if (isNullObject(row.status)) {
-        return ``;
-      }
-      return h(
-        NTag,
-        {
-          style: {
-            marginRight: '6px',
-          },
-          type: getOptionTag(options.value.sys_normal_disable, row.status),
-          bordered: false,
-        },
-        {
-          default: () => getOptionLabel(options.value.sys_normal_disable, row.status),
-        }
-      );
+      return renderOptionTag('sys_normal_disable', row.status);
     },
   },
 ];
@@ -96,14 +82,6 @@ export function newState(state: State | null): State {
   return cloneDeep(defaultState);
 }
 
-export const options = ref<Options>({
-  sys_normal_disable: [],
-});
-
-async function loadOptions() {
-  options.value = await Dicts({
-    types: ['sys_normal_disable'],
-  });
+export function loadOptions() {
+  dict.loadOptions(['sys_normal_disable']);
 }
-
-await loadOptions();

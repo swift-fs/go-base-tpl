@@ -72,17 +72,17 @@
     <FileUpload ref="fileUploadRef" :finish-call="handleFinishCall" />
     <FileUpload ref="imageUploadRef" :finish-call="handleFinishCall" upload-type="image" />
     <FileUpload ref="docUploadRef" :finish-call="handleFinishCall" upload-type="doc" />
-    <MultipartUpload ref="multipartUploadRef" @onFinish="handleFinishCall" />
+    <MultipartUpload ref="multipartUploadRef" @on-finish="handleFinishCall" />
   </div>
 </template>
 
 <script lang="ts" setup>
-  import { h, reactive, ref } from 'vue';
+  import { h, onMounted, reactive, ref } from 'vue';
   import { useDialog, useMessage } from 'naive-ui';
   import { BasicTable, TableAction } from '@/components/Table';
   import { BasicForm, useForm } from '@/components/Form/index';
   import { Delete, List } from '@/api/apply/attachment';
-  import { columns, schemas } from './columns';
+  import { columns, schemas, loadOptions } from './columns';
   import {
     DeleteOutlined,
     UploadOutlined,
@@ -179,9 +179,6 @@
           reloadTable();
         });
       },
-      onNegativeClick: () => {
-        // message.error('取消');
-      },
     });
   }
 
@@ -196,9 +193,6 @@
           message.success('操作成功');
           reloadTable();
         });
-      },
-      onNegativeClick: () => {
-        // message.error('取消');
       },
     });
   }
@@ -216,6 +210,10 @@
       reloadTable();
     }
   }
+
+  onMounted(async () => {
+    loadOptions();
+  });
 </script>
 
 <style lang="less" scoped></style>

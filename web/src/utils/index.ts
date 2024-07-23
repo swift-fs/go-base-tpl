@@ -13,9 +13,10 @@ import {
 } from 'naive-ui';
 import { EllipsisHorizontalCircleOutline } from '@vicons/ionicons5';
 import { PageEnum } from '@/enums/pageEnum';
-import { isObject } from './is/index';
+import { isNullObject, isObject } from './is/index';
 import { cloneDeep } from 'lodash-es';
-import { VNode } from '@vue/runtime-core';
+import { VNode } from 'vue';
+import { DictType, useDictStore } from '@/store/modules/dict';
 
 export const renderTooltip = (trigger, content) => {
   return h(NTooltip, null, {
@@ -70,6 +71,27 @@ export const renderTag: SelectRenderTag = ({ option }) => {
       type: option.listClass as 'success' | 'warning' | 'error' | 'info' | 'primary' | 'default',
     },
     { default: () => option.label }
+  );
+};
+
+// renderOptionTag 选项标签
+export const renderOptionTag = (type: DictType, value: any) => {
+  if (isNullObject(value)) {
+    return ``;
+  }
+  const dict = useDictStore();
+  return h(
+    NTag,
+    {
+      style: {
+        marginRight: '6px',
+      },
+      type: dict.getType(type, value),
+      bordered: false,
+    },
+    {
+      default: () => dict.getLabel(type, value),
+    }
   );
 };
 
@@ -329,7 +351,7 @@ export function lighten(color: string, amount: number) {
 
 // 获取树的所有节点key
 export function getAllExpandKeys(treeData: any): any[] {
-  let expandedKeys = [];
+  let expandedKeys: any = [];
   const expandKeys = (items: any[]) => {
     items.forEach((item: any) => {
       expandedKeys.push(item.key);
@@ -347,7 +369,7 @@ export function getAllExpandKeys(treeData: any): any[] {
 }
 
 // 从树中查找指定节点
-export function findTreeNode(data: any[], key?: string | number, keyField = 'key'): any {
+export function findTreeNode(data: any, key?: string | number, keyField = 'key'): any {
   for (const item of data) {
     if (item[keyField] == key) {
       return item;

@@ -58,15 +58,15 @@
     </n-card>
 
     <ApplyRefund
-      @reloadTable="reloadTable"
-      @updateShowModal="updateShowModal"
+      @reload-table="reloadTable"
+      @update-show-modal="updateShowModal"
       :showModal="showModal"
       :formParams="formParams"
     />
 
     <AcceptRefund
-      @reloadTable="reloadTable"
-      @updateShowModal="updateAcceptShowModal"
+      @reload-table="reloadTable"
+      @update-show-modal="updateAcceptShowModal"
       :showModal="showAcceptModal"
       :formParams="formParams"
     />
@@ -183,9 +183,6 @@
           message.success('删除成功');
           reloadTable();
         });
-      },
-      onNegativeClick: () => {
-        // message.error('取消');
       },
     });
   }

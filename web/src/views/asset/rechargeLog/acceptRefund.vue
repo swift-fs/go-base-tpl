@@ -36,7 +36,10 @@
           </n-form-item>
 
           <n-form-item label="更新状态" path="status">
-            <n-select v-model:value="params.status" :options="options.acceptRefundStatus" />
+            <n-select
+              v-model:value="params.status"
+              :options="dict.getOptionUnRef('acceptRefundStatus')"
+            />
           </n-form-item>
 
           <n-form-item label="拒绝原因" path="rejectRefundReason" v-if="params.status === 9">
@@ -64,10 +67,11 @@
 
 <script lang="ts" setup>
   import { ref, computed, watch } from 'vue';
-  import { rules, State, newState, options } from './model';
+  import { rules, State, newState } from './model';
   import { useMessage } from 'naive-ui';
   import { adaModalWidth } from '@/utils/hotgo';
   import { AcceptRefund, View } from '@/api/order';
+  import { useDictStore } from '@/store/modules/dict';
   const emit = defineEmits(['reloadTable', 'updateShowModal']);
 
   interface Props {
@@ -93,6 +97,7 @@
 
   const loading = ref(false);
   const params = ref<State>(props.formParams);
+  const dict = useDictStore();
   const message = useMessage();
   const formRef = ref<any>({});
   const formBtnLoading = ref(false);

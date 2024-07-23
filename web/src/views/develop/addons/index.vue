@@ -74,7 +74,7 @@
           <n-form-item label="功能分组" path="group">
             <n-select
               placeholder="请选择"
-              :options="options.addonsGroupOptions"
+              :options="dict.getOptionUnRef('addonsGroupOptions')"
               v-model:value="formParams.group"
               :on-update:value="onUpdateValueGroup"
             />
@@ -86,7 +86,7 @@
                 <n-checkbox
                   :value="option.value"
                   :label="option.label"
-                  v-for="option in options.addonsExtend"
+                  v-for="option in dict.getOptionUnRef('addonsExtend')"
                   :key="option"
                 />
               </n-space>
@@ -128,15 +128,17 @@
 </template>
 
 <script lang="ts" setup>
-  import { computed, h, reactive, ref } from 'vue';
+  import { computed, h, onMounted, reactive, ref } from 'vue';
   import { NIcon, useMessage, useDialog, useNotification } from 'naive-ui';
   import { BasicTable, TableAction } from '@/components/Table';
   import { BasicForm, useForm } from '@/components/Form/index';
   import { List, Build, UnInstall, Install, Upgrade } from '@/api/develop/addons';
   import { PlusOutlined } from '@vicons/antd';
-  import { newState, schemas, columns, options } from './model';
+  import { newState, schemas, columns, loadOptions } from './model';
   import { adaModalWidth } from '@/utils/hotgo';
+  import { useDictStore } from '@/store/modules/dict';
 
+  const dict = useDictStore();
   const dialog = useDialog();
   const message = useMessage();
   const notification = useNotification();
@@ -315,6 +317,10 @@
       },
     });
   }
+
+  onMounted(async () => {
+    loadOptions();
+  });
 </script>
 
 <style lang="less" scoped></style>

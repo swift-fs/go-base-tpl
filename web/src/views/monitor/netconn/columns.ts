@@ -1,9 +1,7 @@
 import { h } from 'vue';
 import { NButton, NTag } from 'naive-ui';
 import { timestampToTime, formatBefore } from '@/utils/dateUtil';
-import { getOptionLabel } from '@/utils/hotgo';
-import { options } from '@/views/monitor/netconn/modal/model';
-import { renderIcon, renderTooltip } from '@/utils';
+import { renderIcon, renderOptionTag, renderTooltip } from '@/utils';
 import { HelpCircleOutline } from '@vicons/ionicons5';
 
 export const columns = [
@@ -95,19 +93,7 @@ export const columns = [
     key: 'group',
     width: 100,
     render(row) {
-      return h(
-        NTag,
-        {
-          style: {
-            marginRight: '6px',
-          },
-          type: 'info',
-          bordered: false,
-        },
-        {
-          default: () => getOptionLabel(options.value.group, row.group),
-        }
-      );
+      return renderOptionTag('ServerLicenseGroupOptions', row.group);
     },
   },
   {

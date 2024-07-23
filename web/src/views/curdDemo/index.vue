@@ -50,7 +50,8 @@
   import { BasicTable, TableAction } from '@/components/Table';
   import { BasicForm, useForm } from '@/components/Form/index';
   import { usePermission } from '@/hooks/web/usePermission';
-  import { List, Export, Delete } from '@/api/curdDemo';
+  import { useDictStore } from '@/store/modules/dict';
+  import { List, Export, Delete, Status } from '@/api/curdDemo';
   import { PlusOutlined, ExportOutlined, DeleteOutlined } from '@vicons/antd';
   import { columns, schemas, loadOptions } from './model';
   import { adaTableScrollX } from '@/utils/hotgo';
@@ -59,6 +60,7 @@
   const dialog = useDialog();
   const message = useMessage();
   const { hasPermission } = usePermission();
+  const dict = useDictStore();
   const actionRef = ref();
   const searchFormRef = ref<any>({});
   const editRef = ref();
@@ -66,7 +68,7 @@
   const checkedIds = ref([]);
 
   const actionColumn = reactive({
-    width: 144,
+    width: 216,
     title: '操作',
     key: 'action',
     fixed: 'right',
@@ -80,6 +82,22 @@
             auth: ['/curdDemo/edit'],
           },
 
+          {
+            label: '禁用',
+            onClick: handleStatus.bind(null, record, 2),
+            ifShow: () => {
+              return record.status === 1;
+            },
+            auth: ['/curdDemo/status'],
+          },
+          {
+            label: '启用',
+            onClick: handleStatus.bind(null, record, 1),
+            ifShow: () => {
+              return record.status === 2;
+            },
+            auth: ['/curdDemo/status'],
+          },
           {
             label: '删除',
             onClick: handleDelete.bind(null, record),
@@ -170,8 +188,19 @@
     Export(searchFormRef.value?.formModel);
   }
 
+  // 修改状态
+  function handleStatus(record: Recordable, status: number) {
+    Status({ id: record.id, status: status }).then((_res) => {
+      message.success('设为' + dict.getLabel('sys_normal_disable', status) + '成功');
+      setTimeout(() => {
+        reloadTable();
+      });
+    });
+  }
+
   onMounted(() => {
     loadOptions();
+
   });
 </script>
 

@@ -14,7 +14,7 @@
         <n-tab-pane
           :name="item.key.toString()"
           :tab="item.label"
-          v-for="item in options.orderStatus"
+          v-for="item in dict.getOptionUnRef('orderStatus')"
           :key="item.key"
         >
           <List :type="defaultTab" />
@@ -28,18 +28,21 @@
   import { onMounted, ref } from 'vue';
   import List from './list.vue';
   import { useRouter } from 'vue-router';
-  import { options } from '@/views/asset/rechargeLog/model';
+  import { loadOptions } from './model';
+  import { useDictStore } from '@/store/modules/dict';
 
+  const dict = useDictStore();
   const router = useRouter();
   const defaultTab = ref('-1');
+
+  function handleBeforeLeave(tabName: string) {
+    defaultTab.value = tabName;
+  }
 
   onMounted(() => {
     if (router.currentRoute.value.query?.type) {
       defaultTab.value = router.currentRoute.value.query.type as string;
     }
+    loadOptions();
   });
-
-  function handleBeforeLeave(tabName: string) {
-    defaultTab.value = tabName;
-  }
 </script>

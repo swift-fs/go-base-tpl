@@ -73,7 +73,7 @@
           <n-form-item label="状态" path="status">
             <n-radio-group v-model:value="formParams.status" name="status">
               <n-radio-button
-                v-for="status in blacklistOptions"
+                v-for="status in dict.getOptionUnRef('BlacklistStatusOptions')"
                 :key="status.value"
                 :value="status.value"
                 :label="status.label"
@@ -98,31 +98,18 @@
 </template>
 
 <script lang="ts" setup>
-  import { h, reactive, ref } from 'vue';
-  import { NTag, useDialog, useMessage } from 'naive-ui';
+  import { h, onMounted, reactive, ref } from 'vue';
+  import { useDialog, useMessage } from 'naive-ui';
   import { BasicTable, TableAction } from '@/components/Table';
   import { BasicForm, FormSchema, useForm } from '@/components/Form/index';
   import { Delete, Edit, List, Status } from '@/api/sys/blacklist';
   import { DeleteOutlined, PlusOutlined } from '@vicons/antd';
   import { statusActions } from '@/enums/optionsiEnum';
-  import { getOptionLabel, getOptionTag, Option } from '@/utils/hotgo';
   import { defRangeShortcuts } from '@/utils/dateUtil';
+  import { useDictStore } from '@/store/modules/dict';
+  import { renderOptionTag } from '@/utils';
 
-  const blacklistOptions: Option[] = [
-    {
-      key: 1,
-      value: 1,
-      label: '封禁中',
-      listClass: 'warning',
-    },
-    {
-      key: 2,
-      value: 2,
-      label: '已解封',
-      listClass: 'success',
-    },
-  ];
-
+  const dict = useDictStore();
   const columns = [
     {
       title: 'ID',
@@ -140,19 +127,7 @@
       title: '状态',
       key: 'status',
       render(row) {
-        return h(
-          NTag,
-          {
-            style: {
-              marginRight: '6px',
-            },
-            type: getOptionTag(blacklistOptions, row.status),
-            bordered: false,
-          },
-          {
-            default: () => getOptionLabel(blacklistOptions, row.status),
-          }
-        );
+        return renderOptionTag('BlacklistStatusOptions', row.status);
       },
     },
     {
@@ -190,7 +165,7 @@
       defaultValue: null,
       componentProps: {
         placeholder: '请选择类型',
-        options: blacklistOptions,
+        options: dict.getOption('BlacklistStatusOptions'),
         onUpdateValue: (e: any) => {
           console.log(e);
         },
@@ -240,13 +215,13 @@
     sort: 0,
     status: 1,
   };
-  let formParams = ref<any>(resetFormParams);
+  const formParams = ref<any>(resetFormParams);
 
   const actionColumn = reactive({
-    width: 220,
+    width: 150,
     title: '操作',
     key: 'action',
-    // fixed: 'right',
+    fixed: 'right',
     render(record) {
       return h(TableAction as any, {
         style: 'button',
@@ -260,10 +235,6 @@
             onClick: handleDelete.bind(null, record),
           },
         ],
-        dropDownActions: statusActions,
-        select: (key) => {
-          updateStatus(record.id, key);
-        },
       });
     },
   });
@@ -284,7 +255,6 @@
   };
 
   function onCheckedRow(rowKeys) {
-    console.log(rowKeys);
     batchDeleteDisabled.value = rowKeys.length <= 0;
     checkedIds.value = rowKeys;
   }
@@ -334,9 +304,6 @@
           reloadTable();
         });
       },
-      onNegativeClick: () => {
-        // message.error('取消');
-      },
     });
   }
 
@@ -356,9 +323,6 @@
             message.error(e.message ?? '操作失败');
           });
       },
-      onNegativeClick: () => {
-        // message.error('取消');
-      },
     });
   }
 
@@ -372,14 +336,9 @@
     reloadTable();
   }
 
-  function updateStatus(id, status) {
-    Status({ id: id, status: status }).then((_res) => {
-      message.success('操作成功');
-      setTimeout(() => {
-        reloadTable();
-      });
-    });
-  }
+  onMounted(() => {
+    dict.loadOptions(['BlacklistStatusOptions']);
+  });
 </script>
 
 <style lang="less" scoped></style>

@@ -196,9 +196,9 @@ func GetFileMeta(file *ghttp.UploadFile) (meta *FileMeta, err error) {
 	}
 
 	// 兼容naiveUI
-	naiveType := "text/plain"
-	if IsImgType(Ext(file.Filename)) {
-		naiveType = ""
+	naiveType := meta.MimeType
+	if len(naiveType) == 0 {
+		naiveType = "text/plain"
 	}
 	meta.NaiveType = naiveType
 

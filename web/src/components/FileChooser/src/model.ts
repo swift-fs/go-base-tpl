@@ -21,12 +21,6 @@ export type Attachment = {
   sizeFormat: string;
 };
 
-export interface KindRawOption {
-  key: string;
-  label: string;
-  icon: string;
-}
-
 export interface KindOption {
   key: string;
   label: any;

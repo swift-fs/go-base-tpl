@@ -38,8 +38,8 @@
     <GroupModal ref="GroupModalRef" />
 
     <Edit
-      @reloadTable="reloadTable"
-      @updateShowModal="updateShowModal"
+      @reload-table="reloadTable"
+      @update-show-modal="updateShowModal"
       :showModal="showModal"
       :formParams="formEditParams"
     />
@@ -47,7 +47,7 @@
 </template>
 
 <script lang="ts" setup>
-  import { computed, h, reactive, ref } from 'vue';
+  import { computed, h, onMounted, reactive, ref } from 'vue';
   import { useDialog, useMessage } from 'naive-ui';
   import { BasicTable, TableAction } from '@/components/Table';
   import { BasicForm, FormSchema, useForm } from '@/components/Form/index';
@@ -56,12 +56,14 @@
   import { TrademarkOutlined } from '@vicons/antd';
   import GroupModal from './modal/modal.vue';
   import Edit from '@/views/monitor/netconn/modal/edit.vue';
-  import { newState, options, State } from '@/views/monitor/netconn/modal/model';
+  import { loadOptions, newState, State } from '@/views/monitor/netconn/modal/model';
   import { defRangeShortcuts } from '@/utils/dateUtil';
   import { adaTableScrollX } from '@/utils/hotgo';
+  import { useDictStore } from '@/store/modules/dict';
 
   const message = useMessage();
   const dialog = useDialog();
+  const dict = useDictStore();
   const showModal = ref(false);
   const formEditParams = ref<State>(newState(null));
   const actionRef = ref();
@@ -115,7 +117,7 @@
       defaultValue: null,
       componentProps: {
         placeholder: '请选择授权分组',
-        options: options.value.group,
+        options: dict.getOption('ServerLicenseGroupOptions'),
         onUpdateValue: (e: any) => {
           console.log(e);
         },
@@ -213,6 +215,10 @@
   function updateShowModal(value) {
     showModal.value = value;
   }
+
+  onMounted(async () => {
+    loadOptions();
+  });
 </script>
 
 <style lang="less" scoped></style>

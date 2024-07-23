@@ -24,7 +24,7 @@ type (
 		CronStatus(ctx context.Context, in *servmsg.CronStatusReq) (err error)
 		// CronOnlineExec 执行一次任务
 		CronOnlineExec(ctx context.Context, in *servmsg.CronOnlineExecReq) (err error)
-		// DispatchLog 执行一次任务
+		// DispatchLog 查看调度日志
 		DispatchLog(ctx context.Context, in *servmsg.CronDispatchLogReq) (log *cron.Log, err error)
 		// OnExampleHello 一个tcp请求例子
 		OnExampleHello(ctx context.Context, req *servmsg.ExampleHelloReq)

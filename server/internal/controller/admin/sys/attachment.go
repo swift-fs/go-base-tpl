@@ -8,8 +8,6 @@ package sys
 import (
 	"context"
 	"hotgo/api/admin/attachment"
-	"hotgo/internal/library/storager"
-	"hotgo/internal/model/input/sysin"
 	"hotgo/internal/service"
 )
 
@@ -47,42 +45,6 @@ func (c *cAttachment) List(ctx context.Context, req *attachment.ListReq) (res *a
 	res = new(attachment.ListRes)
 	res.List = list
 	res.PageRes.Pack(req, totalCount)
-	return
-}
-
-// ChooserOption 获取选择器选项
-func (c *cAttachment) ChooserOption(ctx context.Context, req *attachment.ChooserOptionReq) (res *attachment.ChooserOptionRes, err error) {
-	res = new(attachment.ChooserOptionRes)
-
-	res.Drive, err = service.SysDictData().Select(ctx, &sysin.DataSelectInp{Type: "config_upload_drive"})
-	if err != nil {
-		return
-	}
-
-	var kinds = []attachment.KindSelect{
-		{
-			Label: "全部", Key: "", Value: "",
-		},
-		{
-			Label: "图片", Key: storager.KindImg, Value: storager.KindImg, Icon: "PictureOutlined", Tag: "success",
-		},
-		{
-			Label: "文档", Key: storager.KindDoc, Value: storager.KindDoc, Icon: "FileWordOutlined", Tag: "primary",
-		},
-		{
-			Label: "音频", Key: storager.KindAudio, Value: storager.KindAudio, Icon: "CustomerServiceOutlined", Tag: "info",
-		},
-		{
-			Label: "视频", Key: storager.KindVideo, Value: storager.KindVideo, Icon: "PlaySquareOutlined", Tag: "warning",
-		},
-		{
-			Label: "压缩包", Key: storager.KindZip, Value: storager.KindZip, Icon: "FileZipOutlined", Tag: "error",
-		},
-		{
-			Label: "其他", Key: storager.KindOther, Value: storager.KindOther, Icon: "PlusOutlined", Tag: "default",
-		},
-	}
-	res.Kind = append(res.Kind, kinds...)
 	return
 }
 

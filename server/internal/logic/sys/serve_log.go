@@ -11,6 +11,7 @@ import (
 	"github.com/gogf/gf/v2/database/gdb"
 	"github.com/gogf/gf/v2/os/gctx"
 	"github.com/gogf/gf/v2/util/gconv"
+	"github.com/gogf/gf/v2/util/gmode"
 	"hotgo/internal/dao"
 	"hotgo/internal/library/hgorm"
 	"hotgo/internal/library/hgorm/handler"
@@ -44,6 +45,12 @@ func (s *sSysServeLog) List(ctx context.Context, in *sysin.ServeLogListInp) (lis
 	// 查询链路ID
 	if in.TraceId != "" {
 		mod = mod.Where(dao.SysServeLog.Columns().TraceId, in.TraceId)
+	}
+
+	// 非生产环境，允许关键词查询日志
+	// 生成环境使用需谨慎，日志量大易产生慢日志
+	if !gmode.IsProduct() && in.Content != "" {
+		mod = mod.WhereLike(dao.SysServeLog.Columns().Content, "%"+in.Content+"%")
 	}
 
 	// 查询日志级别

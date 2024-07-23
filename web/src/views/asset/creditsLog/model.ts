@@ -1,62 +1,10 @@
-import { h, ref } from 'vue';
-import { NTag } from 'naive-ui';
-import { cloneDeep } from 'lodash-es';
+import { ref } from 'vue';
 import { FormSchema } from '@/components/Form';
-import { Option } from '@/api/creditsLog';
-import { isNullObject } from '@/utils/is';
 import { defRangeShortcuts } from '@/utils/dateUtil';
-import { getOptionLabel, getOptionTag, Options } from '@/utils/hotgo';
-import {Dicts} from "@/api/dict/dict";
+import { useDictStore } from '@/store/modules/dict';
+import { renderOptionTag } from '@/utils';
 
-export interface State {
-  id: number;
-  memberId: number;
-  appId: string;
-  addonsName: string;
-  creditType: string;
-  creditGroup: string;
-  beforeNum: number;
-  num: number;
-  afterNum: number;
-  remark: string;
-  ip: string;
-  mapId: number;
-  status: number;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export const defaultState = {
-  id: 0,
-  memberId: 0,
-  appId: '',
-  addonsName: '',
-  creditType: '',
-  creditGroup: '',
-  beforeNum: 0,
-  num: 0,
-  afterNum: 0,
-  remark: '',
-  ip: '',
-  mapId: 0,
-  status: 1,
-  createdAt: '',
-  updatedAt: '',
-};
-
-export function newState(state: State | null): State {
-  if (state !== null) {
-    return cloneDeep(state);
-  }
-  return cloneDeep(defaultState);
-}
-
-export const options = ref<Options>({
-  creditType: [],
-  creditGroup: [],
-});
-
-export const rules = {};
+const dict = useDictStore();
 
 export const schemas = ref<FormSchema[]>([
   {
@@ -77,7 +25,7 @@ export const schemas = ref<FormSchema[]>([
     defaultValue: null,
     componentProps: {
       placeholder: '请选择变动的组别',
-      options: [],
+      options: dict.getOption('creditGroup'),
       onUpdateValue: (e: any) => {
         console.log(e);
       },
@@ -146,22 +94,7 @@ export const columns = [
     title: '变动类型',
     key: 'creditType',
     render(row) {
-      if (isNullObject(row.creditType)) {
-        return ``;
-      }
-      return h(
-        NTag,
-        {
-          style: {
-            marginRight: '6px',
-          },
-          type: getOptionTag(options.value.creditType, row.creditType),
-          bordered: false,
-        },
-        {
-          default: () => getOptionLabel(options.value.creditType, row.creditType),
-        }
-      );
+      return renderOptionTag('creditType', row.creditType);
     },
     width: 150,
   },
@@ -169,22 +102,7 @@ export const columns = [
     title: '组别',
     key: 'creditGroup',
     render(row) {
-      if (isNullObject(row.creditGroup)) {
-        return ``;
-      }
-      return h(
-        NTag,
-        {
-          style: {
-            marginRight: '6px',
-          },
-          type: getOptionTag(options.value.creditGroup, row.creditGroup),
-          bordered: false,
-        },
-        {
-          default: () => getOptionLabel(options.value.creditGroup, row.creditGroup),
-        }
-      );
+      return renderOptionTag('creditGroup', row.creditGroup);
     },
     width: 150,
   },
@@ -240,20 +158,6 @@ export const columns = [
   },
 ];
 
-async function loadOptions() {
-  options.value = await Dicts({
-    types: ['creditType', 'creditGroup'],
-  });
-  for (const item of schemas.value) {
-    switch (item.field) {
-      case 'creditType':
-        item.componentProps.options = options.value.creditType;
-        break;
-      case 'creditGroup':
-        item.componentProps.options = options.value.creditGroup;
-        break;
-    }
-  }
+export function loadOptions() {
+  dict.loadOptions(['creditType', 'creditGroup']);
 }
-
-await loadOptions();

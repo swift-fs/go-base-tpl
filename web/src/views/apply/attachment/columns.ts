@@ -1,15 +1,13 @@
 import { h, ref } from 'vue';
-import { NAvatar, NImage, NTag } from 'naive-ui';
+import { NAvatar, NImage } from 'naive-ui';
 import { getFileExt } from '@/utils/urlUtils';
-import { getOptionLabel, getOptionTag, Options } from '@/utils/hotgo';
 import { FormSchema } from '@/components/Form';
-import { errorImg } from '@/utils/hotgo';
+import { fallbackSrc } from '@/utils/hotgo';
 import { defRangeShortcuts } from '@/utils/dateUtil';
-import { ChooserOption } from '@/api/apply/attachment';
-export const options = ref<Options>({
-  kind: [],
-  drive: [],
-});
+import { useDictStore } from '@/store/modules/dict';
+import { renderOptionTag } from '@/utils';
+
+const dict = useDictStore();
 
 export const schemas = ref<FormSchema[]>([
   {
@@ -19,7 +17,7 @@ export const schemas = ref<FormSchema[]>([
     defaultValue: null,
     componentProps: {
       placeholder: '请选择上传驱动',
-      options: [],
+      options: dict.getOption('config_upload_drive'),
       onUpdateValue: (e: any) => {
         console.log(e);
       },
@@ -32,7 +30,7 @@ export const schemas = ref<FormSchema[]>([
     defaultValue: null,
     componentProps: {
       placeholder: '请选择上传类型',
-      options: [],
+      options: dict.getOption('AttachmentKindOption'),
       onUpdateValue: (e: any) => {
         console.log(e);
       },
@@ -89,11 +87,6 @@ export const columns = [
     key: 'appId',
     width: 100,
   },
-  // {
-  //   title: '用户ID',
-  //   key: 'memberId',
-  //   width: 100,
-  // },
   {
     title: '驱动',
     key: 'drive',
@@ -106,19 +99,7 @@ export const columns = [
     title: '上传类型',
     key: 'kind',
     render(row) {
-      return h(
-        NTag,
-        {
-          style: {
-            marginRight: '6px',
-          },
-          type: getOptionTag(options.value.kind, row.kind),
-          bordered: false,
-        },
-        {
-          default: () => getOptionLabel(options.value.kind, row.kind),
-        }
-      );
+      return renderOptionTag('AttachmentKindOption', row.kind);
     },
     width: 120,
   },
@@ -153,7 +134,7 @@ export const columns = [
         width: 40,
         height: 40,
         src: row.fileUrl,
-        fallbackSrc: errorImg,
+        fallbackSrc: fallbackSrc(),
         style: {
           width: '40px',
           height: '40px',
@@ -185,18 +166,6 @@ export const columns = [
   },
 ];
 
-async function loadOptions() {
-  options.value = await ChooserOption();
-  for (const item of schemas.value) {
-    switch (item.field) {
-      case 'kind':
-        item.componentProps.options = options.value.kind;
-        break;
-      case 'drive':
-        item.componentProps.options = options.value.drive;
-        break;
-    }
-  }
+export function loadOptions() {
+  dict.loadOptions(['AttachmentKindOption', 'config_upload_drive']);
 }
-
-await loadOptions();

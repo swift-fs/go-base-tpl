@@ -1,9 +1,13 @@
+// @ts-ignore
 import onerrorImg from '@/assets/images/onerror.png';
 import { usePermission } from '@/hooks/web/usePermission';
 import { ActionItem } from '@/components/Table';
 import { isBoolean, isFunction } from '@/utils/is';
 import { PermissionsEnum } from '@/enums/permissionsEnum';
 
+/**
+ * @deprecated 这个方法将来未来版本完全弃用，请统一使用useDictStore()来维护字典选项
+ */
 export interface Option {
   label: string;
   value: string | number;
@@ -12,11 +16,17 @@ export interface Option {
   listClass: 'default' | 'error' | 'primary' | 'info' | 'success' | 'warning';
 }
 
+/**
+ * @deprecated 这个方法将来未来版本完全弃用，请统一使用useDictStore()来维护字典选项
+ */
 export interface Options {
   [name: string]: Option[];
 }
 
-// 获取选项名称
+/**
+ * 获取选项名称
+ * @deprecated 这个方法将来未来版本完全弃用，请统一使用useDictStore()来维护字典选项
+ */
 export function getOptionLabel(options: Option[], value) {
   if (options === undefined || options?.length === 0) {
     return `unknown`;
@@ -30,7 +40,10 @@ export function getOptionLabel(options: Option[], value) {
   return `unknown`;
 }
 
-// 获取选项标签
+/**
+ * 获取选项标签
+ * @deprecated 这个方法将来未来版本完全弃用，请统一使用useDictStore()来维护字典选项
+ */
 export function getOptionTag(options: Option[], value) {
   if (options === undefined || options?.length === 0) {
     return 'default';
@@ -54,7 +67,7 @@ export function adaModalWidth(def = 840) {
   }
 }
 
-interface TableColumn {
+export interface TableColumn {
   width?: number | string;
   auth?: PermissionsEnum | PermissionsEnum[] | string | string[];
   ifShow?: boolean | ((action: ActionItem) => boolean);
@@ -91,10 +104,15 @@ export function isIfShow(action: ActionItem): boolean {
   return isIfShow;
 }
 
-// 图片加载失败显示自定义默认图片(缺省图)
+// 图片加载失败显示自定义默认图片(缺省图) img标签使用
 export function errorImg(e: any): void {
   e.target.src = onerrorImg;
   e.target.onerror = null;
+}
+
+// 图片加载失败显示自定义默认图片(缺省图) NImage组件使用
+export function fallbackSrc(): string {
+  return onerrorImg;
 }
 
 export function timeFix() {
@@ -144,8 +162,8 @@ export function convertListToTree(list: any[], idField = 'id', pidField = 'pid')
 
 // 从树选项中获取所有key
 export function getTreeKeys(data: any[], idField = 'id') {
-  const keys = [];
-  data.map((item) => {
+  const keys: any = [];
+  data.map((item: any) => {
     keys.push(item[idField]);
     if (item.children && item.children.length) {
       keys.push(...getTreeKeys(item.children));

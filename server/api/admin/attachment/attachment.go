@@ -47,21 +47,3 @@ type ClearKindReq struct {
 }
 
 type ClearKindRes struct{}
-
-// ChooserOptionReq 获取选择器选项
-type ChooserOptionReq struct {
-	g.Meta `path:"/attachment/chooserOption" method:"get" tags:"附件" summary:"获取选择器选项"`
-}
-
-type ChooserOptionRes struct {
-	Drive sysin.DataSelectModel `json:"drive" dc:"驱动"`
-	Kind  []KindSelect          `json:"kind"  dc:"上传类型"`
-}
-
-type KindSelect struct {
-	Key   string `json:"key"`
-	Value string `json:"value"`
-	Tag   string `json:"listClass"`
-	Label string `json:"label"`
-	Icon  string `json:"icon"`
-}

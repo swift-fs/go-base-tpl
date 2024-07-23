@@ -2,14 +2,15 @@ import { h, ref } from 'vue';
 import { NTag, NButton } from 'naive-ui';
 import { cloneDeep } from 'lodash-es';
 import { FormSchema } from '@/components/Form';
-import { Dicts } from '@/api/dict/dict';
 import { defRangeShortcuts } from '@/utils/dateUtil';
 import { validate } from '@/utils/validateUtil';
-import { Option, getOptionLabel, getOptionTag } from '@/utils/hotgo';
-import { renderTooltip, renderIcon } from '@/utils';
+import { renderTooltip, renderIcon, renderOptionTag } from '@/utils';
 import { HelpCircleOutline } from '@vicons/ionicons5';
 import { TreeOption } from '@/api/org/dept';
-import { isNullObject } from '@/utils/is';
+import { useDictStore } from '@/store/modules/dict';
+import type { FormRules } from 'naive-ui/es/form/src/interface';
+
+const dict = useDictStore();
 
 export class State {
   public id = 0; // 部门ID
@@ -45,7 +46,7 @@ export function newState(state: State | Record<string, any> | null): State {
 }
 
 // 表单验证规则
-export const rules = {
+export const rules: FormRules = {
   email: {
     required: false,
     trigger: ['blur', 'input'],
@@ -155,22 +156,7 @@ export const columns = [
     align: 'left',
     width: 100,
     render(row) {
-      if (isNullObject(row.type)) {
-        return ``;
-      }
-      return h(
-        NTag,
-        {
-          style: {
-            marginRight: '6px',
-          },
-          type: getOptionTag(options.value.deptType, row.type),
-          bordered: false,
-        },
-        {
-          default: () => getOptionLabel(options.value.deptType, row.type),
-        }
-      );
+      return renderOptionTag('deptType', row.type);
     },
   },
   {
@@ -189,22 +175,7 @@ export const columns = [
     align: 'left',
     width: 80,
     render(row) {
-      if (isNullObject(row.status)) {
-        return ``;
-      }
-      return h(
-        NTag,
-        {
-          style: {
-            marginRight: '6px',
-          },
-          type: getOptionTag(options.value.sys_normal_disable, row.status),
-          bordered: false,
-        },
-        {
-          default: () => getOptionLabel(options.value.sys_normal_disable, row.status),
-        }
-      );
+      return renderOptionTag('sys_normal_disable', row.status);
     },
   },
   {
@@ -214,26 +185,9 @@ export const columns = [
   },
 ];
 
-// 字典数据选项
-export const options = ref({
-  sys_normal_disable: [] as Option[],
-  deptType: [] as Option[],
-});
-
 // 加载字典数据选项
 export function loadOptions() {
-  Dicts({
-    types: ['sys_normal_disable', 'deptType'],
-  }).then((res) => {
-    options.value = res;
-    for (const item of schemas.value) {
-      switch (item.field) {
-        case 'status':
-          item.componentProps.options = options.value.sys_normal_disable;
-          break;
-      }
-    }
-  });
+  dict.loadOptions(['sys_normal_disable', 'deptType']);
 }
 
 // 关系树选项

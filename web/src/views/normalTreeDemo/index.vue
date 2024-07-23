@@ -11,7 +11,7 @@
           <n-input v-model:value="model[field]" />
         </template>
       </BasicForm>
-      <BasicTable  ref="actionRef" openChecked :columns="columns" :request="loadDataTable" :row-key="(row) => row.id" :actionColumn="actionColumn" :scroll-x="1280" :resizeHeightOffset="-10000" :cascade="false" :expanded-row-keys="expandedKeys" @update:expanded-row-keys="updateExpandedKeys" :checked-row-keys="checkedIds" @update:checked-row-keys="handleOnCheckedRow">
+      <BasicTable  ref="actionRef" openChecked :columns="columns" :request="loadDataTable" :row-key="(row) => row.id" :actionColumn="actionColumn" :scroll-x="scrollX" :resizeHeightOffset="-10000" :cascade="false" :expanded-row-keys="expandedKeys" @update:expanded-row-keys="updateExpandedKeys" :checked-row-keys="checkedIds" @update:checked-row-keys="handleOnCheckedRow">
         <template #tableTitle>
           <n-button type="primary"  @click="addTable" class="min-left-space" v-if="hasPermission(['/normalTreeDemo/edit'])">
             <template #icon>
@@ -47,15 +47,16 @@
 </template>
 
 <script lang="ts" setup>
-  import { h, reactive, ref, onMounted } from 'vue';
+  import { h, reactive, ref, computed, onMounted } from 'vue';
   import { useDialog, useMessage } from 'naive-ui';
   import { BasicTable, TableAction } from '@/components/Table';
   import { BasicForm, useForm } from '@/components/Form/index';
   import { usePermission } from '@/hooks/web/usePermission';
+  import { useDictStore } from '@/store/modules/dict';
   import { List, Delete } from '@/api/normalTreeDemo';
   import { PlusOutlined, DeleteOutlined, AlignLeftOutlined } from '@vicons/antd';
   import { columns, schemas, loadOptions, newState } from './model';
-  import { convertListToTree } from '@/utils/hotgo';
+  import { adaTableScrollX, convertListToTree } from '@/utils/hotgo';
   import Edit from './edit.vue';
 
   const dialog = useDialog();
@@ -63,8 +64,9 @@
   const { hasPermission } = usePermission();
   const actionRef = ref();
   const searchFormRef = ref<any>({});
-  const viewRef = ref();
   const editRef = ref();
+  const dict = useDictStore();
+
   const checkedIds = ref([]);
   const expandedKeys = ref([]);
   const allTreeKeys = ref([]);
@@ -98,6 +100,10 @@
 
       });
     },
+  });
+
+  const scrollX = computed(() => {
+    return adaTableScrollX(columns, actionColumn.width);
   });
 
   const [register, {}] = useForm({
@@ -196,6 +202,7 @@
 
   onMounted(() => {
     loadOptions();
+
   });
 </script>
 

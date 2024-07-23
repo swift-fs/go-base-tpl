@@ -1,5 +1,9 @@
 <template>
-  <n-drawer v-model:show="isDrawer" :width="width" :placement="placement">
+  <n-drawer
+    v-model:show="isDrawer"
+    :width="dialogWidth"
+    :label-placement="settingStore.isMobile ? 'top' : 'left'"
+  >
     <n-drawer-content :title="title" closable>
       <n-form
         :model="formParams"
@@ -28,7 +32,7 @@
         <n-form-item label="状态" path="status">
           <n-radio-group v-model:value="formParams.status" name="status">
             <n-radio-button
-              v-for="status in statusMap"
+              v-for="status in dict.getOptionUnRef('sys_normal_disable')"
               :key="status.value"
               :value="status.value"
               :label="status.label"
@@ -39,34 +43,25 @@
 
       <template #footer>
         <n-space>
-          <n-button type="primary" :loading="subLoading" @click="formSubmit">提交</n-button>
-          <n-button @click="handleReset">重置</n-button>
+          <n-button type="primary" :loading="btnLoading" @click="formSubmit">提交</n-button>
+          <n-button @click="closeDrawer">取消</n-button>
         </n-space>
       </template>
     </n-drawer-content>
   </n-drawer>
 </template>
 
-<script lang="ts">
-  import { defineComponent, reactive, ref, toRefs } from 'vue';
-  import { TreeSelectOption, useMessage } from 'naive-ui';
-  import { QuestionCircleOutlined } from '@vicons/antd';
+<script lang="ts" setup>
+  import { computed, ref } from 'vue';
+  import { useMessage } from 'naive-ui';
   import { EditDict } from '@/api/dict/dict';
+  import { useDictStore } from '@/store/modules/dict';
+  import type { FormRules } from 'naive-ui/es/form/src/interface';
+  import { State } from '@/views/system/dict/model';
+  import { adaModalWidth } from '@/utils/hotgo';
+  import { useProjectSettingStore } from '@/store/modules/projectSetting';
 
-  const statusMap = [
-    {
-      value: 0,
-      label: '禁用',
-    },
-    {
-      value: 1,
-      label: '启用',
-    },
-  ].map((s) => {
-    return s;
-  });
-
-  const rules = {
+  const rules: FormRules = {
     label: {
       required: true,
       message: '请输入标题',
@@ -78,96 +73,60 @@
       trigger: 'blur',
     },
   };
-  export default defineComponent({
-    name: 'CreateDrawer',
-    components: {},
-    props: {
-      title: {
-        type: String,
-        default: '添加顶级菜单',
-      },
-      optionTreeData: {
-        type: Object || Array,
-        default: [],
-      },
-    },
-    emits: ['loadData'],
-    setup(_props, context) {
-      const message = useMessage();
-      const formRef: any = ref(null);
-      const defaultValueRef = () => ({
-        id: 0,
-        pid: 0,
-        type: '',
-        name: '',
-        remark: '',
-        status: 1,
-        sort: 10,
-      });
 
-      const state = reactive<any>({
-        width: 500,
-        isDrawer: false,
-        subLoading: false,
-        formParams: defaultValueRef(),
-        placement: 'right',
-        icon: '',
-        alertText:
-          '该功能主要实时预览各种布局效果，更多完整配置在 projectSetting.ts 中设置，建议在生产环境关闭该布局预览功能。',
-      });
+  interface Props {
+    title: '添加顶级菜单';
+    optionTreeData: [];
+  }
 
-      function openDrawer(form) {
-        if (document.body.clientWidth < 500) {
-          state.width = document.body.clientWidth;
-        }
-        state.isDrawer = true;
-        state.formParams = Object.assign(state.formParams, form);
+  const emit = defineEmits(['loadData']);
+  const props = withDefaults(defineProps<Props>(), {});
+  const dict = useDictStore();
+  const message = useMessage();
+  const settingStore = useProjectSettingStore();
+  const formRef: any = ref(null);
+  const formParams = ref<State>(new State());
+  const btnLoading = ref(false);
+  const isDrawer = ref(false);
+
+  const dialogWidth = computed(() => {
+    return adaModalWidth(500);
+  });
+
+  function openDrawer(state: State) {
+    isDrawer.value = true;
+    formParams.value = state;
+  }
+
+  function closeDrawer() {
+    isDrawer.value = false;
+  }
+
+  function formSubmit() {
+    formRef.value.validate((errors) => {
+      if (!errors) {
+        btnLoading.value = true;
+        EditDict(formParams.value)
+          .then(async (_res) => {
+            message.success('操作成功');
+            emit('loadData');
+            closeDrawer();
+          })
+          .finally(() => {
+            btnLoading.value = false;
+          });
+      } else {
+        message.error('请填写完整信息');
       }
+    });
+  }
 
-      function closeDrawer() {
-        state.isDrawer = false;
-      }
+  // 处理选项更新
+  function handleUpdateValue(value: number) {
+    formParams.value.pid = value;
+  }
 
-      function formSubmit() {
-        formRef.value.validate((errors) => {
-          if (!errors) {
-            EditDict({ ...state.formParams }).then(async (_res) => {
-              message.success('操作成功');
-              handleReset();
-              await context.emit('loadData');
-              closeDrawer();
-            });
-          } else {
-            message.error('请填写完整信息');
-          }
-        });
-      }
-
-      function handleReset() {
-        formRef.value.restoreValidation();
-        state.formParams = Object.assign(state.formParams, defaultValueRef());
-      }
-
-      // 处理选项更新
-      function handleUpdateValue(
-        value: string | number | Array<string | number> | null,
-        _option: TreeSelectOption | null | Array<TreeSelectOption | null>
-      ) {
-        state.formParams.pid = value;
-      }
-
-      return {
-        ...toRefs(state),
-        formRef,
-        rules,
-        formSubmit,
-        handleReset,
-        openDrawer,
-        closeDrawer,
-        statusMap,
-        handleUpdateValue,
-        QuestionCircleOutlined,
-      };
-    },
+  defineExpose({
+    openDrawer,
   });
 </script>

@@ -28,7 +28,7 @@ type (
 		AuthorizeCall(ctx context.Context, in *commonin.WechatAuthorizeCallInp) (res *commonin.WechatAuthorizeCallModel, err error)
 		// GetOpenId 从缓存中获取临时openid
 		GetOpenId(ctx context.Context) (openId string, err error)
-		GetCacheKey(typ, ak string) string
+		GetCacheKey(typ string, ak string) string
 		// CleanTempMap 清理临时map
 		CleanTempMap(ctx context.Context)
 	}

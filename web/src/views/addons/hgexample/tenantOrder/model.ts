@@ -1,13 +1,13 @@
-import { h, ref } from 'vue';
-import { NTag } from 'naive-ui';
+import { ref } from 'vue';
 import { cloneDeep } from 'lodash-es';
 import { FormSchema } from '@/components/Form';
-import { Dicts } from '@/api/dict/dict';
-import { isNullObject } from '@/utils/is';
 import { defRangeShortcuts } from '@/utils/dateUtil';
-import { Option, getOptionLabel, getOptionTag } from '@/utils/hotgo';
 import { useUserStore } from '@/store/modules/user';
+import { useDictStore } from '@/store/modules/dict';
+import { renderOptionTag } from '@/utils';
+import type { FormRules } from 'naive-ui/es/form/src/interface';
 
+const dict = useDictStore();
 const userStore = useUserStore();
 
 export class State {
@@ -41,7 +41,7 @@ export function newState(state: State | Record<string, any> | null): State {
 }
 
 // 表单验证规则
-export const rules = {
+export const rules: FormRules = {
   money: {
     required: true,
     trigger: ['blur', 'input'],
@@ -195,22 +195,7 @@ export const columns = [
     align: 'left',
     width: 100,
     render(row) {
-      if (isNullObject(row.status)) {
-        return ``;
-      }
-      return h(
-        NTag,
-        {
-          style: {
-            marginRight: '6px',
-          },
-          type: getOptionTag(options.value.payStatus, row.status),
-          bordered: false,
-        },
-        {
-          default: () => getOptionLabel(options.value.payStatus, row.status),
-        }
-      );
+      return renderOptionTag('payStatus', row.status);
     },
   },
   {
@@ -221,23 +206,7 @@ export const columns = [
   },
 ];
 
-// 字典数据选项
-export const options = ref({
-  payStatus: [] as Option[],
-});
-
 // 加载字典数据选项
 export function loadOptions() {
-  Dicts({
-    types: ['payStatus'],
-  }).then((res) => {
-    options.value = res;
-    for (const item of schemas.value) {
-      switch (item.field) {
-        case 'status':
-          item.componentProps.options = options.value.payStatus;
-          break;
-      }
-    }
-  });
+  dict.loadOptions(['payStatus']);
 }

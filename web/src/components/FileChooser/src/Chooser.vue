@@ -2,7 +2,7 @@
   <n-grid :x-gap="5" :y-gap="5" :cols="pageGridCols" responsive="screen">
     <n-gi :span="2">
       <n-menu
-        :options="options.kind"
+        :options="generateKindOptions()"
         style="width: 100%"
         :default-value="defaultKindValue"
         :on-update:value="handleUpdateKind"
@@ -60,8 +60,8 @@
                     </n-ellipsis>
                   </template>
 
-                  <template #action style="padding: 5px">
-                    <n-space justify="center">
+                  <template #action>
+                    <n-space justify="center" style="padding: 5px">
                       <n-button
                         strong
                         secondary
@@ -75,7 +75,6 @@
                             <DownloadOutlined v-else />
                           </n-icon>
                         </template>
-
                         {{ item.kind === 'image' ? '预览' : '下载' }}
                       </n-button>
                       <n-button
@@ -130,14 +129,15 @@
   import { defRangeShortcuts } from '@/utils/dateUtil';
   import { EyeOutlined, DeleteOutlined, DownloadOutlined, ClearOutlined } from '@vicons/antd';
   import { useProjectSettingStore } from '@/store/modules/projectSetting';
-  import { ChooserOption, ClearKind, Delete, List } from '@/api/apply/attachment';
+  import { ClearKind, Delete, List } from '@/api/apply/attachment';
   import { constantRouterIcon } from '@/router/router-icons';
   import { errorImg } from '@/utils/hotgo';
   import { getFileExt } from '@/utils/urlUtils';
   import { renderIcon } from '@/utils';
-  import { Attachment, FileType, KindOption, KindRawOption } from './model';
+  import { Attachment, FileType, KindOption } from './model';
   import Preview from './Preview.vue';
-  import { VNode } from '@vue/runtime-core';
+  import { VNode } from 'vue';
+  import { Option, useDictStore } from '@/store/modules/dict';
 
   export interface Props {
     fileList: string[] | null;
@@ -152,6 +152,7 @@
   });
 
   const emit = defineEmits(['saveChange']);
+  const dict = useDictStore();
   const settingStore = useProjectSettingStore();
   const message = useMessage();
   const dialog = useDialog();
@@ -191,7 +192,7 @@
       defaultValue: null,
       componentProps: {
         placeholder: '请选择上传驱动',
-        options: options.value.drive,
+        options: dict.getOption('config_upload_drive'),
         onUpdateValue: (e: any) => {
           console.log(e);
         },
@@ -250,9 +251,6 @@
           reloadTable();
         });
       },
-      onNegativeClick: () => {
-        // message.error('取消');
-      },
     });
   }
 
@@ -295,14 +293,14 @@
     return selectList.value.some((selected) => selected === item.fileUrl);
   }
 
-  function generateKindOptions(kinds: KindRawOption[]): any {
+  function generateKindOptions(): any {
     const option: KindOption[] = [];
-    kinds.forEach((item: KindRawOption) => {
+    dict.getOptionUnRef('AttachmentKindOption').forEach((item: Option) => {
       const data: KindOption = {
         label: () => h(NEllipsis, null, { default: () => item.label }),
-        key: item.key,
+        key: item.key.toString(),
         extra: () => (item.key !== '' ? createExtraContent(item) : null),
-        icon: constantRouterIcon[item.icon] || null,
+        icon: constantRouterIcon[item.extra] || null,
         disabled: isDisabledKindOption(item),
       };
       option.push(data);
@@ -310,14 +308,14 @@
     return option;
   }
 
-  function isDisabledKindOption(item: KindRawOption): boolean {
+  function isDisabledKindOption(item: Option): boolean {
     if (props.fileType === 'default') {
       return false;
     }
     return item.key !== props.fileType;
   }
 
-  function createExtraContent(item: KindRawOption): VNode {
+  function createExtraContent(item: Option): VNode {
     return h(
       NButton,
       {
@@ -338,28 +336,11 @@
                 reloadTable();
               });
             },
-            onNegativeClick: () => {
-              // message.error('取消');
-            },
           });
         },
       },
       { icon: renderIcon(ClearOutlined) }
     );
-  }
-
-  async function loadOptions() {
-    let tmpOptions = await ChooserOption();
-    options.value.drive = tmpOptions.drive;
-    options.value.kind = generateKindOptions(tmpOptions.kind);
-
-    for (const item of schemas.value) {
-      switch (item.field) {
-        case 'drive':
-          item.componentProps.options = options.value.drive;
-          break;
-      }
-    }
   }
 
   function loadList() {
@@ -392,8 +373,12 @@
     loadList();
   }
 
+  function loadOptions() {
+    dict.loadOptions(['AttachmentKindOption', 'config_upload_drive']);
+  }
+
   onMounted(async () => {
-    await loadOptions();
+    loadOptions();
     loadList();
   });
 

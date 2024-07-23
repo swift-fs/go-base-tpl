@@ -27,6 +27,15 @@ export function Edit(params) {
   });
 }
 
+// 修改CURD列表状态
+export function Status(params) {
+  return http.request({
+    url: '/curdDemo/status',
+    method: 'POST',
+    params,
+  });
+}
+
 // 操作CURD列表开关
 export function Switch(params) {
   return http.request({

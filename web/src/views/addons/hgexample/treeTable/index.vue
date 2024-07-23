@@ -22,7 +22,7 @@
                 type="info"
                 icon-placement="left"
                 @click="openEditDrawer"
-                :disabled="formParams?.id === null || formParams?.id <= 0"
+                :disabled="!formParams?.id || formParams?.id < 1"
               >
                 <template #icon>
                   <div class="flex items-center">
@@ -104,15 +104,15 @@
           <List
             :checkedId="checkedId"
             :optionTreeData="optionTreeData"
-            @reloadTable="reloadTable"
+            @reload-table="reloadTable"
           />
         </n-card>
       </n-gi>
     </n-grid>
 
     <Edit
-      @reloadTable="reloadTable"
-      @updateShowModal="updateShowModal"
+      @reload-table="reloadTable"
+      @update-show-modal="updateShowModal"
       :showModal="showModal"
       :formParams="formParams"
       :optionTreeData="optionTreeData"
@@ -133,7 +133,7 @@
   import List from './list.vue';
   import { Delete, Select } from '@/api/addons/hgexample/treeTable';
   import Edit from './edit.vue';
-  import { newState } from './model';
+  import { newState, loadOptions } from './model';
 
   const showModal = ref(false);
   const message = useMessage();
@@ -228,4 +228,8 @@
   function updateShowModal(value) {
     showModal.value = value;
   }
+
+  onMounted(() => {
+    loadOptions();
+  });
 </script>

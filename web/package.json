@@ -1,6 +1,6 @@
 {
   "name": "hotgo",
-  "version": "2.15.1",
+  "version": "2.15.7",
   "author": {
     "name": "MengShuai",
     "email": "133814250@qq.com",
@@ -41,7 +41,7 @@
     "highlight.js": "^11.8.0",
     "lodash-es": "^4.17.21",
     "mint-filter": "^4.0.3",
-    "naive-ui": "^2.38.1",
+    "naive-ui": "^2.39.0",
     "pinia": "^2.1.7",
     "pinyin-pro": "^3.16.3",
     "print-js": "^1.6.0",

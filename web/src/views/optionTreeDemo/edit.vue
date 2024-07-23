@@ -43,12 +43,12 @@
               </n-gi>
               <n-gi span="2">
                 <n-form-item label="测试分类" path="categoryId">
-                  <n-select v-model:value="formValue.categoryId" :options="options.testCategoryOption" />
+                  <n-select v-model:value="formValue.categoryId" :options="dict.getOptionUnRef('testCategoryOption')" />
                 </n-form-item>
               </n-gi>
               <n-gi span="2">
                 <n-form-item label="描述" path="description">
-                  <n-input type="textarea" placeholder="描述" v-model:value="formValue.description" />
+                  <n-input placeholder="请输入描述" v-model:value="formValue.description" />
                 </n-form-item>
               </n-gi>
               <n-gi span="1">
@@ -58,7 +58,7 @@
               </n-gi>
               <n-gi span="1">
                 <n-form-item label="状态" path="status">
-                  <n-select v-model:value="formValue.status" :options="options.sys_normal_disable" />
+                  <n-select v-model:value="formValue.status" :options="dict.getOptionUnRef('sys_normal_disable')" />
                 </n-form-item>
               </n-gi>
             </n-grid>
@@ -81,8 +81,9 @@
 
 <script lang="ts" setup>
   import { ref, computed } from 'vue';
+  import { useDictStore } from '@/store/modules/dict';
   import { Edit, View, MaxSort } from '@/api/optionTreeDemo';
-  import { options, State, newState, treeOption, loadTreeOption, rules } from './model';
+  import { State, newState, treeOption, loadTreeOption, rules } from './model';
   import { useProjectSettingStore } from '@/store/modules/projectSetting';
   import { useMessage } from 'naive-ui';
   import { adaModalWidth } from '@/utils/hotgo';
@@ -90,6 +91,7 @@
   const emit = defineEmits(['reloadTable']);
   const message = useMessage();
   const settingStore = useProjectSettingStore();
+  const dict = useDictStore();
   const loading = ref(false);
   const showModal = ref(false);
   const formValue = ref<State>(newState(null));
@@ -99,6 +101,34 @@
     return adaModalWidth(840);
   });
 
+  // 提交表单
+  function confirmForm(e) {
+    e.preventDefault();
+    formRef.value.validate((errors) => {
+      if (!errors) {
+        formBtnLoading.value = true;
+        Edit(formValue.value)
+          .then((_res) => {
+            message.success('操作成功');
+            closeForm();
+            emit('reloadTable');
+          })
+          .finally(() => {
+            formBtnLoading.value = false;
+          });
+      } else {
+        message.error('请填写完整信息');
+      }
+    });
+  }
+
+  // 关闭表单
+  function closeForm() {
+    showModal.value = false;
+    loading.value = false;
+  }
+
+  // 打开模态框
   function openModal(state: State) {
     showModal.value = true;
 
@@ -129,30 +159,6 @@
       .finally(() => {
         loading.value = false;
       });
-  }
-
-  function confirmForm(e) {
-    e.preventDefault();
-    formBtnLoading.value = true;
-    formRef.value.validate((errors) => {
-      if (!errors) {
-        Edit(formValue.value).then((_res) => {
-          message.success('操作成功');
-          setTimeout(() => {
-            closeForm();
-            emit('reloadTable');
-          });
-        });
-      } else {
-        message.error('请填写完整信息');
-      }
-      formBtnLoading.value = false;
-    });
-  }
-
-  function closeForm() {
-    showModal.value = false;
-    loading.value = false;
   }
 
   defineExpose({

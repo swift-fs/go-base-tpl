@@ -3,7 +3,6 @@
 // @Copyright  Copyright (c) 2023 HotGo CLI
 // @Author  Ms <133814250@qq.com>
 // @License  https://github.com/bufanyun/hotgo/blob/master/LICENSE
-//
 package sysin
 
 import (
@@ -34,6 +33,7 @@ type ServeLogListInp struct {
 	form.PageReq
 	TraceId     string        `json:"traceId"          dc:"链路ID"`
 	LevelFormat string        `json:"levelFormat"      dc:"日志级别"`
+	Content     string        `json:"content"          dc:"日志内容"`
 	TriggerNs   []int64       `json:"triggerNs"        dc:"触发时间(ns)"`
 	CreatedAt   []*gtime.Time `json:"createdAt"        dc:"创建时间"`
 }

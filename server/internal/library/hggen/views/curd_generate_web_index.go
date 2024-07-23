@@ -60,8 +60,6 @@ func (l *gCurd) webIndexTplData(ctx context.Context, in *CurdPreviewInput) (g.Ma
 	// 修改状态
 	if in.options.Step.HasStatus {
 		importApiMethod = append(importApiMethod, "Status")
-		importUtilsMethod = append(importUtilsMethod, "getOptionLabel")
-		importModelMethod = append(importModelMethod, "options")
 		in.options.Step.ActionColumnWidth += actionWidth
 	}
 
@@ -107,6 +105,11 @@ func (l *gCurd) webIndexTplData(ctx context.Context, in *CurdPreviewInput) (g.Ma
 	importBuffer.WriteString("  import { BasicTable, TableAction } from '@/components/Table';\n")
 	importBuffer.WriteString("  import { BasicForm, useForm } from '@/components/Form/index';\n")
 	importBuffer.WriteString("  import { usePermission } from '@/hooks/web/usePermission';\n")
+
+	// 导入字典
+	if in.options.DictOps.Has {
+		importBuffer.WriteString("  import { useDictStore } from '@/store/modules/dict';\n")
+	}
 
 	// 导入api
 	importBuffer.WriteString("  import " + ImportWebMethod(importApiMethod) + " from '" + in.options.ImportWebApi + "';\n")

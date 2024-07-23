@@ -1,46 +1,11 @@
 import { h, ref } from 'vue';
-import { NTag } from 'naive-ui';
-import { cloneDeep } from 'lodash-es';
 import { FormSchema } from '@/components/Form';
-import { isNullObject } from '@/utils/is';
 import { defRangeShortcuts } from '@/utils/dateUtil';
-import { getOptionLabel, getOptionTag, Option } from '@/utils/hotgo';
-import { Dicts } from '@/api/dict/dict';
+import { NTag } from 'naive-ui';
+import { useDictStore } from '@/store/modules/dict';
+import { renderOptionTag } from '@/utils';
 
-export interface State {
-  id: number;
-  reqId: string;
-  memberId: number;
-  username: string;
-  response: any;
-  loginAt: number;
-  errMsg: string;
-  status: number;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export const defaultState = {
-  id: 0,
-  reqId: '',
-  memberId: 0,
-  username: '',
-  response: null,
-  loginAt: 0,
-  errMsg: '',
-  status: 1,
-  createdAt: '',
-  updatedAt: '',
-};
-
-export function newState(state: State | null): State {
-  if (state !== null) {
-    return cloneDeep(state);
-  }
-  return cloneDeep(defaultState);
-}
-
-export const rules = {};
+const dict = useDictStore();
 
 export const schemas = ref<FormSchema[]>([
   {
@@ -72,7 +37,7 @@ export const schemas = ref<FormSchema[]>([
     defaultValue: null,
     componentProps: {
       placeholder: '请选择状态',
-      options: [],
+      options: dict.getOption('sys_login_status'),
       onUpdateValue: (e: any) => {
         console.log(e);
       },
@@ -143,22 +108,7 @@ export const columns = [
     title: '状态',
     key: 'status',
     render(row) {
-      if (isNullObject(row.status)) {
-        return ``;
-      }
-      return h(
-        NTag,
-        {
-          style: {
-            marginRight: '6px',
-          },
-          type: getOptionTag(options.value.sys_login_status, row.status),
-          bordered: false,
-        },
-        {
-          default: () => getOptionLabel(options.value.sys_login_status, row.status),
-        }
-      );
+      return renderOptionTag('sys_login_status', row.status);
     },
     width: 150,
   },
@@ -184,23 +134,7 @@ export const columns = [
   },
 ];
 
-// 字典数据选项
-export const options = ref({
-  sys_login_status: [] as Option[],
-});
-
 // 加载字典数据选项
 export function loadOptions() {
-  Dicts({
-    types: ['sys_login_status'],
-  }).then((res) => {
-    options.value = res;
-    for (const item of schemas.value) {
-      switch (item.field) {
-        case 'status':
-          item.componentProps.options = options.value.sys_login_status;
-          break;
-      }
-    }
-  });
+  dict.loadOptions(['sys_login_status']);
 }

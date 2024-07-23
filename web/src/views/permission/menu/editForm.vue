@@ -17,7 +17,7 @@
               :on-update:value="handleUpdateType"
             >
               <n-radio-button
-                v-for="menuType in options.sys_menu_types"
+                v-for="menuType in dict.getOptionUnRef('sys_menu_types')"
                 :key="menuType.value"
                 :value="menuType.value"
                 :label="menuType.label"
@@ -91,7 +91,7 @@
           <n-form-item label="目录组件" path="component">
             <n-select
               v-if="formParams.type === 1"
-              :options="options.sys_menu_component"
+              :options="dict.getOptionUnRef('sys_menu_component')"
               v-model:value="formParams.component"
               placeholder="请选择目录组件"
               clearable
@@ -159,7 +159,7 @@
             <n-input-group>
               <n-select
                 :style="{ width: '33%', minWidth: '80px' }"
-                :options="options.sys_switch"
+                :options="dict.getOptionUnRef('sys_switch')"
                 v-model:value="formParams.isFrame"
               />
               <n-input
@@ -173,7 +173,7 @@
           <n-form-item label="菜单状态" path="status">
             <n-radio-group v-model:value="formParams.status" name="status">
               <n-radio-button
-                v-for="status in options.sys_normal_disable"
+                v-for="status in dict.getOptionUnRef('sys_normal_disable')"
                 :key="status.value"
                 :value="status.value"
                 :label="status.label"
@@ -210,13 +210,15 @@
   import { QuestionCircleOutlined } from '@vicons/antd';
   import IconSelector from '@/components/IconSelector/index.vue';
   import { computed, ref } from 'vue';
-  import { newState, State, options } from '@/views/permission/menu/model';
+  import { newState, State } from '@/views/permission/menu/model';
   import { FormItemRule, useDialog, useMessage } from 'naive-ui';
   import { cloneDeep } from 'lodash-es';
   import { DeleteMenu, EditMenu } from '@/api/system/menu';
   import { findTreeNode } from '@/utils';
+  import { useDictStore } from '@/store/modules/dict';
+  import type { FormRules } from 'naive-ui/es/form/src/interface';
 
-  const rules = {
+  const rules: FormRules = {
     title: {
       required: true,
       message: '请输入名称',
@@ -231,15 +233,17 @@
       required: false,
       message: '请输入路由地址',
       trigger: 'blur',
-      validator: function (_rule: FormItemRule, value: any, callback: Function) {
+      validator: function (_rule: FormItemRule, value: any, callback: Function): boolean | Error {
         if (formParams.value.type != 3 && !value) {
           callback(new Error('请输入路由地址'));
         }
+        return true;
       },
     },
   };
 
   const emit = defineEmits(['reloadTable', 'closeForm']);
+  const dict = useDictStore();
   const message = useMessage();
   const dialog = useDialog();
   const loading = ref(false);

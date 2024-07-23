@@ -3,7 +3,7 @@
 // @Copyright  Copyright (c) 2024 HotGo CLI
 // @Author  Ms <133814250@qq.com>
 // @License  https://github.com/bufanyun/hotgo/blob/master/LICENSE
-// @AutoGenerate Version 2.13.1
+// @AutoGenerate Version 2.15.1
 package sys
 
 import (
@@ -75,6 +75,12 @@ func (c *cCurdDemo) View(ctx context.Context, req *curddemo.ViewReq) (res *curdd
 // Delete 删除CURD列表
 func (c *cCurdDemo) Delete(ctx context.Context, req *curddemo.DeleteReq) (res *curddemo.DeleteRes, err error) {
 	err = service.SysCurdDemo().Delete(ctx, &req.CurdDemoDeleteInp)
+	return
+}
+
+// Status 更新CURD列表状态
+func (c *cCurdDemo) Status(ctx context.Context, req *curddemo.StatusReq) (res *curddemo.StatusRes, err error) {
+	err = service.SysCurdDemo().Status(ctx, &req.CurdDemoStatusInp)
 	return
 }
 

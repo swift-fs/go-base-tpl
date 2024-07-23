@@ -3,7 +3,8 @@ import { FormItemRule } from 'naive-ui';
  * @description 表单验证封装
  */
 export const validate = {
-  ip(rule: FormItemRule, value: any, callback: Function) {
+  // 验证ipv4
+  ip(rule: FormItemRule, value: any, callback: Function): boolean | Error {
     // 支持通配符的ipv4正则
     const ipv4Regex =
       /^(?:[1-9]?[0-9]|1[0-9]{2}|2(?:[0-4][0-9]|5[0-5]))(?!.*?\.\*\.[*\d])(?:\.(?:(?:[1-9]?[0-9]|1[0-9]{2}|2(?:[0-4][0-9]|5[0-5]))|\*)){1,3}$/;
@@ -20,9 +21,10 @@ export const validate = {
     } else {
       callback();
     }
+    return true;
   },
   //0-100百分比验证
-  percentage(rule: FormItemRule, value: any, callback: Function) {
+  percentage(rule: FormItemRule, value: any, callback: Function): boolean | Error {
     const reg = /^([1-9]{1,2}$)|(^[0-9]{1,2}\.[0-9]{1,2}$)|100$/;
     if (!value && !rule.required) {
       callback(new Error('请输入比例'));
@@ -31,9 +33,10 @@ export const validate = {
     } else {
       callback();
     }
+    return true;
   },
   // 手机号 （eg:138********,159********）
-  phone(rule: FormItemRule, value: any, callback: Function) {
+  phone(rule: FormItemRule, value: any, callback: Function): boolean | Error {
     const regPhone = /^1([38][0-9]|4[579]|5[0-3,5-9]|6[6]|7[0135678]|9[89])\d{8}$/;
     if (!value && !rule.required) {
       callback();
@@ -44,9 +47,10 @@ export const validate = {
     } else {
       callback();
     }
+    return true;
   },
   // 用户名 （eg:a123456）
-  userName(rule: FormItemRule, value: any, callback: Function) {
+  userName(rule: FormItemRule, value: any, callback: Function): boolean | Error {
     const regUserName = /^[0-9a-zA-Z]{6,16}$/;
     if (!value && !rule.required) {
       callback(new Error('请输入登录账号'));
@@ -55,9 +59,10 @@ export const validate = {
     } else {
       callback();
     }
+    return true;
   },
   // 账号
-  account(rule: FormItemRule, value: any, callback: Function) {
+  account(rule: FormItemRule, value: any, callback: Function): boolean | Error {
     const regex = /^[\w_\d]{6,16}$/;
     if (!value && !rule.required) {
       callback();
@@ -68,9 +73,10 @@ export const validate = {
     } else {
       callback();
     }
+    return true;
   },
   // 密码
-  password(rule: FormItemRule, value: any, callback: Function) {
+  password(rule: FormItemRule, value: any, callback: Function): boolean | Error {
     const regPassword = /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{6,18}$/;
     if (!value && !rule.required) {
       callback(new Error('请输入密码'));
@@ -79,9 +85,10 @@ export const validate = {
     } else {
       callback();
     }
+    return true;
   },
   // 邮箱
-  email(rule: FormItemRule, value: any, callback: Function) {
+  email(rule: FormItemRule, value: any, callback: Function): boolean | Error {
     const regEmails = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
     // console.log('isRequired is: ', JSON.stringify(isRequired))
     if (!value && !rule.required) {
@@ -93,9 +100,10 @@ export const validate = {
     } else {
       callback();
     }
+    return true;
   },
   // 金额验证
-  amount(rule: FormItemRule, value: any, callback: Function) {
+  amount(rule: FormItemRule, value: any, callback: Function): boolean | Error {
     const regAmount = /(^[0-9]{1,10}$)|(^[0-9]{1,10}[\.]{1}[0-9]{1,2}$)/;
     if (!value && !rule.required) {
       callback();
@@ -106,9 +114,10 @@ export const validate = {
     } else {
       callback();
     }
+    return true;
   },
   // 身份证验证
-  idCard(rule: FormItemRule, value: any, callback: Function, isEnabled = true) {
+  idCard(rule: FormItemRule, value: any, callback: Function, isEnabled = true): boolean | Error {
     const regIdCard =
       /^[1-9]\d{7}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])\d{3}$|^[1-9]\d{5}[1-9]\d{3}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])\d{3}([0-9]|X|x)$/;
     if (!isEnabled) {
@@ -122,9 +131,10 @@ export const validate = {
     } else {
       callback();
     }
+    return true;
   },
   // 银行卡验证
-  bank(rule: FormItemRule, value: any, callback: Function) {
+  bank(rule: FormItemRule, value: any, callback: Function): boolean | Error {
     const regBank = /^([1-9]{1})(\d{15}|\d{16}|\d{18})$/;
     if (!value && !rule.required) {
       callback();
@@ -135,9 +145,10 @@ export const validate = {
     } else {
       callback();
     }
+    return true;
   },
   // 非零正整数验证
-  num(rule: FormItemRule, value: any, callback: Function) {
+  num(rule: FormItemRule, value: any, callback: Function): boolean | Error {
     const reg = /^\+?[1-9][0-9]*$/;
     if (!value && !rule.required) {
       callback(new Error('请填写非零正整数'));
@@ -148,9 +159,10 @@ export const validate = {
         callback();
       }
     }
+    return true;
   },
   // 银行卡
-  bankCard(rule: FormItemRule, value: any, callback: Function) {
+  bankCard(rule: FormItemRule, value: any, callback: Function): boolean | Error {
     const regBankCard = /^(\d{16}|\d{19})$/;
     if (value == '' && !rule.required) {
       callback(new Error('请输入银行卡号'));
@@ -161,9 +173,10 @@ export const validate = {
         callback();
       }
     }
+    return true;
   },
   // 固话格式
-  tel(rule: FormItemRule, value: any, callback: Function) {
+  tel(rule: FormItemRule, value: any, callback: Function): boolean | Error {
     const regTel = /^(0\d{2,3}-?)?\d{7,8}$/;
     if (value == '' && !rule.required) {
       callback(new Error('请输入座机号码'));
@@ -174,9 +187,10 @@ export const validate = {
         callback();
       }
     }
+    return true;
   },
   // QQ号码
-  qq(rule: FormItemRule, value: any, callback: Function) {
+  qq(rule: FormItemRule, value: any, callback: Function): boolean | Error {
     const regex = /^[1-9][0-9]{4,}$/;
     if (!value && !rule.required) {
       callback();
@@ -189,9 +203,10 @@ export const validate = {
         callback();
       }
     }
+    return true;
   },
   // weibo号
-  weibo(rule: FormItemRule, value: any, callback: Function) {
+  weibo(rule: FormItemRule, value: any, callback: Function): boolean | Error {
     const regex = /^[0-9a-zA-Z\u4e00-\u9fa5_-]*$/;
     if (!value && !rule.required) {
       callback();
@@ -204,9 +219,11 @@ export const validate = {
         callback();
       }
     }
+    return true;
   },
   // 不验证
-  none(_rule: FormItemRule, _value: any, callback: Function) {
+  none(_rule: FormItemRule, _value: any, callback: Function): boolean {
     callback();
+    return true;
   },
 };

@@ -71,8 +71,8 @@
     </n-card>
 
     <Edit
-      @reloadTable="reloadTable"
-      @updateShowModal="updateShowModal"
+      @reload-table="reloadTable"
+      @update-show-modal="updateShowModal"
       :showModal="showModal"
       :formParams="formParams"
       :optionTreeData="optionTreeData"
@@ -87,10 +87,11 @@
   import { BasicForm, useForm } from '@/components/Form/index';
   import { useSorter } from '@/hooks/common';
   import { Delete, List, Status, Export } from '@/api/addons/hgexample/treeTable';
-  import { State, columns, schemas, options, newState } from './model';
+  import { State, columns, schemas, newState } from './model';
   import { DeleteOutlined, PlusOutlined, ExportOutlined } from '@vicons/antd';
-  import { adaTableScrollX, getOptionLabel } from '@/utils/hotgo';
+  import { adaTableScrollX } from '@/utils/hotgo';
   import Edit from './edit.vue';
+  import { useDictStore } from '@/store/modules/dict';
 
   interface Props {
     checkedId?: number;
@@ -99,6 +100,7 @@
 
   const props = withDefaults(defineProps<Props>(), { checkedId: 0, optionTreeData: [] });
   const emit = defineEmits(['reloadTable']);
+  const dict = useDictStore();
   const dialog = useDialog();
   const message = useMessage();
   const searchFormRef = ref<any>();
@@ -232,7 +234,7 @@
 
   function handleStatus(record: Recordable, status: number) {
     Status({ id: record.id, status: status }).then((_res) => {
-      message.success('设为' + getOptionLabel(options.value.sys_normal_disable, status) + '成功');
+      message.success('设为' + dict.getLabel('sys_normal_disable', status) + '成功');
       setTimeout(() => {
         reloadTable();
       });

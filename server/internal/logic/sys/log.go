@@ -17,6 +17,7 @@ import (
 	"github.com/gogf/gf/v2/os/gtime"
 	"github.com/gogf/gf/v2/text/gstr"
 	"github.com/gogf/gf/v2/util/gconv"
+	"github.com/gogf/gf/v2/util/gmode"
 	"hotgo/internal/consts"
 	"hotgo/internal/dao"
 	"hotgo/internal/global"
@@ -226,7 +227,7 @@ func (s *sSysLog) AnalysisLog(ctx context.Context) entity.SysLog {
 		takeUpTime = tt
 	}
 
-	headerData.MustSet("qqq", request.EnterTime.String())
+	headerData.MustAppend("Enter-Time", request.EnterTime.String())
 
 	data = entity.SysLog{
 		AppId:      appId,
@@ -237,7 +238,7 @@ func (s *sSysLog) AnalysisLog(ctx context.Context) entity.SysLog {
 		Url:        request.URL.Path,
 		GetData:    getData,
 		PostData:   postData,
-		HeaderData: headerData,
+		HeaderData: s.SimplifyHeaderParams(headerData),
 		Ip:         clientIp,
 		ProvinceId: ipData.ProvinceCode,
 		CityId:     ipData.CityCode,
@@ -251,6 +252,21 @@ func (s *sSysLog) AnalysisLog(ctx context.Context) entity.SysLog {
 		TakeUpTime: takeUpTime,
 		UpdatedAt:  gtime.Now(),
 		CreatedAt:  request.EnterTime,
+	}
+	return data
+}
+
+// SimplifyHeaderParams 过滤掉请求头中的大参数
+func (s *sSysLog) SimplifyHeaderParams(data *gjson.Json) *gjson.Json {
+	if data == nil || data.IsNil() {
+		return data
+	}
+	var filters = []string{"Accept", "Authorization", "Cookie"}
+	for _, filter := range filters {
+		v := data.Get(filter)
+		if len(v.String()) > 128 {
+			data.MustRemove(filter)
+		}
 	}
 	return data
 }
@@ -350,7 +366,18 @@ func (s *sSysLog) List(ctx context.Context, in *sysin.LogListInp) (list []*sysin
 
 	// 请求耗时
 	if dict.HasOptionKey(consts.HTTPHandlerTimeOptions, in.TakeUpTime) {
-		mod = mod.Where(fmt.Sprintf("`take_up_time` %v", in.TakeUpTime))
+		mod = mod.Where(gdb.Raw(fmt.Sprintf("(`take_up_time` %v)", in.TakeUpTime)))
+	}
+
+	// 非生产环境，允许关键词查询日志
+	// 生成环境使用需谨慎，日志量大易产生慢日志
+	if !gmode.IsProduct() && in.Keyword != "" {
+		mod = mod.Where("(`get_data` LIKE '%" +
+			in.Keyword + "%' or `post_data` LIKE '%" +
+			in.Keyword + "%' or `header_data` LIKE '%" +
+			in.Keyword + "%' or `error_data` LIKE '%" +
+			in.Keyword + "%' or `error_msg` LIKE '%" +
+			in.Keyword + "%')")
 	}
 
 	totalCount, err = mod.Count()

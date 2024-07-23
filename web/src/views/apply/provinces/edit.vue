@@ -59,7 +59,7 @@
         <n-form-item label="状态" path="status">
           <n-radio-group v-model:value="params.status" name="status">
             <n-radio-button
-              v-for="status in options.sys_normal_disable"
+              v-for="status in dict.getOptionUnRef('sys_normal_disable')"
               :key="Number(status.value)"
               :value="Number(status.value)"
               :label="status.label"
@@ -80,10 +80,11 @@
 
 <script lang="ts" setup>
   import { ref, computed, watch } from 'vue';
-  import { options, State, newState } from './model';
+  import { State, newState } from './model';
   import { Edit, MaxSort, CheckProvincesUniqueId } from '@/api/apply/provinces';
   import { FormItemRule, useMessage } from 'naive-ui';
   import { adaModalWidth } from '@/utils/hotgo';
+  import { useDictStore } from '@/store/modules/dict';
   const emit = defineEmits(['reloadTable', 'updateShowModal']);
 
   interface Props {
@@ -138,6 +139,7 @@
     },
   };
 
+  const dict = useDictStore();
   const message = useMessage();
   const formRef = ref<any>({});
   const formBtnLoading = ref(false);

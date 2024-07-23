@@ -62,6 +62,8 @@ var defaultSort = map[string]bool{
 	"sort": true,
 }
 
+var defaultTreeFields = []string{"pid", "level", "tree"}
+
 // 默认表单验证映射 物理类型命名识别
 var defaultFormRoleMap = map[string]string{
 	"mobile":    FormRolePhone,

@@ -58,7 +58,7 @@
             </n-space>
           </template>
           <div class="w-full menu">
-            <n-input type="input" v-model:value="pattern" placeholder="输入字典名称搜索">
+            <n-input type="text" v-model:value="pattern" placeholder="输入字典名称搜索">
               <template #suffix>
                 <n-icon size="18" class="cursor-pointer">
                   <SearchOutlined />
@@ -111,7 +111,7 @@
       ref="createDrawerRef"
       :title="drawerTitle"
       :optionTreeData="optionTreeData"
-      @loadData="loadData"
+      @load-data="loadData"
     />
   </div>
 </template>
@@ -129,6 +129,7 @@
   import CreateDrawer from './CreateDrawer.vue';
   import List from './list.vue';
   import { DeleteDict, getDictTree } from '@/api/dict/dict';
+  import { State } from '@/views/system/dict/model';
 
   const createDrawerRef = ref();
   const message = useMessage();
@@ -143,28 +144,18 @@
   const pattern = ref('');
   const drawerTitle = ref('');
   const optionTreeData = ref([]);
-  const defaultValueRef = () => ({
-    id: 0,
-    pid: 0,
-    type: '',
-    name: '',
-    remark: '',
-    status: 1,
-    sort: 10,
-  });
-
-  const formParams = reactive(defaultValueRef());
+  const formParams = ref<State>(new State());
 
   function openCreateDrawer() {
     drawerTitle.value = '添加字典类型';
     const { openDrawer } = createDrawerRef.value;
-    openDrawer(defaultValueRef());
+    openDrawer(new State());
   }
 
   function openEditDrawer() {
     drawerTitle.value = '编辑字典类型';
     const { openDrawer } = createDrawerRef.value;
-    openDrawer(formParams);
+    openDrawer(formParams.value);
   }
 
   function selectedTree(keys, opts) {
@@ -172,7 +163,7 @@
       const treeItem = opts[0];
       treeItemKey.value = keys;
       treeItemTitle.value = treeItem.label;
-      Object.assign(formParams, treeItem);
+      formParams.value = unref(treeItem);
       isEditMenu.value = true;
       checkedId.value = treeItem.id;
     } else {
@@ -189,13 +180,10 @@
       positiveText: '确定',
       negativeText: '取消',
       onPositiveClick: () => {
-        DeleteDict({ ...formParams }).then(async (_res) => {
+        DeleteDict(formParams.value).then(async (_res) => {
           message.success('操作成功');
           await loadData();
         });
-      },
-      onNegativeClick: () => {
-        message.error('已取消');
       },
     });
   }
@@ -208,14 +196,10 @@
     }
   }
 
-  onMounted(async () => {
-    await loadData();
-  });
-
   async function loadData() {
     const treeMenuList = await getDictTree();
     const keys = treeMenuList.list.map((item) => item.key);
-    Object.assign(formParams, keys);
+    Object.assign(formParams.value, keys);
     treeData.value = [];
     optionTreeData.value = [];
     treeData.value = treeMenuList.list;
@@ -226,4 +210,8 @@
   function onExpandedKeys(keys) {
     expandedKeys.value = keys;
   }
+
+  onMounted(async () => {
+    await loadData();
+  });
 </script>

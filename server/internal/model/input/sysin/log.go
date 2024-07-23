@@ -23,6 +23,7 @@ type LogListInp struct {
 	Ip         string  `json:"ip"             dc:"访问IP"`
 	ErrorCode  string  `json:"errorCode"      dc:"状态码"`
 	CreatedAt  []int64 `json:"createdAt"      dc:"创建时间"`
+	Keyword    string  `json:"keyword"        dc:"关键词"`
 }
 
 type LogListModel struct {

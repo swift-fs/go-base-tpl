@@ -6,17 +6,16 @@
         :model="formValue"
         :rules="rules"
         ref="formRef"
-        label-placement="left"
+        label-placement="top"
       >
+        <n-divider title-placement="left">基础设置</n-divider>
         <n-form-item label="默认驱动" path="smsDrive">
           <n-select
             placeholder="默认发送驱动"
-            :options="options.config_sms_drive"
+            :options="dict.getOptionUnRef('config_sms_drive')"
             v-model:value="formValue.smsDrive"
           />
         </n-form-item>
-
-        <n-divider title-placement="left">发信限制</n-divider>
         <n-form-item label="最小发送间隔" path="smsMinInterval">
           <n-input-number
             :show-button="false"
@@ -179,7 +178,10 @@
         class="py-4"
       >
         <n-form-item label="事件模板" path="event">
-          <n-select :options="options.config_sms_template" v-model:value="formParams.event" />
+          <n-select
+            :options="dict.getOptionUnRef('config_sms_template')"
+            v-model:value="formParams.event"
+          />
         </n-form-item>
 
         <n-form-item label="手机号" path="mobile">
@@ -213,37 +215,29 @@
   import { ref, onMounted, watch } from 'vue';
   import { useMessage } from 'naive-ui';
   import { getConfig, sendTestSms, updateConfig } from '@/api/sys/config';
-  import { Dicts } from '@/api/dict/dict';
-  import { Options } from '@/utils/hotgo';
   import { GlassesOutline, Glasses } from '@vicons/ionicons5';
+  import { useDictStore } from '@/store/modules/dict';
+  import type { FormRules } from 'naive-ui/es/form/src/interface';
 
+  const dict = useDictStore();
+  const message = useMessage();
   const group = ref('sms');
   const show = ref(false);
   const showModal = ref(false);
   const formBtnLoading = ref(false);
   const formParams = ref({ mobile: '', event: '', code: '1234' });
+  const formTestRef = ref<any>();
+  const formRef: any = ref(null);
+  const defaultTabName = 'aliyun';
+  const tabName = ref<string>(defaultTabName);
 
-  const rules = {
+  const rules: FormRules = {
     smsDrive: {
       required: true,
       message: '请输入默认驱动',
       trigger: 'blur',
     },
   };
-
-  const formTestRef = ref<any>();
-  const formRef: any = ref(null);
-  const message = useMessage();
-
-  const options = ref<Options>({
-    config_sms_template: [],
-    config_sms_drive: [],
-  });
-
-  /** 默认选项卡 */
-  const defaultTabName = 'aliyun';
-  /** 选项卡名称 */
-  const tabName = ref<string>(defaultTabName);
 
   const formValue = ref({
     smsDrive: defaultTabName,
@@ -263,14 +257,6 @@
     smsTencentTemplate: null,
   });
 
-  /** 监听类型变化,同步到选项卡中 */
-  watch(
-    () => formValue.value.smsDrive,
-    (smsDrive: string) => {
-      tabName.value = smsDrive;
-    }
-  );
-
   function sendTest() {
     showModal.value = true;
     formBtnLoading.value = false;
@@ -289,30 +275,21 @@
     });
   }
 
-  onMounted(() => {
-    load();
-  });
-
-  async function load() {
+  function load() {
     show.value = true;
-    await loadOptions();
-    new Promise((_resolve, _reject) => {
-      getConfig({ group: group.value })
-        .then((res) => {
-          res.list.smsAliYunTemplate = JSON.parse(res.list.smsAliYunTemplate);
-          res.list.smsTencentTemplate = JSON.parse(res.list.smsTencentTemplate);
-          formValue.value = res.list;
-        })
-        .finally(() => {
-          show.value = false;
-        });
-    });
+    getConfig({ group: group.value })
+      .then((res) => {
+        res.list.smsAliYunTemplate = JSON.parse(res.list.smsAliYunTemplate);
+        res.list.smsTencentTemplate = JSON.parse(res.list.smsTencentTemplate);
+        formValue.value = res.list;
+      })
+      .finally(() => {
+        show.value = false;
+      });
   }
 
-  async function loadOptions() {
-    options.value = await Dicts({
-      types: ['config_sms_template', 'config_sms_drive'],
-    });
+  function loadOptions() {
+    dict.loadOptions(['config_sms_template', 'config_sms_drive']);
   }
 
   function confirmForm(e) {
@@ -330,4 +307,16 @@
       formBtnLoading.value = false;
     });
   }
+
+  watch(
+    () => formValue.value.smsDrive,
+    (smsDrive: string) => {
+      tabName.value = smsDrive;
+    }
+  );
+
+  onMounted(() => {
+    loadOptions();
+    load();
+  });
 </script>

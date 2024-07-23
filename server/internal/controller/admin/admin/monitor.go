@@ -204,16 +204,6 @@ func (c *cMonitor) NetOnlineList(ctx context.Context, req *monitor.NetOnlineList
 func (c *cMonitor) NetOption(ctx context.Context, req *monitor.NetOptionReq) (res *monitor.NetOptionRes, err error) {
 	res = new(monitor.NetOptionRes)
 
-	// 授权分组
-	for k, v := range consts.LicenseGroupNameMap {
-		res.LicenseGroup = append(res.LicenseGroup, &form.Select{
-			Value: k,
-			Name:  v,
-			Label: v,
-		})
-	}
-	sort.Sort(res.LicenseGroup)
-
 	for _, v := range service.TCPServer().Instance().GetRoutes() {
 		// 无需勾选的路由
 		disabled := false

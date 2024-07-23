@@ -3,7 +3,7 @@
 // @Copyright  Copyright (c) 2024 HotGo CLI
 // @Author  Ms <133814250@qq.com>
 // @License  https://github.com/bufanyun/hotgo/blob/master/LICENSE
-// @AutoGenerate Version 2.13.1
+// @AutoGenerate Version 2.15.1
 package sys
 
 import (
@@ -69,11 +69,6 @@ func (s *sSysCurdDemo) List(ctx context.Context, in *sysin.CurdDemoListInp) (lis
 		mod = mod.WhereLike(dao.SysGenCurdDemo.Columns().Description, "%"+in.Description+"%")
 	}
 
-	// 查询状态
-	if in.Status > 0 {
-		mod = mod.Where(dao.SysGenCurdDemo.Columns().Status, in.Status)
-	}
-
 	// 查询创建者
 	if in.CreatedBy != "" {
 		ids, err := service.AdminMember().GetIdsByKeyword(ctx, in.CreatedBy)
@@ -86,11 +81,6 @@ func (s *sSysCurdDemo) List(ctx context.Context, in *sysin.CurdDemoListInp) (lis
 	// 查询创建时间
 	if len(in.CreatedAt) == 2 {
 		mod = mod.WhereBetween(dao.SysGenCurdDemo.Columns().CreatedAt, in.CreatedAt[0], in.CreatedAt[1])
-	}
-
-	// 查询测试分类
-	if in.CategoryId > 0 {
-		mod = mod.Where(dao.SysGenCurdDemo.Columns().CategoryId, in.CategoryId)
 	}
 
 	// 查询关联分类
@@ -145,6 +135,7 @@ func (s *sSysCurdDemo) Export(ctx context.Context, in *sysin.CurdDemoListInp) (e
 // Edit 修改/新增CURD列表
 func (s *sSysCurdDemo) Edit(ctx context.Context, in *sysin.CurdDemoEditInp) (err error) {
 	return g.DB().Transaction(ctx, func(ctx context.Context, tx gdb.TX) (err error) {
+
 		// 修改
 		if in.Id > 0 {
 			in.UpdatedBy = contexts.GetUserId(ctx)
@@ -169,6 +160,7 @@ func (s *sSysCurdDemo) Edit(ctx context.Context, in *sysin.CurdDemoEditInp) (err
 
 // Delete 删除CURD列表
 func (s *sSysCurdDemo) Delete(ctx context.Context, in *sysin.CurdDemoDeleteInp) (err error) {
+
 	if _, err = s.Model(ctx).WherePri(in.Id).Delete(); err != nil {
 		err = gerror.Wrap(err, "删除CURD列表失败，请稍后重试！")
 		return
@@ -195,6 +187,18 @@ func (s *sSysCurdDemo) MaxSort(ctx context.Context, in *sysin.CurdDemoMaxSortInp
 func (s *sSysCurdDemo) View(ctx context.Context, in *sysin.CurdDemoViewInp) (res *sysin.CurdDemoViewModel, err error) {
 	if err = s.Model(ctx).WherePri(in.Id).Hook(hook.MemberSummary).Scan(&res); err != nil {
 		err = gerror.Wrap(err, "获取CURD列表信息，请稍后重试！")
+		return
+	}
+	return
+}
+
+// Status 更新CURD列表状态
+func (s *sSysCurdDemo) Status(ctx context.Context, in *sysin.CurdDemoStatusInp) (err error) {
+	if _, err = s.Model(ctx).WherePri(in.Id).Data(g.Map{
+		dao.SysGenCurdDemo.Columns().Status:    in.Status,
+		dao.SysGenCurdDemo.Columns().UpdatedBy: contexts.GetUserId(ctx),
+	}).Update(); err != nil {
+		err = gerror.Wrap(err, "更新CURD列表状态失败，请稍后重试！")
 		return
 	}
 	return

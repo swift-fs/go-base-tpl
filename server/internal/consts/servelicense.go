@@ -5,6 +5,15 @@
 // @License  https://github.com/bufanyun/hotgo/blob/master/LICENSE
 package consts
 
+import (
+	"hotgo/internal/library/dict"
+	"hotgo/internal/model"
+)
+
+func init() {
+	dict.RegisterEnums("ServerLicenseGroupOptions", "服务授权分组选项", ServerLicenseGroupOptions)
+}
+
 // 授权分组
 const (
 	LicenseGroupDefault = "default" // 默认组
@@ -12,8 +21,9 @@ const (
 	LicenseGroupAuth    = "auth"    // 服务授权
 )
 
-var LicenseGroupNameMap = map[string]string{
-	LicenseGroupDefault: "默认组",
-	LicenseGroupCron:    "定时任务",
-	LicenseGroupAuth:    "服务授权",
+// ServerLicenseGroupOptions 服务授权分组选项
+var ServerLicenseGroupOptions = []*model.Option{
+	dict.GenWarningOption(LicenseGroupDefault, "默认组"),
+	dict.GenSuccessOption(LicenseGroupCron, "定时任务"),
+	dict.GenSuccessOption(LicenseGroupAuth, "服务授权"),
 }

@@ -87,8 +87,7 @@ type NetOptionReq struct {
 }
 
 type NetOptionRes struct {
-	LicenseGroup form.Selects   `json:"licenseGroup" dc:"授权分组"`
-	Routes       []*RouteSelect `json:"routes" dc:"路由选项"`
+	Routes []*RouteSelect `json:"routes" dc:"路由选项"`
 }
 
 type RouteSelect struct {

@@ -2,12 +2,13 @@ import { h, ref } from 'vue';
 import { NTag } from 'naive-ui';
 import { cloneDeep } from 'lodash-es';
 import { FormSchema } from '@/components/Form';
-import { Dicts } from '@/api/dict/dict';
 import { isNullObject } from '@/utils/is';
 import { defRangeShortcuts } from '@/utils/dateUtil';
-import { Option, getOptionLabel, getOptionTag } from '@/utils/hotgo';
 import { renderPopoverMemberSumma, MemberSumma } from '@/utils';
 import { TreeOption } from '@/api/normalTreeDemo';
+import { useDictStore } from '@/store/modules/dict';
+
+const dict = useDictStore();
 
 export class State {
   public title = ''; // 标题
@@ -73,7 +74,7 @@ export const schemas = ref<FormSchema[]>([
     defaultValue: null,
     componentProps: {
       placeholder: '请选择测试分类',
-      options: [],
+      options: dict.getOption('testCategoryOption'),
       onUpdateValue: (e: any) => {
         console.log(e);
       },
@@ -86,7 +87,7 @@ export const schemas = ref<FormSchema[]>([
     defaultValue: null,
     componentProps: {
       placeholder: '请选择状态',
-      options: [],
+      options: dict.getOption('sys_normal_disable'),
       onUpdateValue: (e: any) => {
         console.log(e);
       },
@@ -130,11 +131,11 @@ export const columns = [
           style: {
             marginRight: '6px',
           },
-          type: getOptionTag(options.value.testCategoryOption, row.categoryId),
+          type: dict.getType('testCategoryOption', row.categoryId),
           bordered: false,
         },
         {
-          default: () => getOptionLabel(options.value.testCategoryOption, row.categoryId),
+          default: () => dict.getLabel('testCategoryOption', row.categoryId),
         }
       );
     },
@@ -160,11 +161,11 @@ export const columns = [
           style: {
             marginRight: '6px',
           },
-          type: getOptionTag(options.value.sys_normal_disable, row.status),
+          type: dict.getType('sys_normal_disable', row.status),
           bordered: false,
         },
         {
-          default: () => getOptionLabel(options.value.sys_normal_disable, row.status),
+          default: () => dict.getLabel('sys_normal_disable', row.status),
         }
       );
     },
@@ -186,29 +187,9 @@ export const columns = [
   },
 ];
 
-// 字典数据选项
-export const options = ref({
-  sys_normal_disable: [] as Option[],
-  testCategoryOption: [] as Option[],
-});
-
 // 加载字典数据选项
 export function loadOptions() {
-  Dicts({
-    types: ['sys_normal_disable', 'testCategoryOption'],
-  }).then((res) => {
-    options.value = res;
-    for (const item of schemas.value) {
-      switch (item.field) {
-        case 'status':
-          item.componentProps.options = options.value.sys_normal_disable;
-          break;
-        case 'categoryId':
-          item.componentProps.options = options.value.testCategoryOption;
-          break;
-      }
-    }
-  });
+  dict.loadOptions(['sys_normal_disable', 'testCategoryOption']);
 }
 
 // 关系树选项

@@ -4,6 +4,7 @@ import { store } from '@/store';
 import {
   ACCESS_TOKEN,
   CURRENT_CONFIG,
+  CURRENT_DICT,
   CURRENT_LOGIN_CONFIG,
   CURRENT_USER,
   IS_LOCKSCREEN,
@@ -256,6 +257,7 @@ export const useUserStore = defineStore({
           this.setUserInfo(null);
           storage.remove(ACCESS_TOKEN);
           storage.remove(CURRENT_USER);
+          storage.remove(CURRENT_DICT);
         }
         return Promise.resolve(response);
       } catch (e) {

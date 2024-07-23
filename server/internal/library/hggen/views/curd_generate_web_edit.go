@@ -67,20 +67,20 @@ func (l *gCurd) generateWebEditFormItem(ctx context.Context, in *CurdPreviewInpu
 		// case FormModeTimeRange: // 必须要有两个字段，后面优化下
 
 		case FormModeRadio:
-			component = fmt.Sprintf("<n-form-item label=\"%s\" path=\"%s\">\n            <n-radio-group v-model:value=\"formValue.%s\" name=\"%s\">\n            <n-radio-button\n              v-for=\"%s in options.%s\"\n              :key=\"%s.value\"\n              :value=\"%s.value\"\n              :label=\"%s.label\"\n            />\n          </n-radio-group>\n          </n-form-item>", field.Dc, field.TsName, field.TsName, field.TsName, field.TsName, in.options.dictMap[field.TsName], field.TsName, field.TsName, field.TsName)
+			component = fmt.Sprintf("<n-form-item label=\"%s\" path=\"%s\">\n            <n-radio-group v-model:value=\"formValue.%s\" name=\"%s\">\n            <n-radio-button\n              v-for=\"%s in dict.getOptionUnRef('%s')\"\n              :key=\"%s.value\"\n              :value=\"%s.value\"\n              :label=\"%s.label\"\n            />\n          </n-radio-group>\n          </n-form-item>", field.Dc, field.TsName, field.TsName, field.TsName, field.TsName, in.options.dictMap[field.TsName], field.TsName, field.TsName, field.TsName)
 
 		case FormModeCheckbox:
-			component = fmt.Sprintf("<n-form-item label=\"%s\" path=\"%s\">\n            <n-checkbox-group v-model:value=\"formValue.%s\">\n            <n-space>\n              <n-checkbox\n                v-for=\"item in options.%s\"\n                :key=\"item.value\"\n                :value=\"item.value\"\n                :label=\"item.label\"\n              />\n            </n-space>\n          </n-checkbox-group>\n          </n-form-item>", field.Dc, field.TsName, field.TsName, in.options.dictMap[field.TsName])
+			component = fmt.Sprintf("<n-form-item label=\"%s\" path=\"%s\">\n            <n-checkbox-group v-model:value=\"formValue.%s\">\n            <n-space>\n              <n-checkbox\n                v-for=\"item in dict.getOptionUnRef('%s')\"\n                :key=\"item.value\"\n                :value=\"item.value\"\n                :label=\"item.label\"\n              />\n            </n-space>\n          </n-checkbox-group>\n          </n-form-item>", field.Dc, field.TsName, field.TsName, in.options.dictMap[field.TsName])
 
 		case FormModeSelect:
 			if in.options.dictMap[field.TsName] != nil {
-				component = fmt.Sprintf("<n-form-item label=\"%s\" path=\"%s\">\n            <n-select v-model:value=\"formValue.%s\" :options=\"options.%s\" />\n          </n-form-item>", field.Dc, field.TsName, field.TsName, in.options.dictMap[field.TsName])
+				component = fmt.Sprintf("<n-form-item label=\"%s\" path=\"%s\">\n            <n-select v-model:value=\"formValue.%s\" :options=\"dict.getOptionUnRef('%s')\" />\n          </n-form-item>", field.Dc, field.TsName, field.TsName, in.options.dictMap[field.TsName])
 			} else {
 				component = fmt.Sprintf("<n-form-item label=\"%s\" path=\"%s\">\n            <n-select v-model:value=\"formValue.%s\" options=\"\" />\n          </n-form-item>", field.Dc, field.TsName, field.TsName)
 			}
 
 		case FormModeSelectMultiple:
-			component = fmt.Sprintf("<n-form-item label=\"%s\" path=\"%s\">\n            <n-select multiple v-model:value=\"formValue.%s\" :options=\"options.%s\" />\n          </n-form-item>", field.Dc, field.TsName, field.TsName, in.options.dictMap[field.TsName])
+			component = fmt.Sprintf("<n-form-item label=\"%s\" path=\"%s\">\n            <n-select multiple v-model:value=\"formValue.%s\" :options=\"dict.getOptionUnRef('%s')\" />\n          </n-form-item>", field.Dc, field.TsName, field.TsName, in.options.dictMap[field.TsName])
 
 		case FormModeUploadImage:
 			component = fmt.Sprintf("<n-form-item label=\"%s\" path=\"%s\">\n            <UploadImage :maxNumber=\"1\" v-model:value=\"formValue.%s\" />\n          </n-form-item>", field.Dc, field.TsName, field.TsName)
@@ -154,6 +154,11 @@ func (l *gCurd) generateWebEditScript(ctx context.Context, in *CurdPreviewInput)
 
 	importBuffer.WriteString("  import { ref, computed } from 'vue';\n")
 
+	// 导入字典
+	if in.options.DictOps.Has {
+		importBuffer.WriteString("  import { useDictStore } from '@/store/modules/dict';\n")
+	}
+
 	// 导入api
 	var importApiMethod = []string{"Edit", "View"}
 	if in.options.Step.HasMaxSort {
@@ -162,7 +167,7 @@ func (l *gCurd) generateWebEditScript(ctx context.Context, in *CurdPreviewInput)
 	importBuffer.WriteString("  import " + ImportWebMethod(importApiMethod) + " from '" + in.options.ImportWebApi + "';\n")
 
 	// 导入model
-	var importModelMethod = []string{"options", "State", "newState"}
+	var importModelMethod = []string{"State", "newState"}
 	if in.options.Step.IsTreeTable {
 		importModelMethod = append(importModelMethod, []string{"treeOption", "loadTreeOption"}...)
 	}

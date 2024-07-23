@@ -20,7 +20,7 @@
       ref="actionRef"
       :actionColumn="actionColumn"
       @update:checked-row-keys="onCheckedRow"
-      :scroll-x="1500"
+      :scroll-x="scrollX"
       :resizeHeightOffset="-10000"
     >
       <template #tableTitle>
@@ -108,7 +108,7 @@
             <n-form-item label="所属部门" path="deptId">
               <n-tree-select
                 key-field="id"
-                :options="options.dept"
+                :options="deptTreeOptions"
                 :default-value="formParams.deptId"
                 @update:value="handleUpdateDeptValue"
                 clearable
@@ -121,7 +121,7 @@
             <n-form-item label="绑定角色" path="roleId">
               <n-tree-select
                 key-field="id"
-                :options="options.role"
+                :options="roleTreeOptions"
                 :default-value="formParams.roleId"
                 @update:value="handleUpdateRoleValue"
                 clearable
@@ -143,7 +143,7 @@
             <n-form-item label="绑定岗位" path="postIds">
               <n-select
                 :default-value="formParams.postIds"
-                :options="options.post"
+                :options="dict.getOptionUnRef('adminPostOption')"
                 @update:value="handleUpdatePostValue"
                 multiple
                 clearable
@@ -171,7 +171,7 @@
             <n-form-item label="性别" path="sex">
               <n-radio-group v-model:value="formParams.sex" name="sex">
                 <n-radio-button
-                  v-for="status in options.sys_user_sex"
+                  v-for="status in dict.getOptionUnRef('sys_user_sex')"
                   :key="status.value"
                   :value="status.value"
                   :label="status.label"
@@ -183,7 +183,7 @@
             <n-form-item label="状态" path="status">
               <n-radio-group v-model:value="formParams.status" name="status">
                 <n-radio-button
-                  v-for="status in options.sys_normal_disable"
+                  v-for="status in dict.getOptionUnRef('sys_normal_disable')"
                   :key="status.value"
                   :value="status.value"
                   :label="status.label"
@@ -207,15 +207,15 @@
     </n-modal>
 
     <AddBalance
-      @reloadTable="reloadTable"
-      @updateShowModal="updateBalanceShowModal"
+      @reload-table="reloadTable"
+      @update-show-modal="updateBalanceShowModal"
       :showModal="showBalanceModal"
       :formParams="formParams"
     />
 
     <AddIntegral
-      @reloadTable="reloadTable"
-      @updateShowModal="updateIntegralShowModal"
+      @reload-table="reloadTable"
+      @update-show-modal="updateIntegralShowModal"
       :showModal="showIntegralModal"
       :formParams="formParams"
     />
@@ -237,25 +237,33 @@
 </template>
 
 <script lang="ts" setup>
-  import { h, reactive, ref, onMounted, computed } from 'vue';
+  import { h, reactive, ref, computed } from 'vue';
   import { useDialog, useMessage } from 'naive-ui';
   import { ActionItem, BasicTable, TableAction } from '@/components/Table';
   import { BasicForm } from '@/components/Form/index';
-  import { Delete, Edit, List, Status, ResetPwd } from '@/api/org/user';
+  import { Delete, Edit, List, ResetPwd } from '@/api/org/user';
   import { columns } from './columns';
   import { PlusOutlined, DeleteOutlined } from '@vicons/antd';
   import { QrCodeOutline } from '@vicons/ionicons5';
-  import { adaModalWidth } from '@/utils/hotgo';
+  import { adaModalWidth, adaTableScrollX } from '@/utils/hotgo';
   import { getRandomString } from '@/utils/charset';
   import { cloneDeep } from 'lodash-es';
   import QrcodeVue from 'qrcode.vue';
   import AddBalance from './addBalance.vue';
   import AddIntegral from './addIntegral.vue';
-  import { addNewState, addState, options, register, defaultState, loadOptions } from './model';
+  import {
+    addNewState,
+    addState,
+    register,
+    defaultState,
+    deptTreeOptions,
+    roleTreeOptions,
+  } from './model';
   import { usePermission } from '@/hooks/web/usePermission';
   import { useUserStore } from '@/store/modules/user';
   import { LoginRoute } from '@/router';
   import { getNowUrl } from '@/utils/urlUtils';
+  import { useDictStore } from '@/store/modules/dict';
 
   interface Props {
     type?: string;
@@ -273,6 +281,7 @@
     },
   };
 
+  const dict = useDictStore();
   const { hasPermission } = usePermission();
   const userStore = useUserStore();
   const showIntegralModal = ref(false);
@@ -292,12 +301,13 @@
     name: '',
     qrUrl: '',
   });
+
   const dialogWidth = computed(() => {
     return adaModalWidth();
   });
 
   const actionColumn = reactive({
-    width: 280,
+    width: 200,
     title: '操作',
     key: 'action',
     fixed: 'right',
@@ -306,22 +316,6 @@
       return h(TableAction as any, {
         style: 'button',
         actions: [
-          {
-            label: '已启用',
-            onClick: handleStatus.bind(null, record, 2),
-            ifShow: () => {
-              return record.status === 1 && record.id !== 1;
-            },
-            auth: ['/member/status'],
-          },
-          {
-            label: '已禁用',
-            onClick: handleStatus.bind(null, record, 1),
-            ifShow: () => {
-              return record.status === 2 && record.id !== 1;
-            },
-            auth: ['/member/status'],
-          },
           {
             label: '编辑',
             onClick: handleEdit.bind(null, record),
@@ -360,6 +354,10 @@
         },
       });
     },
+  });
+
+  const scrollX = computed(() => {
+    return adaTableScrollX(columns, actionColumn.width);
   });
 
   function getDropDownActions(record: Recordable): ActionItem[] {
@@ -488,15 +486,6 @@
     reloadTable();
   }
 
-  function handleStatus(record: Recordable, status) {
-    Status({ id: record.id, status: status }).then((_res) => {
-      message.success('操作成功');
-      setTimeout(() => {
-        reloadTable();
-      });
-    });
-  }
-
   function handleUpdateDeptValue(value) {
     formParams.value.deptId = Number(value);
   }
@@ -532,10 +521,6 @@
     qrParams.value.qrUrl = domain + LoginRoute.path + '?scope=register&inviteCode=' + code;
     showQrModal.value = true;
   }
-
-  onMounted(async () => {
-    await loadOptions();
-  });
 </script>
 
 <style lang="less" scoped></style>

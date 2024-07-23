@@ -186,7 +186,7 @@ func (s *sSysEmsLog) Send(ctx context.Context, in *sysin.SendEmsInp) (err error)
 	data.Content = in.Content
 	data.Code = in.Code
 	data.Ip = location.GetClientIp(ghttp.RequestFromCtx(ctx))
-	data.Status = consts.EmsStatusNotUsed
+	data.Status = consts.CodeStatusNotUsed
 	data.CreatedAt = gtime.Now()
 	data.UpdatedAt = gtime.Now()
 
@@ -395,7 +395,7 @@ func (s *sSysEmsLog) VerifyCode(ctx context.Context, in *sysin.VerifyEmsCodeInp)
 	}
 
 	if in.Event != consts.EmsTemplateCode {
-		if models.Status == consts.EmsStatusUsed {
+		if models.Status == consts.CodeStatusUsed {
 			err = gerror.New("验证码已使用，请重新发送！")
 			return
 		}
@@ -414,7 +414,7 @@ func (s *sSysEmsLog) VerifyCode(ctx context.Context, in *sysin.VerifyEmsCodeInp)
 
 	_, err = dao.SysEmsLog.Ctx(ctx).Where("id", models.Id).Data(g.Map{
 		"times":      models.Times + 1,
-		"status":     consts.EmsStatusUsed,
+		"status":     consts.CodeStatusUsed,
 		"updated_at": gtime.Now(),
 	}).Update()
 	return

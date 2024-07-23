@@ -3,7 +3,7 @@
 // @Copyright  Copyright (c) 2024 HotGo CLI
 // @Author  Ms <133814250@qq.com>
 // @License  https://github.com/bufanyun/hotgo/blob/master/LICENSE
-// @AutoGenerate Version 2.13.1
+// @AutoGenerate Version 2.15.1
 package sysin
 
 import (
@@ -21,6 +21,8 @@ import (
 type OptionTreeDemoUpdateFields struct {
 	Title       string `json:"title"       dc:"标题"`
 	Pid         int64  `json:"pid"         dc:"上级"`
+	Level       int    `json:"level"       dc:"关系树级别"`
+	Tree        string `json:"tree"        dc:"关系树"`
 	CategoryId  int64  `json:"categoryId"  dc:"测试分类"`
 	Description string `json:"description" dc:"描述"`
 	Sort        int    `json:"sort"        dc:"排序"`
@@ -32,6 +34,8 @@ type OptionTreeDemoUpdateFields struct {
 type OptionTreeDemoInsertFields struct {
 	Title       string `json:"title"       dc:"标题"`
 	Pid         int64  `json:"pid"         dc:"上级"`
+	Level       int    `json:"level"       dc:"关系树级别"`
+	Tree        string `json:"tree"        dc:"关系树"`
 	CategoryId  int64  `json:"categoryId"  dc:"测试分类"`
 	Description string `json:"description" dc:"描述"`
 	Sort        int    `json:"sort"        dc:"排序"`

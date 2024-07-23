@@ -6,17 +6,16 @@
         :model="formValue"
         :rules="rules"
         ref="formRef"
-        label-placement="left"
+        label-placement="top"
       >
+        <n-divider title-placement="left">基础设置</n-divider>
         <n-form-item label="默认驱动" path="uploadDrive">
           <n-select
             placeholder="默认驱动"
-            :options="options.config_upload_drive"
+            :options="dict.getOptionUnRef('config_upload_drive')"
             v-model:value="formValue.uploadDrive"
           />
         </n-form-item>
-
-        <n-divider title-placement="left">上传限制</n-divider>
         <n-form-item label="图片大小限制" path="uploadImageSize">
           <n-input-number
             :show-button="false"
@@ -311,30 +310,24 @@
   import { useMessage } from 'naive-ui';
   import { getConfig, updateConfig } from '@/api/sys/config';
   import { Glasses, GlassesOutline } from '@vicons/ionicons5';
-  import { Dicts } from '@/api/dict/dict';
-  import { Options } from '@/utils/hotgo';
+  import { useDictStore } from '@/store/modules/dict';
+  import type { FormRules } from 'naive-ui/es/form/src/interface';
 
+  const dict = useDictStore();
+  const message = useMessage();
   const group = ref('upload');
   const show = ref(false);
   const formRef: any = ref(null);
-  const message = useMessage();
+  const defaultTabName = 'local';
+  const tabName = ref<string>(defaultTabName);
 
-  const rules = {
+  const rules: FormRules = {
     uploadDrive: {
       required: true,
       message: '请输入默认驱动',
       trigger: 'blur',
     },
   };
-
-  const options = ref<Options>({
-    config_upload_drive: [],
-  });
-
-  /** 默认选项卡 */
-  const defaultTabName = 'local';
-  /** 选项卡名称 */
-  const tabName = ref<string>(defaultTabName);
 
   const formValue = ref({
     uploadDrive: defaultTabName,
@@ -374,14 +367,6 @@
     uploadMinioDomain: '',
   });
 
-  /** 监听类型变化,同步到选项卡中 */
-  watch(
-    () => formValue.value.uploadDrive,
-    (uploadDrive: string) => {
-      tabName.value = uploadDrive;
-    }
-  );
-
   function formSubmit() {
     formRef.value.validate((errors) => {
       if (!errors) {
@@ -395,27 +380,30 @@
     });
   }
 
-  onMounted(async () => {
-    load();
-    await loadOptions();
-  });
-
   function load() {
     show.value = true;
-    new Promise((_resolve, _reject) => {
-      getConfig({ group: group.value })
-        .then((res) => {
-          formValue.value = res.list;
-        })
-        .finally(() => {
-          show.value = false;
-        });
-    });
+    getConfig({ group: group.value })
+      .then((res) => {
+        formValue.value = res.list;
+      })
+      .finally(() => {
+        show.value = false;
+      });
   }
 
-  async function loadOptions() {
-    options.value = await Dicts({
-      types: ['config_upload_drive'],
-    });
+  function loadOptions() {
+    dict.loadOptions(['config_upload_drive']);
   }
+
+  watch(
+    () => formValue.value.uploadDrive,
+    (uploadDrive: string) => {
+      tabName.value = uploadDrive;
+    }
+  );
+
+  onMounted(async () => {
+    loadOptions();
+    load();
+  });
 </script>

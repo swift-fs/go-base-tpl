@@ -1,11 +1,13 @@
 import { cloneDeep } from 'lodash-es';
 import { h, ref } from 'vue';
-import { Dicts } from '@/api/dict/dict';
-import { errorImg, Option, Options } from '@/utils/hotgo';
+import { fallbackSrc } from '@/utils/hotgo';
 import { isUrl } from '@/utils/is';
 import { NIcon, NIconWrapper, NImage, NTag } from 'naive-ui';
 import { getIconComponent } from '@/utils/icons';
 import { FormSchema } from '@/components/Form';
+import { useDictStore } from '@/store/modules/dict';
+
+const dict = useDictStore();
 
 export const genInfoObj = {
   label: '',
@@ -36,7 +38,7 @@ export const columns = [
           width: 48,
           height: 48,
           src: row.logo,
-          fallbackSrc: errorImg,
+          fallbackSrc: fallbackSrc(),
           style: {
             width: '48px',
             height: '48px',
@@ -152,7 +154,7 @@ export const schemas = ref<FormSchema[]>([
     label: '分组',
     componentProps: {
       placeholder: '请选择分组',
-      options: [],
+      options: dict.getOption('addonsGroupOptions'),
       onUpdateValue: (e: any) => {
         console.log(e);
       },
@@ -164,7 +166,7 @@ export const schemas = ref<FormSchema[]>([
     label: '安装状态',
     componentProps: {
       placeholder: '请选择状态',
-      options: [],
+      options: dict.getOption('addonsInstallStatus'),
       onUpdateValue: (e: any) => {
         console.log(e);
       },
@@ -172,32 +174,6 @@ export const schemas = ref<FormSchema[]>([
   },
 ]);
 
-export interface IOptions extends Options {
-  addonsGroupOptions: Option[];
-  addonsInstallStatus: Option[];
-  addonsExtend: Option[];
+export function loadOptions() {
+  dict.loadOptions(['addonsGroupOptions', 'addonsInstallStatus', 'addonsExtend']);
 }
-
-export const options = ref<IOptions>({
-  addonsGroupOptions: [],
-  addonsInstallStatus: [],
-  addonsExtend: [],
-});
-
-async function loadOptions() {
-  options.value = await Dicts({
-    types: ['addonsGroupOptions', 'addonsInstallStatus', 'addonsExtend'],
-  });
-  for (const item of schemas.value) {
-    switch (item.field) {
-      case 'status':
-        item.componentProps.options = options.value.addonsInstallStatus;
-        break;
-      case 'group':
-        item.componentProps.options = options.value.addonsGroupOptions;
-        break;
-    }
-  }
-}
-
-await loadOptions();

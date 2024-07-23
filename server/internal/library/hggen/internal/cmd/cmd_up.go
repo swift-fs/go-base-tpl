@@ -48,7 +48,7 @@ func init() {
 }
 
 type cUpInput struct {
-	g.Meta `name:"up"  config:"gfcli.up"`
+	g.Meta `name:"up" config:"gfcli.up"`
 	All    bool `name:"all" short:"a" brief:"upgrade both version and cli, auto fix codes" orphan:"true"`
 	Cli    bool `name:"cli" short:"c" brief:"also upgrade CLI tool" orphan:"true"`
 	Fix    bool `name:"fix" short:"f" brief:"auto fix codes(it only make sense if cli is to be upgraded)" orphan:"true"`
@@ -142,8 +142,9 @@ func (c cUp) doUpgradeVersion(ctx context.Context, in cUpInput) (out *doUpgradeV
 			}
 			for _, pkg := range packages {
 				mlog.Printf(`upgrading "%s" from "%s" to "latest"`, pkg.Name, pkg.Version)
-				// go get -u
-				command := fmt.Sprintf(`cd %s && go get -u %s@latest`, dirPath, pkg.Name)
+				mlog.Printf(`running command: go get %s@latest`, pkg.Name)
+				// go get @latest
+				command := fmt.Sprintf(`cd %s && go get %s@latest`, dirPath, pkg.Name)
 				if err = gproc.ShellRun(ctx, command); err != nil {
 					return
 				}

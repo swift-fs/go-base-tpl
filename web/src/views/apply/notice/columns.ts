@@ -1,8 +1,9 @@
 import { h } from 'vue';
-import { NAvatar, NAvatarGroup, NTag, NTooltip } from 'naive-ui';
-import { noticeTagOptions, noticeTypeOptions } from '@/enums/systemMessageEnum';
-import { getOptionLabel, getOptionTag } from '@/utils/hotgo';
+import { NAvatar, NAvatarGroup, NTooltip } from 'naive-ui';
+import { renderOptionTag } from '@/utils';
+import { useDictStore } from '@/store/modules/dict';
 
+const dict = useDictStore();
 export const columns = [
   {
     title: 'ID',
@@ -25,19 +26,7 @@ export const columns = [
     title: '消息类型',
     key: 'type',
     render(row) {
-      return h(
-        NTag,
-        {
-          style: {
-            marginRight: '6px',
-          },
-          type: getOptionTag(noticeTypeOptions, row.type),
-          bordered: false,
-        },
-        {
-          default: () => getOptionLabel(noticeTypeOptions, row.type),
-        }
-      );
+      return renderOptionTag('noticeTypeOptions', row.type);
     },
     width: 100,
   },
@@ -45,19 +34,7 @@ export const columns = [
     title: '标签',
     key: 'tag',
     render(row) {
-      return h(
-        NTag,
-        {
-          style: {
-            marginRight: '6px',
-          },
-          type: getOptionTag(noticeTagOptions, row.tag),
-          bordered: false,
-        },
-        {
-          default: () => getOptionLabel(noticeTagOptions, row.tag),
-        }
-      );
+      return renderOptionTag('noticeTagOptions', row.tag);
     },
     width: 100,
   },
@@ -129,3 +106,7 @@ export const columns = [
     width: 180,
   },
 ];
+
+export function loadOptions() {
+  dict.loadOptions(['sys_normal_disable']);
+}

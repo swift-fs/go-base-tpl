@@ -3,15 +3,18 @@
 // @Copyright  Copyright (c) 2024 HotGo CLI
 // @Author  Ms <133814250@qq.com>
 // @License  https://github.com/bufanyun/hotgo/blob/master/LICENSE
-// @AutoGenerate Version 2.13.1
+// @AutoGenerate Version 2.15.1
 package sysin
 
 import (
 	"context"
+	"hotgo/internal/consts"
 	"hotgo/internal/library/hgorm/hook"
 	"hotgo/internal/model/entity"
 	"hotgo/internal/model/input/form"
+	"hotgo/utility/validate"
 
+	"github.com/gogf/gf/v2/errors/gerror"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/os/gtime"
 )
@@ -26,9 +29,7 @@ type CurdDemoUpdateFields struct {
 	CityId      int64  `json:"cityId"      dc:"所在城市"`
 	Sort        int    `json:"sort"        dc:"排序"`
 	Switch      int    `json:"switch"      dc:"显示开关"`
-	Status      int    `json:"status"      dc:"状态"`
 	UpdatedBy   int64  `json:"updatedBy"   dc:"更新者"`
-	CategoryId  int64  `json:"categoryId"  dc:"测试分类"`
 }
 
 // CurdDemoInsertFields 新增CURD列表字段过滤
@@ -41,9 +42,7 @@ type CurdDemoInsertFields struct {
 	CityId      int64  `json:"cityId"      dc:"所在城市"`
 	Sort        int    `json:"sort"        dc:"排序"`
 	Switch      int    `json:"switch"      dc:"显示开关"`
-	Status      int    `json:"status"      dc:"状态"`
 	CreatedBy   int64  `json:"createdBy"   dc:"创建者"`
-	CategoryId  int64  `json:"categoryId"  dc:"测试分类"`
 }
 
 // CurdDemoEditInp 修改/新增CURD列表
@@ -69,11 +68,6 @@ func (in *CurdDemoEditInp) Filter(ctx context.Context) (err error) {
 
 	// 验证排序
 	if err := g.Validator().Rules("required").Data(in.Sort).Messages("排序不能为空").Run(ctx); err != nil {
-		return err.Current()
-	}
-
-	// 验证测试分类
-	if err := g.Validator().Rules("required").Data(in.CategoryId).Messages("测试分类不能为空").Run(ctx); err != nil {
 		return err.Current()
 	}
 
@@ -114,10 +108,8 @@ type CurdDemoListInp struct {
 	Id               int64         `json:"id"               dc:"ID"`
 	Title            string        `json:"title"            dc:"标题"`
 	Description      string        `json:"description"      dc:"描述"`
-	Status           int           `json:"status"           dc:"状态"`
 	CreatedBy        string        `json:"createdBy"        dc:"创建者"`
 	CreatedAt        []*gtime.Time `json:"createdAt"        dc:"创建时间"`
-	CategoryId       int64         `json:"categoryId"       dc:"测试分类"`
 	TestCategoryName string        `json:"testCategoryName" dc:"关联分类"`
 }
 
@@ -133,14 +125,12 @@ type CurdDemoListModel struct {
 	Attachfile       string            `json:"attachfile"       dc:"附件"`
 	Sort             int               `json:"sort"             dc:"排序"`
 	Switch           int               `json:"switch"           dc:"显示开关"`
-	Status           int               `json:"status"           dc:"状态"`
 	CreatedBy        int64             `json:"createdBy"        dc:"创建者"`
 	CreatedBySumma   *hook.MemberSumma `json:"createdBySumma"   dc:"创建者摘要信息"`
 	CreatedAt        *gtime.Time       `json:"createdAt"        dc:"创建时间"`
 	UpdatedBy        int64             `json:"updatedBy"        dc:"更新者"`
 	UpdatedBySumma   *hook.MemberSumma `json:"updatedBySumma"   dc:"更新者摘要信息"`
 	UpdatedAt        *gtime.Time       `json:"updatedAt"        dc:"修改时间"`
-	CategoryId       int64             `json:"categoryId"       dc:"测试分类"`
 	TestCategoryName string            `json:"testCategoryName" dc:"关联分类"`
 }
 
@@ -154,11 +144,9 @@ type CurdDemoExportModel struct {
 	CityId           int64       `json:"cityId"           dc:"所在城市"`
 	Sort             int         `json:"sort"             dc:"排序"`
 	Switch           int         `json:"switch"           dc:"显示开关"`
-	Status           int         `json:"status"           dc:"状态"`
 	CreatedBy        int64       `json:"createdBy"        dc:"创建者"`
 	CreatedAt        *gtime.Time `json:"createdAt"        dc:"创建时间"`
 	UpdatedBy        int64       `json:"updatedBy"        dc:"更新者"`
-	CategoryId       int64       `json:"categoryId"       dc:"测试分类"`
 	TestCategoryName string      `json:"testCategoryName" dc:"关联分类"`
 }
 
@@ -172,6 +160,32 @@ func (in *CurdDemoMaxSortInp) Filter(ctx context.Context) (err error) {
 type CurdDemoMaxSortModel struct {
 	Sort int `json:"sort"  description:"排序"`
 }
+
+// CurdDemoStatusInp 更新CURD列表状态
+type CurdDemoStatusInp struct {
+	Id     int64 `json:"id" v:"required#ID不能为空" dc:"ID"`
+	Status int   `json:"status" dc:"状态"`
+}
+
+func (in *CurdDemoStatusInp) Filter(ctx context.Context) (err error) {
+	if in.Id <= 0 {
+		err = gerror.New("ID不能为空")
+		return
+	}
+
+	if in.Status <= 0 {
+		err = gerror.New("状态不能为空")
+		return
+	}
+
+	if !validate.InSlice(consts.StatusSlice, in.Status) {
+		err = gerror.New("状态不正确")
+		return
+	}
+	return
+}
+
+type CurdDemoStatusModel struct{}
 
 // CurdDemoSwitchInp 更新CURD列表开关状态
 type CurdDemoSwitchInp struct {

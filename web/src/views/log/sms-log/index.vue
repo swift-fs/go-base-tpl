@@ -44,19 +44,18 @@
 </template>
 
 <script lang="ts" setup>
-  import { computed, h, reactive, ref } from 'vue';
-  import { NTag, useDialog, useMessage } from 'naive-ui';
+  import { computed, h, onMounted, reactive, ref } from 'vue';
+  import { useDialog, useMessage } from 'naive-ui';
   import { BasicTable, TableAction } from '@/components/Table';
   import { BasicForm, FormSchema, useForm } from '@/components/Form/index';
   import { getLogList, Delete } from '@/api/log/smslog';
   import { DeleteOutlined } from '@vicons/antd';
-  import { Dicts } from '@/api/dict/dict';
-  import { adaTableScrollX, getOptionLabel, getOptionTag, Options } from '@/utils/hotgo';
+  import { adaTableScrollX } from '@/utils/hotgo';
   import { defRangeShortcuts } from '@/utils/dateUtil';
+  import { useDictStore } from '@/store/modules/dict';
+  import { renderOptionTag } from '@/utils';
 
-  const options = ref<Options>({
-    config_sms_template: [],
-  });
+  const dict = useDictStore();
 
   const columns = [
     {
@@ -68,19 +67,7 @@
       title: '事件模板',
       key: 'event',
       render(row) {
-        return h(
-          NTag,
-          {
-            style: {
-              marginRight: '6px',
-            },
-            type: getOptionTag(options.value.config_sms_template, row.event),
-            bordered: false,
-          },
-          {
-            default: () => getOptionLabel(options.value.config_sms_template, row.event),
-          }
-        );
+        return renderOptionTag('config_sms_template', row.event);
       },
       width: 150,
     },
@@ -111,19 +98,7 @@
       title: '状态',
       key: 'status',
       render(row) {
-        return h(
-          NTag,
-          {
-            style: {
-              marginRight: '6px',
-            },
-            type: row.status == 2 ? 'success' : 'warning',
-            bordered: false,
-          },
-          {
-            default: () => (row.status == 2 ? '已使用' : '未使用'),
-          }
-        );
+        return renderOptionTag('CodeStatusOptions', row.status);
       },
       width: 100,
     },
@@ -153,7 +128,7 @@
       label: '事件模板',
       componentProps: {
         placeholder: '请选择事件模板',
-        options: [],
+        options: dict.getOption('config_sms_template'),
         onUpdateValue: (e: any) => {
           console.log(e);
         },
@@ -188,16 +163,7 @@
       label: '状态',
       componentProps: {
         placeholder: '请选择状态',
-        options: [
-          {
-            label: '未使用',
-            value: '1',
-          },
-          {
-            label: '已使用',
-            value: '2',
-          },
-        ],
+        options: dict.getOption('CodeStatusOptions'),
         onUpdateValue: (e: any) => {
           console.log(e);
         },
@@ -264,9 +230,6 @@
           reloadTable();
         });
       },
-      onNegativeClick: () => {
-        // message.error('不确定');
-      },
     });
   }
 
@@ -282,14 +245,10 @@
           reloadTable();
         });
       },
-      onNegativeClick: () => {
-        // message.error('不确定');
-      },
     });
   }
 
   const loadDataTable = async (res) => {
-    await loadOptions();
     return await getLogList({ ...searchFormRef.value?.formModel, ...res });
   };
 
@@ -307,18 +266,13 @@
     reloadTable();
   }
 
-  async function loadOptions() {
-    options.value = await Dicts({
-      types: ['config_sms_template'],
-    });
-    for (const item of schemas.value) {
-      switch (item.field) {
-        case 'event':
-          item.componentProps.options = options.value.config_sms_template;
-          break;
-      }
-    }
+  function loadOptions() {
+    dict.loadOptions(['config_sms_template', 'CodeStatusOptions']);
   }
+
+  onMounted(() => {
+    loadOptions();
+  });
 </script>
 
 <style lang="less" scoped></style>

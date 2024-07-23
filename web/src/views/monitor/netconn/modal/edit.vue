@@ -24,7 +24,10 @@
           <n-grid x-gap="24" :cols="2">
             <n-gi>
               <n-form-item label="分组" path="group">
-                <n-select v-model:value="params.group" :options="options.group" />
+                <n-select
+                  v-model:value="params.group"
+                  :options="dict.getOptionUnRef('ServerLicenseGroupOptions')"
+                />
               </n-form-item>
             </n-gi>
             <n-gi>
@@ -78,7 +81,10 @@
           </n-form-item>
 
           <n-form-item label="授权状态" path="status">
-            <n-select v-model:value="params.status" :options="options.sys_normal_disable" />
+            <n-select
+              v-model:value="params.status"
+              :options="dict.getOptionUnRef('sys_normal_disable')"
+            />
           </n-form-item>
 
           <n-form-item label="备注" path="remark">
@@ -100,9 +106,10 @@
   import { ref, computed, watch } from 'vue';
   import { Edit, View } from '@/api/serveLicense';
   import DatePicker from '@/components/DatePicker/datePicker.vue';
-  import { rules, options, State, newState } from './model';
+  import { rules, State, newState } from './model';
   import { useMessage } from 'naive-ui';
   import { adaModalWidth } from '@/utils/hotgo';
+  import { useDictStore } from '@/store/modules/dict';
 
   const emit = defineEmits(['reloadTable', 'updateShowModal']);
 
@@ -129,6 +136,7 @@
 
   const loading = ref(false);
   const params = ref<State>(props.formParams);
+  const dict = useDictStore();
   const message = useMessage();
   const formRef = ref<any>({});
   const formBtnLoading = ref(false);

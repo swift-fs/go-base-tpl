@@ -63,16 +63,6 @@
         />
                 </n-form-item>
               </n-gi>
-              <n-gi span="1">
-                <n-form-item label="状态" path="status">
-                  <n-select v-model:value="formValue.status" :options="options.sys_normal_disable" />
-                </n-form-item>
-              </n-gi>
-              <n-gi span="1">
-                <n-form-item label="测试分类" path="categoryId">
-                  <n-select v-model:value="formValue.categoryId" :options="options.testCategoryOption" />
-                </n-form-item>
-              </n-gi>
             </n-grid>
           </n-form>
         </n-spin>
@@ -93,8 +83,9 @@
 
 <script lang="ts" setup>
   import { ref, computed } from 'vue';
+  import { useDictStore } from '@/store/modules/dict';
   import { Edit, View, MaxSort } from '@/api/curdDemo';
-  import { options, State, newState, rules } from './model';
+  import { State, newState, rules } from './model';
   import Editor from '@/components/Editor/editor.vue';
   import UploadImage from '@/components/Upload/uploadImage.vue';
   import UploadFile from '@/components/Upload/uploadFile.vue';
@@ -106,6 +97,7 @@
   const emit = defineEmits(['reloadTable']);
   const message = useMessage();
   const settingStore = useProjectSettingStore();
+  const dict = useDictStore();
   const loading = ref(false);
   const showModal = ref(false);
   const formValue = ref<State>(newState(null));
@@ -144,25 +136,28 @@
       });
   }
 
+  // 提交表单
   function confirmForm(e) {
     e.preventDefault();
-    formBtnLoading.value = true;
     formRef.value.validate((errors) => {
       if (!errors) {
-        Edit(formValue.value).then((_res) => {
-          message.success('操作成功');
-          setTimeout(() => {
+        formBtnLoading.value = true;
+        Edit(formValue.value)
+          .then((_res) => {
+            message.success('操作成功');
             closeForm();
             emit('reloadTable');
+          })
+          .finally(() => {
+            formBtnLoading.value = false;
           });
-        });
       } else {
         message.error('请填写完整信息');
       }
-      formBtnLoading.value = false;
     });
   }
 
+  // 关闭表单
   function closeForm() {
     showModal.value = false;
     loading.value = false;

@@ -24,8 +24,6 @@
         :request="loadDataTable"
         :row-key="(row) => row.id"
         ref="actionRef"
-        :actionColumn="actionColumn"
-        @update:checked-row-keys="onCheckedRow"
         :scroll-x="1090"
         :resizeHeightOffset="-10000"
         size="small"
@@ -51,33 +49,19 @@
 </template>
 
 <script lang="ts" setup>
-  import { h, reactive, ref } from 'vue';
+  import { onMounted, ref } from 'vue';
   import { useMessage } from 'naive-ui';
-  import { BasicTable, TableAction } from '@/components/Table';
+  import { BasicTable } from '@/components/Table';
   import { BasicForm, useForm } from '@/components/Form/index';
   import { usePermission } from '@/hooks/web/usePermission';
   import { List, Export } from '@/api/pay/refund';
-  import { columns, schemas } from './model';
+  import { columns, schemas, loadOptions } from './model';
   import { ExportOutlined } from '@vicons/antd';
 
   const { hasPermission } = usePermission();
   const actionRef = ref();
   const message = useMessage();
   const searchFormRef = ref<any>({});
-
-  const actionColumn = reactive({
-    width: 300,
-    title: '操作',
-    key: 'action',
-    // fixed: 'right',
-    render(record) {
-      return h(TableAction as any, {
-        style: 'button',
-        actions: [],
-      });
-    },
-  });
-
   const [register, {}] = useForm({
     gridProps: { cols: '1 s:1 m:2 l:3 xl:4 2xl:4' },
     labelWidth: 80,
@@ -96,6 +80,10 @@
     message.loading('正在导出列表...', { duration: 1200 });
     Export(searchFormRef.value?.formModel);
   }
+
+  onMounted(async () => {
+    loadOptions();
+  });
 </script>
 
 <style lang="less" scoped></style>

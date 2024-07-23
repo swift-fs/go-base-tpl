@@ -10,6 +10,7 @@ build:
 	@rm -rf ./$(ADMIN_RESOURCE_PATH)
 	@mkdir ./$(ADMIN_RESOURCE_PATH)
 	@cd ../web && yarn build && \cp -rf ./dist/*  ../server$(ADMIN_RESOURCE_PATH)
+	@cd ../server
 	@echo "y" | gf build
 
 # 通过热编译启动所有服务
