@@ -103,7 +103,16 @@ func (c *c@{.varName}) Switch(ctx context.Context, req *@{.varName | ToLower}.Sw
 // TreeOption 获取@{.tableComment}关系树选项
 func (c *c@{.varName}) TreeOption(ctx context.Context, req *@{.varName | ToLower}.TreeOptionReq) (res *@{.varName | ToLower}.TreeOptionRes, err error) {
     data, err := service.@{.servFunName}().TreeOption(ctx)
-    res = (*@{.varName | ToLower}.TreeOptionRes)(&data)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(data) > 0 {
+		res = (*@{.varName | ToLower}.TreeOptionRes)(&data)
+	} else {
+		temp := make(@{.varName | ToLower}.TreeOptionRes, 0)
+		res = &temp
+	}
 	return
 }
 @{end}

@@ -3,7 +3,7 @@
 // @Copyright  Copyright (c) 2024 HotGo CLI
 // @Author  Ms <133814250@qq.com>
 // @License  https://github.com/bufanyun/hotgo/blob/master/LICENSE
-// @AutoGenerate Version 2.15.1
+// @AutoGenerate Version 2.15.7
 package sys
 
 import (
@@ -75,6 +75,15 @@ func (c *cNormalTreeDemo) Delete(ctx context.Context, req *normaltreedemo.Delete
 // TreeOption 获取普通树表关系树选项
 func (c *cNormalTreeDemo) TreeOption(ctx context.Context, req *normaltreedemo.TreeOptionReq) (res *normaltreedemo.TreeOptionRes, err error) {
 	data, err := service.SysNormalTreeDemo().TreeOption(ctx)
-	res = (*normaltreedemo.TreeOptionRes)(&data)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(data) > 0 {
+		res = (*normaltreedemo.TreeOptionRes)(&data)
+	} else {
+		temp := make(normaltreedemo.TreeOptionRes, 0)
+		res = &temp
+	}
 	return
 }

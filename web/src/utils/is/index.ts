@@ -100,8 +100,13 @@ export function isJsonString(value: any) {
   return false;
 }
 
-export function isNullObject(value: object) {
-  return isNullOrUnDef(value) || JSON.stringify(value) === '{}' || JSON.stringify(value) === '[]';
+export function isNullObject(value: any) {
+  return (
+    isNullOrUnDef(value) ||
+    JSON.stringify(value) === '{}' ||
+    JSON.stringify(value) === '[]' ||
+    value === ''
+  );
 }
 
 /**

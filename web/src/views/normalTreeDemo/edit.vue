@@ -101,6 +101,34 @@
     return adaModalWidth(840);
   });
 
+  // 提交表单
+  function confirmForm(e) {
+    e.preventDefault();
+    formRef.value.validate((errors) => {
+      if (!errors) {
+        formBtnLoading.value = true;
+        Edit(formValue.value)
+          .then((_res) => {
+            message.success('操作成功');
+            closeForm();
+            emit('reloadTable');
+          })
+          .finally(() => {
+            formBtnLoading.value = false;
+          });
+      } else {
+        message.error('请填写完整信息');
+      }
+    });
+  }
+
+  // 关闭表单
+  function closeForm() {
+    showModal.value = false;
+    loading.value = false;
+  }
+
+  // 打开模态框
   function openModal(state: State) {
     showModal.value = true;
 
@@ -131,33 +159,6 @@
       .finally(() => {
         loading.value = false;
       });
-  }
-
-  // 提交表单
-  function confirmForm(e) {
-    e.preventDefault();
-    formRef.value.validate((errors) => {
-      if (!errors) {
-        formBtnLoading.value = true;
-        Edit(formValue.value)
-          .then((_res) => {
-            message.success('操作成功');
-            closeForm();
-            emit('reloadTable');
-          })
-          .finally(() => {
-            formBtnLoading.value = false;
-          });
-      } else {
-        message.error('请填写完整信息');
-      }
-    });
-  }
-
-  // 关闭表单
-  function closeForm() {
-    showModal.value = false;
-    loading.value = false;
   }
 
   defineExpose({

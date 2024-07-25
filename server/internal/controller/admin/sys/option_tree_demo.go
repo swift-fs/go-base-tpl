@@ -3,7 +3,7 @@
 // @Copyright  Copyright (c) 2024 HotGo CLI
 // @Author  Ms <133814250@qq.com>
 // @License  https://github.com/bufanyun/hotgo/blob/master/LICENSE
-// @AutoGenerate Version 2.15.1
+// @AutoGenerate Version 2.15.7
 package sys
 
 import (
@@ -75,6 +75,15 @@ func (c *cOptionTreeDemo) Delete(ctx context.Context, req *optiontreedemo.Delete
 // TreeOption 获取选项树表关系树选项
 func (c *cOptionTreeDemo) TreeOption(ctx context.Context, req *optiontreedemo.TreeOptionReq) (res *optiontreedemo.TreeOptionRes, err error) {
 	data, err := service.SysOptionTreeDemo().TreeOption(ctx)
-	res = (*optiontreedemo.TreeOptionRes)(&data)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(data) > 0 {
+		res = (*optiontreedemo.TreeOptionRes)(&data)
+	} else {
+		temp := make(optiontreedemo.TreeOptionRes, 0)
+		res = &temp
+	}
 	return
 }

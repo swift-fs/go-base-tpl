@@ -409,26 +409,20 @@ func (l *gCurd) generateWebModelColumnsEach(buffer *bytes.Buffer, in *CurdPrevie
 			in.options.Step.ImportModel.UtilsIs = append(in.options.Step.ImportModel.UtilsIs, "isNullObject")
 
 		case FormModeUploadImage:
-			component = fmt.Sprintf("  {\n    title: '%s',\n    key: '%s',\n    align: '%v',\n    width: %v,\n    render(row: State) {\n      return h(%s, {\n        width: 32,\n        height: 32,\n        src: row.%s,\n        fallbackSrc: fallbackSrc(),\n        onError: errorImg,\n        style: {\n          width: '32px',\n          height: '32px',\n          'max-width': '100%%',\n          'max-height': '100%%',\n        },\n      });\n    },\n  },\n", field.Dc, field.TsName, field.Align, field.Width, "NImage", field.TsName)
-			in.options.Step.ImportModel.NaiveUI = append(in.options.Step.ImportModel.NaiveUI, "NImage")
-			in.options.Step.ImportModel.UtilsHotGo = append(in.options.Step.ImportModel.UtilsHotGo, "fallbackSrc")
+			component = fmt.Sprintf("  {\n    title: '%s',\n    key: '%s',\n    align: '%v',\n    width: %v,\n    render(row: State) {\n      return renderImage(row.%v);\n    },\n  },\n", field.Dc, field.TsName, field.Align, field.Width, field.TsName)
+			in.options.Step.ImportModel.UtilsIndex = append(in.options.Step.ImportModel.UtilsIndex, "renderImage")
 
 		case FormModeUploadImages:
-			component = fmt.Sprintf("  {\n    title: '%s',\n    key: '%s',\n    align: '%v',\n    width: %v,\n    render(row: State) {\n      if (isNullObject(row.%s)) {\n        return ``;\n      }\n      return row.%s.map((image) => {\n        return h(%s, {\n          width: 32,\n          height: 32,\n          src: image,\n        onError: errorImg,\n          style: {\n            width: '32px',\n            height: '32px',\n            'max-width': '100%%',\n            'max-height': '100%%',\n            'margin-left': '2px',\n          },\n        });\n      });\n    },\n  },\n", field.Dc, field.TsName, field.Align, field.Width, field.TsName, field.TsName, "NImage")
-			in.options.Step.ImportModel.NaiveUI = append(in.options.Step.ImportModel.NaiveUI, "NImage")
-			in.options.Step.ImportModel.UtilsIs = append(in.options.Step.ImportModel.UtilsIs, "isArray")
-			in.options.Step.ImportModel.UtilsHotGo = append(in.options.Step.ImportModel.UtilsHotGo, "errorImg")
+			component = fmt.Sprintf("  {\n    title: '%s',\n    key: '%s',\n    align: '%v',\n    width: %v,\n    render(row: State) {\n      return renderImageGroup(row.%v);\n    },\n  },\n", field.Dc, field.TsName, field.Align, field.Width, field.TsName)
+			in.options.Step.ImportModel.UtilsIndex = append(in.options.Step.ImportModel.UtilsIndex, "renderImageGroup")
 
 		case FormModeUploadFile:
-			component = fmt.Sprintf("  {\n    title: '%s',\n    key: '%s',\n    align: '%v',\n    width: %v,\n    render(row: State) {\n      if (row.%s === '') {\n        return ``;\n      }\n      return h(\n        %s,\n        {\n          size: 'small',\n        },\n        {\n          default: () => getFileExt(row.%s),\n        }\n      );\n    },\n  },\n", field.Dc, field.TsName, field.Align, field.Width, field.TsName, "NAvatar", field.TsName)
-			in.options.Step.ImportModel.NaiveUI = append(in.options.Step.ImportModel.NaiveUI, "NAvatar")
-			in.options.Step.ImportModel.UtilsUrl = append(in.options.Step.ImportModel.UtilsUrl, "getFileExt")
+			component = fmt.Sprintf("  {\n    title: '%s',\n    key: '%s',\n    align: '%v',\n    width: %v,\n    render(row: State) {\n      return renderFile(row.%v);\n    },\n  },\n", field.Dc, field.TsName, field.Align, field.Width, field.TsName)
+			in.options.Step.ImportModel.UtilsIndex = append(in.options.Step.ImportModel.UtilsIndex, "renderFile")
 
 		case FormModeUploadFiles:
-			component = fmt.Sprintf("  {\n    title: '%s',\n    key: '%s',\n    align: '%v',\n    width: %v,\n    render(row: State) {\n      if (isNullObject(row.%s)) {\n        return ``;\n      }\n      return row.%s.map((attachfile) => {\n        return h(\n          %s,\n          {\n            size: 'small',\n            style: {\n              'margin-left': '2px',\n            },\n          },\n          {\n            default: () => getFileExt(attachfile),\n          }\n        );\n      });\n    },\n  },\n", field.Dc, field.TsName, field.Align, field.Width, field.TsName, field.TsName, "NAvatar")
-			in.options.Step.ImportModel.NaiveUI = append(in.options.Step.ImportModel.NaiveUI, "NAvatar")
-			in.options.Step.ImportModel.UtilsIs = append(in.options.Step.ImportModel.UtilsIs, "isNullObject")
-			in.options.Step.ImportModel.UtilsUrl = append(in.options.Step.ImportModel.UtilsUrl, "getFileExt")
+			component = fmt.Sprintf("  {\n    title: '%s',\n    key: '%s',\n    align: '%v',\n    width: %v,\n    render(row: State) {\n      return renderFileGroup(row.%v);\n    },\n  },\n", field.Dc, field.TsName, field.Align, field.Width, field.TsName)
+			in.options.Step.ImportModel.UtilsIndex = append(in.options.Step.ImportModel.UtilsIndex, "renderFileGroup")
 
 		case FormModeSwitch:
 			component = fmt.Sprintf("  {\n    title: '%s',\n    key: '%s',\n    align: '%v',\n    width: %v,\n    render(row: State) {\n      return h(%s, {\n        value: row.%s === 1,\n        checked: '开启',\n        unchecked: '关闭',\n        disabled: !hasPermission(['%s']),\n        onUpdateValue: function (e) {\n          console.log('onUpdateValue e:' + JSON.stringify(e));\n          row.%s = e ? 1 : 2;\n          Switch({ %s: row.%s, key: '%s', value: row.%s }).then((_res) => {\n            $message.success('操作成功');\n          });\n        },\n      });\n    },\n  },\n", field.Dc, field.TsName, field.Align, field.Width, "NSwitch", field.TsName, "/"+in.options.ApiPrefix+"/switch", field.TsName, in.pk.TsName, in.pk.TsName, convert.CamelCaseToUnderline(field.TsName), field.TsName)

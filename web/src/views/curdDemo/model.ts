@@ -1,11 +1,9 @@
 import { h, ref } from 'vue';
-import { NImage, NAvatar, NSwitch } from 'naive-ui';
+import { NSwitch } from 'naive-ui';
 import { cloneDeep } from 'lodash-es';
 import { FormSchema } from '@/components/Form';
-import { getFileExt } from '@/utils/urlUtils';
 import { defRangeShortcuts } from '@/utils/dateUtil';
-import { fallbackSrc } from '@/utils/hotgo';
-import { renderPopoverMemberSumma, MemberSumma } from '@/utils';
+import { renderImage, renderFile, renderPopoverMemberSumma, MemberSumma } from '@/utils';
 import { Switch } from '@/api/curdDemo';
 import { useDictStore } from '@/store/modules/dict';
 import { usePermission } from '@/hooks/web/usePermission';
@@ -176,19 +174,8 @@ export const columns = [
     key: 'image',
     align: 'left',
     width: 100,
-    render(row) {
-      return h(NImage, {
-        width: 32,
-        height: 32,
-        src: row.image,
-        fallbackSrc: fallbackSrc(),
-        style: {
-          width: '32px',
-          height: '32px',
-          'max-width': '100%',
-          'max-height': '100%',
-        },
-      });
+    render(row: State) {
+      return renderImage(row.image);
     },
   },
   {
@@ -196,19 +183,8 @@ export const columns = [
     key: 'attachfile',
     align: 'left',
     width: 100,
-    render(row) {
-      if (row.attachfile === '') {
-        return ``;
-      }
-      return h(
-        NAvatar,
-        {
-          size: 'small',
-        },
-        {
-          default: () => getFileExt(row.attachfile),
-        }
-      );
+    render(row: State) {
+      return renderFile(row.attachfile);
     },
   },
   {
@@ -222,7 +198,7 @@ export const columns = [
     key: 'switch',
     align: 'left',
     width: 150,
-    render(row) {
+    render(row: State) {
       return h(NSwitch, {
         value: row.switch === 1,
         checked: '开启',
@@ -243,7 +219,7 @@ export const columns = [
     key: 'createdBy',
     align: 'left',
     width: 150,
-    render(row) {
+    render(row: State) {
       return renderPopoverMemberSumma(row.createdBySumma);
     },
   },
@@ -258,7 +234,7 @@ export const columns = [
     key: 'updatedBy',
     align: 'left',
     width: 150,
-    render(row) {
+    render(row: State) {
       return renderPopoverMemberSumma(row.updatedBySumma);
     },
   },

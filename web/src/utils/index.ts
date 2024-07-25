@@ -5,6 +5,7 @@ import {
   NBadge,
   NButton,
   NIcon,
+  NImage,
   NPopover,
   NTable,
   NTag,
@@ -13,10 +14,12 @@ import {
 } from 'naive-ui';
 import { EllipsisHorizontalCircleOutline } from '@vicons/ionicons5';
 import { PageEnum } from '@/enums/pageEnum';
-import { isNullObject, isObject } from './is/index';
+import { isArray, isJsonString, isNullObject, isObject } from './is/index';
 import { cloneDeep } from 'lodash-es';
 import { VNode } from 'vue';
 import { DictType, useDictStore } from '@/store/modules/dict';
+import { fallbackSrc } from '@/utils/hotgo';
+import {getFileExt} from "@/utils/urlUtils";
 
 export const renderTooltip = (trigger, content) => {
   return h(NTooltip, null, {
@@ -95,6 +98,71 @@ export const renderOptionTag = (type: DictType, value: any) => {
   );
 };
 
+// render 图片
+export const renderImage = (image: string) => {
+  if (!image || image === '') {
+    return ``;
+  }
+  return h(NImage, {
+    width: 32,
+    height: 32,
+    src: image,
+    fallbackSrc: fallbackSrc(),
+    style: {
+      width: '32px',
+      height: '32px',
+      'max-width': '100%',
+      'max-height': '100%',
+      'margin-left': '2px',
+    },
+  });
+};
+
+// render 图片组
+export const renderImageGroup = (images: any) => {
+  if (isJsonString(images)) {
+    images = JSON.parse(images);
+  }
+  if (isNullObject(images) || !isArray(images)) {
+    return ``;
+  }
+  return images.map((image: string) => {
+    return renderImage(image);
+  });
+};
+
+// render 文件
+export const renderFile = (file: string) => {
+  if (!file || file === '') {
+    return ``;
+  }
+  return h(
+    NAvatar,
+    {
+      size: 'small',
+      style: {
+        'margin-left': '2px',
+      },
+    },
+    {
+      default: () => getFileExt(file),
+    }
+  );
+};
+
+// render 文件组
+export const renderFileGroup = (files: any) => {
+  if (isJsonString(files)) {
+    files = JSON.parse(files);
+  }
+  if (isNullObject(files) || !isArray(files)) {
+    return ``;
+  }
+  return files.map((file: string) => {
+    return renderFile(file);
+  });
+};
+
 export interface MemberSumma {
   id: number; // 用户ID
   realName: string; // 真实姓名
@@ -103,7 +171,7 @@ export interface MemberSumma {
 }
 
 // render 操作人摘要
-export const renderPopoverMemberSumma = (member?: MemberSumma) => {
+export const renderPopoverMemberSumma = (member: MemberSumma | null | undefined) => {
   if (!member) {
     return '';
   }

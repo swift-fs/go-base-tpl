@@ -145,6 +145,9 @@ export function rdmLightRgbColor(): string {
 
 // 将列表数据转为树形数据
 export function convertListToTree(list: any[], idField = 'id', pidField = 'pid') {
+  if (!list || list.length === 0) {
+    return [];
+  }
   const min = list.reduce((prev, current) => (prev[pidField] < current[pidField] ? prev : current));
 
   const map = list.reduce((acc, item) => {
@@ -154,6 +157,13 @@ export function convertListToTree(list: any[], idField = 'id', pidField = 'pid')
 
   list.forEach((item) => {
     if (item[pidField] !== min[pidField]) {
+      if (!map[item[pidField]]) {
+        map[item[pidField]] = {};
+      }
+
+      if (!map[item[pidField]].children) {
+        map[item[pidField]].children = [];
+      }
       map[item[pidField]].children.push(map[item[idField]]);
     }
   });
@@ -163,6 +173,9 @@ export function convertListToTree(list: any[], idField = 'id', pidField = 'pid')
 // 从树选项中获取所有key
 export function getTreeKeys(data: any[], idField = 'id') {
   const keys: any = [];
+  if (!data || data.length === 0) {
+    return keys;
+  }
   data.map((item: any) => {
     keys.push(item[idField]);
     if (item.children && item.children.length) {

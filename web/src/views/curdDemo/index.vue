@@ -57,10 +57,10 @@
   import { adaTableScrollX } from '@/utils/hotgo';
   import Edit from './edit.vue';
 
+  const dict = useDictStore();
   const dialog = useDialog();
   const message = useMessage();
   const { hasPermission } = usePermission();
-  const dict = useDictStore();
   const actionRef = ref();
   const searchFormRef = ref<any>({});
   const editRef = ref();
@@ -72,7 +72,7 @@
     title: '操作',
     key: 'action',
     fixed: 'right',
-    render(record) {
+    render(record: State) {
       return h(TableAction as any, {
         style: 'button',
         actions: [

@@ -1,10 +1,8 @@
 import { h, ref } from 'vue';
-import { NTag } from 'naive-ui';
 import { cloneDeep } from 'lodash-es';
 import { FormSchema } from '@/components/Form';
-import { isNullObject } from '@/utils/is';
 import { defRangeShortcuts } from '@/utils/dateUtil';
-import { renderPopoverMemberSumma, MemberSumma } from '@/utils';
+import { renderOptionTag, renderPopoverMemberSumma, MemberSumma } from '@/utils';
 import { TreeOption } from '@/api/normalTreeDemo';
 import { useDictStore } from '@/store/modules/dict';
 
@@ -121,23 +119,8 @@ export const columns = [
     key: 'categoryId',
     align: 'left',
     width: 100,
-    render(row) {
-      if (isNullObject(row.categoryId)) {
-        return ``;
-      }
-      return h(
-        NTag,
-        {
-          style: {
-            marginRight: '6px',
-          },
-          type: dict.getType('testCategoryOption', row.categoryId),
-          bordered: false,
-        },
-        {
-          default: () => dict.getLabel('testCategoryOption', row.categoryId),
-        }
-      );
+    render(row: State) {
+      return renderOptionTag('testCategoryOption', row.categoryId);
     },
   },
   {
@@ -151,23 +134,8 @@ export const columns = [
     key: 'status',
     align: 'left',
     width: 150,
-    render(row) {
-      if (isNullObject(row.status)) {
-        return ``;
-      }
-      return h(
-        NTag,
-        {
-          style: {
-            marginRight: '6px',
-          },
-          type: dict.getType('sys_normal_disable', row.status),
-          bordered: false,
-        },
-        {
-          default: () => dict.getLabel('sys_normal_disable', row.status),
-        }
-      );
+    render(row: State) {
+      return renderOptionTag('sys_normal_disable', row.status);
     },
   },
   {
@@ -175,7 +143,7 @@ export const columns = [
     key: 'createdBy',
     align: 'left',
     width: 100,
-    render(row) {
+    render(row: State) {
       return renderPopoverMemberSumma(row.createdBySumma);
     },
   },
