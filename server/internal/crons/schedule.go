@@ -17,7 +17,7 @@ func init() {
 	cron.Register(Schedule)
 }
 
-// Schedule 任务调度
+// Schedule 任务调度测试
 var Schedule = &cSchedule{name: "schedule"}
 
 type cSchedule struct {
