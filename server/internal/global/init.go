@@ -60,7 +60,7 @@ func Init(ctx context.Context) {
 	service.AdminMember().LoadSuperAdmin(ctx)
 
 	// 订阅集群同步
-	SubscribeClusterSync(ctx)
+	// SubscribeClusterSync(ctx)
 }
 
 // LoggingServeLogHandler 服务日志处理
