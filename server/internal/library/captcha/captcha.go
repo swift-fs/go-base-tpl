@@ -7,11 +7,15 @@ package captcha
 
 import (
 	"context"
+	"image/color"
+
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/text/gstr"
 	"github.com/mojocn/base64Captcha"
-	"image/color"
 )
+
+// store 验证码存储方式
+var store = base64Captcha.DefaultMemStore
 
 // Generate 生成验证码
 func Generate(ctx context.Context) (id string, base64 string) {
@@ -47,7 +51,7 @@ func Generate(ctx context.Context) (id string, base64 string) {
 		Fonts: []string{"chromohv.ttf"},
 	}
 
-	c := base64Captcha.NewCaptcha(driver.ConvertFonts(), base64Captcha.DefaultMemStore)
+	c := base64Captcha.NewCaptcha(driver.ConvertFonts(), store)
 	id, base64, _, err := c.Generate()
 	if err != nil {
 		g.Log().Errorf(ctx, "captcha.Generate err:%+v", err)
@@ -60,6 +64,5 @@ func Verify(id, answer string) bool {
 	if id == "" || answer == "" {
 		return false
 	}
-	c := base64Captcha.NewCaptcha(new(base64Captcha.DriverString), base64Captcha.DefaultMemStore)
-	return c.Verify(id, gstr.ToLower(answer), true)
+	return store.Verify(id, gstr.ToLower(answer), true)
 }
