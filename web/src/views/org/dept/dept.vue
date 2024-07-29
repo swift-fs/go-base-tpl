@@ -21,6 +21,7 @@
         ref="actionRef"
         openChecked
         :columns="columns"
+        :pagination="false"
         :request="loadDataTable"
         :row-key="(row) => row.id"
         :actionColumn="actionColumn"
