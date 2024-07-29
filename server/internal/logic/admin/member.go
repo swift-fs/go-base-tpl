@@ -630,17 +630,7 @@ func (s *sAdminMember) List(ctx context.Context, in *adminin.MemberListInp) (lis
 		mod = mod.WhereBetween(cols.CreatedAt, gtime.New(in.CreatedAt[0]), gtime.New(in.CreatedAt[1]))
 	}
 
-	totalCount, err = mod.Count()
-	if err != nil {
-		err = gerror.Wrap(err, "获取用户数据行失败！")
-		return
-	}
-
-	if totalCount == 0 {
-		return
-	}
-
-	if err = mod.Hook(hook.MemberInfo).Page(in.Page, in.PerPage).OrderDesc(cols.Id).Scan(&list); err != nil {
+	if err = mod.Hook(hook.MemberInfo).Page(in.Page, in.PerPage).OrderDesc(cols.Id).ScanAndCount(&list, &totalCount, true); err != nil {
 		err = gerror.Wrap(err, "获取用户列表失败！")
 		return
 	}

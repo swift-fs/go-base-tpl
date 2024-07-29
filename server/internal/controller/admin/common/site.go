@@ -7,18 +7,19 @@ package common
 
 import (
 	"context"
-	"github.com/gogf/gf/v2/errors/gerror"
-	"github.com/gogf/gf/v2/frame/g"
-	"github.com/gogf/gf/v2/net/ghttp"
-	"github.com/gogf/gf/v2/text/gstr"
-	"github.com/gogf/gf/v2/util/gconv"
-	"github.com/gogf/gf/v2/util/gmode"
 	"hotgo/api/admin/common"
 	"hotgo/internal/consts"
 	"hotgo/internal/library/captcha"
 	"hotgo/internal/library/token"
 	"hotgo/internal/service"
 	"hotgo/utility/validate"
+
+	"github.com/gogf/gf/v2/errors/gerror"
+	"github.com/gogf/gf/v2/frame/g"
+	"github.com/gogf/gf/v2/net/ghttp"
+	"github.com/gogf/gf/v2/text/gstr"
+	"github.com/gogf/gf/v2/util/gconv"
+	"github.com/gogf/gf/v2/util/gmode"
 )
 
 var Site = cSite{}
@@ -102,7 +103,7 @@ func (c *cSite) AccountLogin(ctx context.Context, req *common.AccountLoginReq) (
 		return
 	}
 
-	if !req.IsLock && login.CaptchaSwitch == 1 {
+	if !req.IsLock && login.CaptchaSwitch == consts.StatusEnabled {
 		// 校验 验证码
 		if !captcha.Verify(req.Cid, req.Code) {
 			err = gerror.New("验证码错误")
