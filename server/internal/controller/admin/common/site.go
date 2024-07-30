@@ -45,7 +45,7 @@ func (c *cSite) Config(ctx context.Context, _ *common.SiteConfigReq) (res *commo
 
 func (c *cSite) getWsAddr(ctx context.Context, request *ghttp.Request) string {
 	// 如果是本地IP访问，则认为是调试模式，走实际请求地址，否则走配置中的地址
-	ip := ghttp.RequestFromCtx(ctx).GetHeader("hostname")
+	ip := ghttp.RequestFromCtx(ctx).GetHost()
 	if validate.IsLocalIPAddr(ip) {
 		return "ws://" + ip + ":" + gstr.StrEx(request.Host, ":") + g.Cfg().MustGet(ctx, "router.websocket.prefix").String()
 	}
@@ -59,7 +59,7 @@ func (c *cSite) getWsAddr(ctx context.Context, request *ghttp.Request) string {
 
 func (c *cSite) getDomain(ctx context.Context, request *ghttp.Request) string {
 	// 如果是本地IP访问，则认为是调试模式，走实际请求地址，否则走配置中的地址
-	ip := request.GetHeader("hostname")
+	ip := request.GetHost()
 	if validate.IsLocalIPAddr(ip) {
 		return "http://" + ip + ":" + gstr.StrEx(request.Host, ":")
 	}
