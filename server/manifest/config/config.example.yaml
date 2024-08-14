@@ -191,7 +191,8 @@ token:
 # 消息队列
 queue:
   switch: true                                        # 队列开关，可选：true|false，默认为true
-  driver: "disk"                                      # 队列驱动，可选：disk|redis|rocketmq|kafka，默认为disk
+  # TODO: 消息队列驱动
+  driver: "redis"                                      # 队列驱动，可选：disk|redis|rocketmq|kafka，默认为disk
   groupName: "greencode"                                  # TODO: mq群组名称
   # 磁盘队列
   disk:
