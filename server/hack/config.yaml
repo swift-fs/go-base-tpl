@@ -30,3 +30,8 @@ gfcli:
         jsonCase: "CamelLower"
         gJsonSupport: true
         clear: false
+    ctrl:
+      srcFolder: "api/api/business"
+      dstFolder: "internal/controller/api"
+      clear: true
+      merge: false
