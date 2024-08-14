@@ -31,7 +31,7 @@ gfcli:
         gJsonSupport: true
         clear: false
     ctrl:
-      srcFolder: "api/api/business"
+      srcFolder: "api/api"
       dstFolder: "internal/controller/api"
       clear: true
       merge: false
