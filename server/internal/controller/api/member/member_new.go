@@ -3,3 +3,13 @@
 // =================================================================================
 
 package member
+
+import (
+	"hotgo/api/api/member"
+)
+
+type ControllerV1 struct{}
+
+func NewV1() member.IMemberV1 {
+	return &ControllerV1{}
+}

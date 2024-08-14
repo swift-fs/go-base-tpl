@@ -10,13 +10,7 @@ package pay
 import (
 	"context"
 	"fmt"
-	"github.com/gogf/gf/v2/encoding/gjson"
-	"github.com/gogf/gf/v2/errors/gerror"
-	"github.com/gogf/gf/v2/frame/g"
-	"github.com/gogf/gf/v2/net/ghttp"
-	"github.com/gogf/gf/v2/os/gctx"
-	"github.com/gogf/gf/v2/util/gmeta"
-	"hotgo/api/api/pay"
+	v1 "hotgo/api/api/pay/v1"
 	"hotgo/internal/consts"
 	"hotgo/internal/library/contexts"
 	"hotgo/internal/library/location"
@@ -25,6 +19,13 @@ import (
 	"hotgo/internal/model/input/payin"
 	"hotgo/internal/service"
 	"hotgo/utility/validate"
+
+	"github.com/gogf/gf/v2/encoding/gjson"
+	"github.com/gogf/gf/v2/errors/gerror"
+	"github.com/gogf/gf/v2/frame/g"
+	"github.com/gogf/gf/v2/net/ghttp"
+	"github.com/gogf/gf/v2/os/gctx"
+	"github.com/gogf/gf/v2/util/gmeta"
 )
 
 // Create 创建支付订单和日志
@@ -127,11 +128,11 @@ func (s *sPay) GenNotifyURL(ctx context.Context, in payin.PayCreateInp) (notifyU
 	var object interface{}
 	switch in.PayType {
 	case consts.PayTypeAliPay:
-		object = pay.NotifyAliPayReq{}
+		object = v1.NotifyAliPayReq{}
 	case consts.PayTypeWxPay:
-		object = pay.NotifyWxPayReq{}
+		object = v1.NotifyWxPayReq{}
 	case consts.PayTypeQQPay:
-		object = pay.NotifyQQPayReq{}
+		object = v1.NotifyQQPayReq{}
 	default:
 		err = gerror.Newf("未被支持的支付方式：%v", in.PayType)
 		return

@@ -3,11 +3,12 @@
 // @Copyright  Copyright (c) 2023 HotGo CLI
 // @Author  Ms <133814250@qq.com>
 // @License  https://github.com/bufanyun/hotgo/blob/master/LICENSE
-package pay
+package v1
 
 import (
-	"github.com/gogf/gf/v2/frame/g"
 	"hotgo/internal/model/input/payin"
+
+	"github.com/gogf/gf/v2/frame/g"
 )
 
 // NotifyAliPayReq 支付宝回调
